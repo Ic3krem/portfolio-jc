@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SaintAngelo - Hospital Queue Management</title>
+<script>
+window.tailwind = window.tailwind || {};
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: { 50:'#f4fcf8', 100:'#e0f5eb', 200:'#b3e6d0', 300:'#7dd3b0', 400:'#3db882', 500:'#0b7d56', 600:'#007345', 700:'#046c4e', 800:'#03543d', 900:'#022c22' },
+        sidebar: '#f7f9f8',
+      },
+      fontFamily: { sans: ['"Segoe UI"','system-ui','sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4fcf8; margin: 0; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: #c4d8cf; border-radius: 3px; }
+  .fade-in { animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(11,125,86,.4); } 70% { box-shadow: 0 0 0 12px rgba(11,125,86,0); } 100% { box-shadow: 0 0 0 0 rgba(11,125,86,0); } }
+  .pulse-ring { animation: pulse-ring 2s infinite; }
+  @keyframes ticker { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+  .ticket-anim { animation: ticker 2.5s ease-in-out infinite; }
+  .nav-item { transition: all .2s ease; border-radius: 8px; }
+  .nav-item:hover { background: #e0f5eb; }
+  .nav-item.active { background: #0b7d56; color: #fff; }
+  .nav-item.active svg { color: #fff !important; }
+  .btn-primary { background: #0b7d56; color: #fff; transition: background .2s; }
+  .btn-primary:hover { background: #03543d; }
+  .badge { padding: 2px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .3px; }
+  .sparkline-container { width: 80px; height: 32px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #0b7d56; box-shadow: 0 0 0 3px rgba(11,125,86,.12); }
+
+  /* Local utility fallback for offline standalone rendering. */
+  a { color: inherit; }
+  button, input, select, textarea { font: inherit; }
+  button { border: 0; cursor: pointer; }
+  .hidden { display: none !important; }
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .inline-flex { display: inline-flex; }
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .flex-col { flex-direction: column; }
+  .items-center { align-items: center; }
+  .items-start { align-items: flex-start; }
+  .items-end { align-items: flex-end; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .text-center { text-align: center; }
+  .text-left { text-align: left; }
+  .flex-1 { flex: 1 1 0%; }
+  .flex-shrink-0 { flex-shrink: 0; }
+  .min-w-0 { min-width: 0; }
+  .fixed { position: fixed; }
+  .relative { position: relative; }
+  .absolute { position: absolute; }
+  .top-0 { top: 0; }
+  .left-0 { left: 0; }
+  .bottom-0 { bottom: 0; }
+  .overflow-y-auto { overflow-y: auto; }
+  .overflow-hidden { overflow: hidden; }
+  .min-h-screen { min-height: 100vh; }
+  .w-full { width: 100%; }
+  .w-1\/2 { width: 50%; }
+  .w-9 { width: 2.25rem; } .h-9 { height: 2.25rem; }
+  .w-10 { width: 2.5rem; } .h-10 { height: 2.5rem; }
+  .w-12 { width: 3rem; } .h-12 { height: 3rem; }
+  .w-\[260px\] { width: 260px; }
+  .ml-\[260px\] { margin-left: 260px; }
+  .max-w-md { max-width: 28rem; }
+  .max-w-4xl { max-width: 56rem; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  .p-1\.5 { padding: .375rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; } .p-10 { padding: 2.5rem; }
+  .px-3 { padding-left: .75rem; padding-right: .75rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; } .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; } .px-10 { padding-left: 2.5rem; padding-right: 2.5rem; } .px-12 { padding-left: 3rem; padding-right: 3rem; } .px-20 { padding-left: 5rem; padding-right: 5rem; }
+  .py-1\.5 { padding-top: .375rem; padding-bottom: .375rem; } .py-2 { padding-top: .5rem; padding-bottom: .5rem; } .py-2\.5 { padding-top: .625rem; padding-bottom: .625rem; } .py-3 { padding-top: .75rem; padding-bottom: .75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; } .py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; } .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+  .pt-4 { padding-top: 1rem; } .pb-2 { padding-bottom: .5rem; }
+  .mb-1 { margin-bottom: .25rem; } .mb-1\.5 { margin-bottom: .375rem; } .mb-2 { margin-bottom: .5rem; } .mb-3 { margin-bottom: .75rem; } .mb-4 { margin-bottom: 1rem; } .mb-5 { margin-bottom: 1.25rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; }
+  .mt-1 { margin-top: .25rem; } .mt-3 { margin-top: .75rem; } .mt-4 { margin-top: 1rem; } .mt-5 { margin-top: 1.25rem; } .mt-6 { margin-top: 1.5rem; } .mt-10 { margin-top: 2.5rem; }
+  .gap-1 { gap: .25rem; } .gap-2 { gap: .5rem; } .gap-3 { gap: .75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+  .space-y-1 > * + * { margin-top: .25rem; } .space-y-3 > * + * { margin-top: .75rem; }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .col-span-2 { grid-column: span 2 / span 2; }
+  .rounded { border-radius: .25rem; } .rounded-lg { border-radius: .5rem; } .rounded-xl { border-radius: .75rem; } .rounded-2xl { border-radius: 1rem; } .rounded-full { border-radius: 9999px; }
+  .border { border: 1px solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; } .border-r { border-right: 1px solid; }
+  .bg-white { background: #fff; }
+  .text-white { color: #fff; }
+  .text-sm { font-size: .875rem; } .text-xs { font-size: .75rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-base { font-size: 1rem; } .text-\[11px\] { font-size: 11px; } .text-\[14px\] { font-size: 14px; } .text-\[28px\] { font-size: 28px; } .text-\[32px\] { font-size: 32px; } .text-\[48px\] { font-size: 48px; }
+  .font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; } .font-black { font-weight: 900; }
+  .uppercase { text-transform: uppercase; }
+  .tracking-tight { letter-spacing: 0; }
+  .tracking-wider { letter-spacing: .05em; }
+  .tracking-\[\.2em\] { letter-spacing: .2em; }
+  .tracking-\[\.25em\] { letter-spacing: .25em; }
+  .leading-relaxed { line-height: 1.625; }
+  .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .shadow-sm { box-shadow: 0 1px 2px rgba(15,23,42,.08); }
+  .transition { transition: all .2s cubic-bezier(.2,.8,.2,1); }
+
+  @media (max-width: 900px) {
+    body { overflow-x: hidden; }
+    #loginScreen { flex-direction: column; }
+    #loginScreen > div { width: 100% !important; }
+    #loginScreen > div:first-child { min-height: auto !important; padding: 2rem 1.5rem !important; }
+    #loginScreen > div:nth-child(2) { min-height: 360px !important; padding: 2rem 1.5rem; }
+    #appShell { flex-direction: column; }
+    #sidebar { position: relative !important; width: 100% !important; height: auto; border-right: 0 !important; border-bottom: 1px solid #e5e7eb; }
+    #sidebarNav { display: flex; gap: .5rem; overflow-x: auto; }
+    #sidebarNav .nav-item { min-width: max-content; }
+    #mainContent { margin-left: 0 !important; padding: 1.5rem !important; }
+    #mainContent .grid { grid-template-columns: 1fr !important; }
+    table { min-width: 720px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="loginScreen" class="min-h-screen flex">
+  <!-- Left pane -->
+  <div class="w-1/2 flex flex-col justify-center px-20 bg-white" style="min-height:100vh">
+    <div class="max-w-md mx-auto w-full">
+      <!-- Logo -->
+      <div class="flex items-center gap-3 mb-10">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center" style="background:#0b7d56">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold" style="color:#1a1a1a">SaintAngelo</h1>
+          <p class="text-xs" style="color:#666">Hospital Queue Management</p>
+        </div>
+      </div>
+
+      <h2 class="text-xl font-semibold mb-1" style="color:#1a1a1a">Welcome back</h2>
+      <p class="text-sm mb-8" style="color:#666">Sign in to access the management system</p>
+
+      <form onsubmit="doLogin(event)">
+        <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Username</label>
+        <input id="loginUser" type="text" value="receptionist" class="w-full border rounded-lg px-4 py-2.5 mb-4 text-sm" style="border-color:#d1d5db" placeholder="Enter username">
+
+        <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Password</label>
+        <input id="loginPass" type="password" value="admin123" class="w-full border rounded-lg px-4 py-2.5 mb-2 text-sm" style="border-color:#d1d5db" placeholder="Enter password">
+
+        <div class="flex justify-between items-center mb-6">
+          <label class="flex items-center gap-2 text-sm" style="color:#666">
+            <input type="checkbox" checked class="rounded"> Remember me
+          </label>
+          <a href="#" class="text-sm font-medium" style="color:#0b7d56">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="w-full btn-primary py-2.5 rounded-lg font-semibold text-sm">Sign In</button>
+      </form>
+
+      <div class="mt-6 text-center">
+        <span class="text-sm" style="color:#666">Need to check queue status?</span>
+        <a href="#" onclick="showPublicView()" class="text-sm font-medium ml-1" style="color:#0b7d56">Public View</a>
+      </div>
+    </div>
+  </div>
+  <!-- Right pane -->
+  <div class="w-1/2 flex items-center justify-center" style="background:linear-gradient(135deg,#0b7d56 0%,#03543d 50%,#022c22 100%);min-height:100vh">
+    <div class="text-center text-white px-12">
+      <svg class="mx-auto mb-8 opacity-90" width="200" height="200" viewBox="0 0 200 200" fill="none">
+        <rect x="40" y="30" width="120" height="140" rx="12" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+        <rect x="80" y="10" width="40" height="40" rx="6" fill="rgba(255,255,255,.2)" stroke="rgba(255,255,255,.4)" stroke-width="2"/>
+        <line x1="100" y1="18" x2="100" y2="42" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="88" y1="30" x2="112" y2="30" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <rect x="60" y="70" width="80" height="8" rx="4" fill="rgba(255,255,255,.2)"/>
+        <rect x="60" y="88" width="60" height="8" rx="4" fill="rgba(255,255,255,.15)"/>
+        <rect x="60" y="106" width="80" height="8" rx="4" fill="rgba(255,255,255,.2)"/>
+        <rect x="60" y="124" width="50" height="8" rx="4" fill="rgba(255,255,255,.15)"/>
+        <circle cx="160" cy="160" r="28" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+        <path d="M152 160h16M160 152v16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <h2 class="text-3xl font-bold mb-3">Smart Queue Management</h2>
+      <p class="text-lg opacity-80 leading-relaxed">Streamline patient flow, reduce wait times,<br>and improve healthcare delivery.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP SHELL ============ -->
+<div id="appShell" class="hidden min-h-screen flex">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="fixed left-0 top-0 bottom-0 w-[260px] flex flex-col border-r" style="background:#f7f9f8;border-color:#e5e7eb;z-index:40">
+    <!-- Logo -->
+    <div class="px-5 py-5 flex items-center gap-3 border-b" style="border-color:#e5e7eb">
+      <div class="w-9 h-9 rounded-lg flex items-center justify-center" style="background:#0b7d56">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+      </div>
+      <div>
+        <h1 class="text-base font-bold" style="color:#1a1a1a">SaintAngelo</h1>
+        <p class="text-[11px]" style="color:#666">Queue Management</p>
+      </div>
+    </div>
+
+    <!-- Role selector -->
+    <div class="px-4 pt-4 pb-2">
+      <select id="roleSelector" onchange="switchRole(this.value)" class="w-full border rounded-lg px-3 py-2 text-sm" style="border-color:#d1d5db;color:#1a1a1a;background:#fff">
+        <option value="receptionist">Receptionist</option>
+        <option value="admin">Administrator</option>
+      </select>
+    </div>
+
+    <!-- Nav -->
+    <nav id="sidebarNav" class="flex-1 px-3 py-2 space-y-1 overflow-y-auto"></nav>
+
+    <!-- User profile -->
+    <div class="px-4 py-4 border-t" style="border-color:#e5e7eb">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold" style="background:#0b7d56">JD</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate" style="color:#1a1a1a">Jane Doe</p>
+          <p class="text-xs truncate" style="color:#666" id="userRoleLabel">Receptionist</p>
+        </div>
+        <button onclick="doLogout()" title="Logout" class="p-1.5 rounded-lg hover:bg-red-50 transition-colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main id="mainContent" class="ml-[260px] flex-1 min-h-screen p-10" style="background:#f4fcf8"></main>
+</div>
+
+<!-- ============ PUBLIC VIEW (full screen) ============ -->
+<div id="publicView" class="hidden min-h-screen" style="background:linear-gradient(160deg,#0b7d56 0%,#03543d 40%,#022c22 100%)">
+  <div class="max-w-4xl mx-auto py-10 px-6 text-center text-white">
+    <!-- Header -->
+    <div class="flex items-center justify-center gap-3 mb-2">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:rgba(255,255,255,.2)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight">SaintAngelo Hospital</h1>
+    </div>
+    <p class="text-white/70 text-sm mb-10" id="publicDateTime"></p>
+
+    <!-- Now Serving -->
+    <div class="rounded-2xl p-10 mb-8" style="background:rgba(255,255,255,.1);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.15)">
+      <p class="uppercase tracking-[.25em] text-white/70 text-sm font-semibold mb-3">Now Serving</p>
+      <p class="font-black ticket-anim pulse-ring inline-block rounded-2xl px-10 py-4" style="font-size:7.5em;line-height:1;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.3)">A-015</p>
+      <p class="mt-4 text-white/60 text-lg">Please proceed to Window 3</p>
+    </div>
+
+    <!-- Next in queue -->
+    <div class="rounded-2xl p-8" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)">
+      <p class="uppercase tracking-[.2em] text-white/60 text-sm font-semibold mb-5">Next in Queue</p>
+      <div class="grid grid-cols-5 gap-4" id="publicNextQueue"></div>
+    </div>
+
+    <!-- Back -->
+    <button onclick="hidePublicView()" class="mt-10 px-6 py-2.5 rounded-lg text-sm font-medium transition" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.2)" onmouseover="this.style.background='rgba(255,255,255,.25)'" onmouseout="this.style.background='rgba(255,255,255,.15)'">Back to Login</button>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+const queueData = [
+  { ticket:'A-012', name:'Maria Santos', priority:'EMERGENCY', status:'COMPLETED', wait:'--', dept:'ER' },
+  { ticket:'A-013', name:'Roberto Cruz', priority:'SENIOR_CITIZEN', status:'IN_SERVICE', wait:'22 min', dept:'OPD' },
+  { ticket:'A-014', name:'Ana Reyes', priority:'REGULAR', status:'CALLED', wait:'18 min', dept:'OPD' },
+  { ticket:'A-015', name:'Carlos Mendoza', priority:'REGULAR', status:'IN_SERVICE', wait:'15 min', dept:'Radiology' },
+  { ticket:'A-016', name:'Teresa Lim', priority:'SENIOR_CITIZEN', status:'WAITING', wait:'12 min', dept:'OPD' },
+  { ticket:'A-017', name:'Juan dela Cruz', priority:'REGULAR', status:'WAITING', wait:'10 min', dept:'Lab' },
+  { ticket:'A-018', name:'Elena Garcia', priority:'EMERGENCY', status:'WAITING', wait:'8 min', dept:'ER' },
+  { ticket:'A-019', name:'Marco Villanueva', priority:'REGULAR', status:'WAITING', wait:'5 min', dept:'OPD' },
+  { ticket:'A-020', name:'Sofia Tan', priority:'REGULAR', status:'WAITING', wait:'2 min', dept:'OPD' },
+  { ticket:'A-021', name:'Diego Ramos', priority:'SENIOR_CITIZEN', status:'WAITING', wait:'1 min', dept:'Lab' },
+];
+
+const activityLog = [
+  { time:'10:42 AM', user:'Dr. Rivera', action:'Completed consultation', detail:'Patient A-012 (Maria Santos)', type:'complete' },
+  { time:'10:38 AM', user:'Receptionist Jane', action:'Registered new patient', detail:'A-021 Diego Ramos — Lab', type:'register' },
+  { time:'10:35 AM', user:'Dr. Chen', action:'Called next patient', detail:'A-015 Carlos Mendoza — Radiology', type:'call' },
+  { time:'10:30 AM', user:'Admin', action:'Updated user permissions', detail:'Dr. Rivera — Added ER access', type:'admin' },
+  { time:'10:22 AM', user:'Receptionist Jane', action:'Registered new patient', detail:'A-020 Sofia Tan — OPD', type:'register' },
+  { time:'10:15 AM', user:'System', action:'Daily backup completed', detail:'All records backed up successfully', type:'system' },
+  { time:'09:58 AM', user:'Dr. Santos', action:'Discharged patient', detail:'A-008 Ramon Aquino', type:'discharge' },
+];
+
+// ============ NAV DEFINITIONS ============
+const receptionistNav = [
+  { id:'dashboard', label:'Dashboard', icon:'layout-dashboard' },
+  { id:'registration', label:'Patient Registration', icon:'user-plus' },
+  { id:'queue', label:'Queue Management', icon:'list-ordered' },
+  { id:'appointments', label:'Appointments', icon:'calendar-clock' },
+  { id:'discharge', label:'Discharge', icon:'log-out' },
+];
+const adminNav = [
+  { id:'admin-dashboard', label:'Dashboard', icon:'bar-chart-3' },
+  { id:'admin-users', label:'User Management', icon:'users' },
+  { id:'admin-logs', label:'Activity Logs', icon:'scroll-text' },
+  { id:'admin-reports', label:'Reports', icon:'file-bar-chart' },
+];
+
+let currentRole = 'receptionist';
+let currentView = 'dashboard';
+
+// ============ ICONS (inline SVG) ============
+const icons = {
+  'layout-dashboard': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  'user-plus': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>',
+  'list-ordered': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>',
+  'calendar-clock': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h5"/><circle cx="17" cy="17" r="5"/><path d="M17 14v3l2 1"/></svg>',
+  'log-out': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+  'bar-chart-3': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>',
+  'users': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  'scroll-text': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 0 0-2-2H2"/><path d="M19 17V5a2 2 0 0 0-2-2H4"/><path d="M15 8h-5"/><path d="M15 12h-5"/></svg>',
+  'file-bar-chart': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-4"/><path d="M8 18v-2"/><path d="M16 18v-6"/></svg>',
+  'clock': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  'activity': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  'check-circle': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  'alert-circle': '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  'megaphone': '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+};
+
+function icon(name, cls='') {
+  return icons[name] || '';
+}
+
+// ============ LOGIN / LOGOUT ============
+function doLogin(e) {
+  if(e) e.preventDefault();
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  currentRole = 'receptionist';
+  currentView = 'dashboard';
+  document.getElementById('roleSelector').value = 'receptionist';
+  buildSidebar();
+  renderView();
+}
+
+function doLogout() {
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+function showPublicView() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('publicView').classList.remove('hidden');
+  renderPublicView();
+}
+
+function hidePublicView() {
+  document.getElementById('publicView').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+// ============ SIDEBAR ============
+function buildSidebar() {
+  const nav = document.getElementById('sidebarNav');
+  const items = currentRole === 'admin' ? adminNav : receptionistNav;
+  document.getElementById('userRoleLabel').textContent = currentRole === 'admin' ? 'Administrator' : 'Receptionist';
+  nav.innerHTML = items.map(it => `
+    <button onclick="navigate('${it.id}')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-left text-[14px] ${currentView===it.id?'active':''}" style="color:${currentView===it.id?'#fff':'#1a1a1a'}">
+      <span style="color:${currentView===it.id?'#fff':'#666'}">${icon(it.icon)}</span>
+      ${it.label}
+    </button>
+  `).join('');
+
+  // Add public view link at bottom of nav
+  nav.innerHTML += `
+    <div class="mt-4 pt-3 border-t" style="border-color:#e5e7eb">
+      <button onclick="showPublicViewFromApp()" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 text-left text-[14px]" style="color:#0b7d56">
+        <span style="color:#0b7d56">${icon('megaphone')}</span>
+        Public Display
+      </button>
+    </div>`;
+}
+
+function showPublicViewFromApp() {
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('publicView').classList.remove('hidden');
+  renderPublicView();
+  // Override back button
+  document.querySelector('#publicView button[onclick]').setAttribute('onclick', 'backToApp()');
+}
+
+function backToApp() {
+  document.getElementById('publicView').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  // Reset the onclick
+  document.querySelector('#publicView button[onclick]').setAttribute('onclick', 'hidePublicView()');
+}
+
+function navigate(viewId) {
+  currentView = viewId;
+  buildSidebar();
+  renderView();
+}
+
+function switchRole(role) {
+  currentRole = role;
+  currentView = role === 'admin' ? 'admin-dashboard' : 'dashboard';
+  buildSidebar();
+  renderView();
+}
+
+// ============ VIEW RENDERER ============
+function renderView() {
+  const main = document.getElementById('mainContent');
+  const renderers = {
+    'dashboard': renderDashboard,
+    'registration': renderRegistration,
+    'queue': renderQueue,
+    'appointments': renderAppointments,
+    'discharge': renderDischarge,
+    'admin-dashboard': renderAdminDashboard,
+    'admin-users': renderAdminUsers,
+    'admin-logs': renderAdminLogs,
+    'admin-reports': renderAdminReports,
+  };
+  const fn = renderers[currentView];
+  if (fn) {
+    main.innerHTML = '<div class="fade-in">' + fn() + '</div>';
+    // Post-render hooks
+    if (currentView === 'dashboard') drawSparklines();
+  }
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  return `
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Dashboard</h2>
+        <p class="text-sm mt-1" style="color:#666">Overview of today's queue activity</p>
+      </div>
+      <div class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg" style="background:#fff;color:#666;border:1px solid #e5e7eb">
+        ${icon('clock')}
+        <span id="dashClock"></span>
+      </div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="grid grid-cols-3 gap-6 mb-8">
+      ${statCard('Total Today', '47', '+12%', 'spark1', '#0b7d56')}
+      ${statCard('Waiting', '12', '-3 from avg', 'spark2', '#d97706')}
+      ${statCard('Avg Wait Time', '18 min', '-2 min', 'spark3', '#0ea5e9')}
+    </div>
+
+    <div class="grid grid-cols-3 gap-6">
+      <!-- Now Serving -->
+      <div class="col-span-2 bg-white rounded-xl p-6 shadow-sm" style="border:1px solid #e5e7eb">
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-4" style="color:#666">Now Serving</h3>
+        <div class="flex items-center gap-8">
+          <div class="text-center">
+            <div class="ticket-anim inline-block rounded-2xl px-8 py-5" style="background:#f0fdf4;border:2px solid #0b7d56">
+              <p class="text-[48px] font-black" style="color:#0b7d56">A-015</p>
+            </div>
+            <p class="text-sm mt-3 font-medium" style="color:#1a1a1a">Carlos Mendoza</p>
+            <p class="text-xs" style="color:#666">Window 3 - Radiology</p>
+          </div>
+          <div class="flex-1 space-y-3">
+            <div class="flex justify-between text-sm py-2 border-b" style="border-color:#f0f0f0">
+              <span style="color:#666">Ticket</span><span class="font-medium" style="color:#1a1a1a">A-015</span>
+            </div>
+            <div class="flex justify-between text-sm py-2 border-b" style="border-color:#f0f0f0">
+              <span style="color:#666">Priority</span><span class="badge" style="background:#f3f4f6;color:#374151">REGULAR</span>
+            </div>
+            <div class="flex justify-between text-sm py-2 border-b" style="border-color:#f0f0f0">
+              <span style="color:#666">Wait Time</span><span class="font-medium" style="color:#1a1a1a">15 min</span>
+            </div>
+            <div class="flex justify-between text-sm py-2">
+              <span style="color:#666">Status</span><span class="badge" style="background:#dcfce7;color:#166534">IN SERVICE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Calls -->
+      <div class="bg-white rounded-xl p-6 shadow-sm" style="border:1px solid #e5e7eb">
+        <h3 class="text-sm font-semibold uppercase tracking-wider mb-4" style="color:#666">Recent Calls</h3>
+        <div class="space-y-3">
+          ${recentCallItem('A-015', 'Carlos Mendoza', 'IN_SERVICE', '10:35 AM')}
+          ${recentCallItem('A-014', 'Ana Reyes', 'CALLED', '10:30 AM')}
+          ${recentCallItem('A-013', 'Roberto Cruz', 'IN_SERVICE', '10:22 AM')}
+          ${recentCallItem('A-012', 'Maria Santos', 'COMPLETED', '10:15 AM')}
+          ${recentCallItem('A-011', 'Pedro Aquino', 'COMPLETED', '10:02 AM')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function statCard(label, value, change, canvasId, color) {
+  const isPositive = change.includes('+') || change.includes('-2') || change.includes('-3');
+  return `
+    <div class="bg-white rounded-xl p-5 shadow-sm" style="border:1px solid #e5e7eb">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="text-sm font-medium" style="color:#666">${label}</p>
+          <p class="text-[32px] font-bold mt-1" style="color:#1a1a1a">${value}</p>
+          <p class="text-xs mt-1 font-medium" style="color:${color}">${change}</p>
+        </div>
+        <div class="sparkline-container">
+          <canvas id="${canvasId}" width="80" height="32"></canvas>
+        </div>
+      </div>
+    </div>`;
+}
+
+function recentCallItem(ticket, name, status, time) {
+  const sc = statusColor(status);
+  return `
+    <div class="flex items-center gap-3 p-2.5 rounded-lg" style="background:#fafafa">
+      <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold" style="background:${sc.bg};color:${sc.text}">${ticket.slice(-3)}</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium truncate" style="color:#1a1a1a">${name}</p>
+        <p class="text-xs" style="color:#666">${time}</p>
+      </div>
+      <span class="w-2 h-2 rounded-full" style="background:${sc.dot}"></span>
+    </div>`;
+}
+
+function statusColor(s) {
+  const map = {
+    'WAITING':     { bg:'#fef3c7', text:'#92400e', dot:'#f59e0b', badge:'background:#fef3c7;color:#92400e' },
+    'CALLED':      { bg:'#dbeafe', text:'#1e40af', dot:'#3b82f6', badge:'background:#dbeafe;color:#1e40af' },
+    'IN_SERVICE':  { bg:'#dcfce7', text:'#166534', dot:'#22c55e', badge:'background:#dcfce7;color:#166534' },
+    'COMPLETED':   { bg:'#f3f4f6', text:'#374151', dot:'#9ca3af', badge:'background:#f3f4f6;color:#374151' },
+  };
+  return map[s] || map['WAITING'];
+}
+
+function priorityBadge(p) {
+  const map = {
+    'REGULAR':        'background:#f3f4f6;color:#374151',
+    'SENIOR_CITIZEN': 'background:#ffedd5;color:#9a3412',
+    'EMERGENCY':      'background:#fee2e2;color:#991b1b',
+  };
+  const label = p.replace('_', ' ');
+  return `<span class="badge" style="${map[p] || map['REGULAR']}">${label}</span>`;
+}
+
+function drawSparklines() {
+  const datasets = {
+    spark1: [12,18,14,22,19,25,30,28,35,40,38,47],
+    spark2: [20,18,22,15,17,14,16,12,13,14,11,12],
+    spark3: [25,22,24,20,21,19,20,18,19,17,18,18],
+  };
+  const colors = { spark1:'#0b7d56', spark2:'#d97706', spark3:'#0ea5e9' };
+  Object.entries(datasets).forEach(([id, data]) => {
+    const c = document.getElementById(id);
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const w = c.width, h = c.height;
+    const max = Math.max(...data), min = Math.min(...data);
+    const range = max - min || 1;
+    ctx.clearRect(0,0,w,h);
+    ctx.beginPath();
+    data.forEach((v, i) => {
+      const x = (i / (data.length-1)) * w;
+      const y = h - ((v - min) / range) * (h - 4) - 2;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = colors[id];
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+    // fill
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fillStyle = colors[id] + '18';
+    ctx.fill();
+  });
+}
+
+// ============ PATIENT REGISTRATION ============
+function renderRegistration() {
+  return `
+    <div class="mb-8">
+      <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Patient Registration</h2>
+      <p class="text-sm mt-1" style="color:#666">Register a new patient or look up an existing record</p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-1 mb-6 p-1 rounded-lg inline-flex" style="background:#e5e7eb">
+      <button id="tabNew" onclick="regTab('new')" class="px-5 py-2 rounded-md text-sm font-medium transition" style="background:#fff;color:#1a1a1a">New Patient</button>
+      <button id="tabExisting" onclick="regTab('existing')" class="px-5 py-2 rounded-md text-sm font-medium transition" style="background:transparent;color:#666">Existing Patient</button>
+    </div>
+
+    <div id="regNewPanel" class="bg-white rounded-xl p-8 shadow-sm" style="border:1px solid #e5e7eb">
+      <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+        ${formField('First Name', 'text', 'firstName', 'e.g. Juan')}
+        ${formField('Last Name', 'text', 'lastName', 'e.g. dela Cruz')}
+        ${formField('Age', 'number', 'age', 'e.g. 34')}
+        ${formField('Contact Number', 'tel', 'contact', '+63 9XX XXX XXXX')}
+        ${formFieldFull('Address', 'text', 'address', 'Street, City, Province')}
+        <div>
+          <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Gender</label>
+          <select class="w-full border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db">
+            <option>Select gender</option><option>Male</option><option>Female</option><option>Other</option>
+          </select>
+        </div>
+        ${formField('Emergency Contact', 'tel', 'emergContact', 'Contact number')}
+        <div>
+          <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Blood Type</label>
+          <select class="w-full border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db">
+            <option>Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Priority</label>
+          <select class="w-full border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db">
+            <option>Regular</option><option>Senior Citizen</option><option>Emergency</option>
+          </select>
+        </div>
+        <div class="flex items-end pb-1">
+          <label class="flex items-center gap-2 text-sm" style="color:#1a1a1a">
+            <input type="checkbox" class="rounded"> Senior Citizen (60+)
+          </label>
+        </div>
+      </div>
+      <div class="mt-5">
+        <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Chief Complaint</label>
+        <textarea rows="3" class="w-full border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db" placeholder="Describe the patient's primary complaint..."></textarea>
+      </div>
+      <div class="mt-6 flex gap-3">
+        <button onclick="showToast('Patient registered successfully! Ticket: A-022')" class="btn-primary px-6 py-2.5 rounded-lg font-semibold text-sm">Register & Add to Queue</button>
+        <button class="px-6 py-2.5 rounded-lg font-semibold text-sm border" style="border-color:#d1d5db;color:#666">Clear Form</button>
+      </div>
+    </div>
+
+    <div id="regExistingPanel" class="hidden bg-white rounded-xl p-8 shadow-sm" style="border:1px solid #e5e7eb">
+      <div class="max-w-md">
+        <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">Search Patient</label>
+        <div class="flex gap-3">
+          <input type="text" class="flex-1 border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db" placeholder="Name or Patient ID">
+          <button class="btn-primary px-5 py-2.5 rounded-lg text-sm font-medium">Search</button>
+        </div>
+      </div>
+      <div class="mt-6 p-6 rounded-lg text-center" style="background:#f9fafb;border:2px dashed #e5e7eb">
+        <p class="text-sm" style="color:#666">Search for a patient to view their record</p>
+      </div>
+    </div>
+  `;
+}
+
+function formField(label, type, id, placeholder) {
+  return `<div>
+    <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">${label}</label>
+    <input type="${type}" class="w-full border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db" placeholder="${placeholder}">
+  </div>`;
+}
+function formFieldFull(label, type, id, placeholder) {
+  return `<div class="col-span-2">
+    <label class="block text-sm font-medium mb-1.5" style="color:#1a1a1a">${label}</label>
+    <input type="${type}" class="w-full border rounded-lg px-4 py-2.5 text-sm" style="border-color:#d1d5db" placeholder="${placeholder}">
+  </div>`;
+}
+
+function regTab(tab) {
+  const isNew = tab === 'new';
+  document.getElementById('regNewPanel').classList.toggle('hidden', !isNew);
+  document.getElementById('regExistingPanel').classList.toggle('hidden', isNew);
+  document.getElementById('tabNew').style.background = isNew ? '#fff' : 'transparent';
+  document.getElementById('tabNew').style.color = isNew ? '#1a1a1a' : '#666';
+  document.getElementById('tabExisting').style.background = isNew ? 'transparent' : '#fff';
+  document.getElementById('tabExisting').style.color = isNew ? '#666' : '#1a1a1a';
+}
+
+// ============ QUEUE MANAGEMENT ============
+function renderQueue() {
+  const rows = queueData.map(q => {
+    const sc = statusColor(q.status);
+    const statusLabel = q.status.replace('_', ' ');
+    const actions = q.status === 'WAITING'
+      ? `<button onclick="showToast('Calling ${q.ticket}...')" class="text-xs px-3 py-1.5 rounded-md font-medium" style="background:#dcfce7;color:#166534">Call</button>
+         <button class="text-xs px-3 py-1.5 rounded-md font-medium" style="background:#fee2e2;color:#991b1b">Skip</button>`
+      : q.status === 'CALLED'
+      ? `<button onclick="showToast('${q.ticket} now in service')" class="text-xs px-3 py-1.5 rounded-md font-medium" style="background:#dbeafe;color:#1e40af">Start</button>`
+      : q.status === 'IN_SERVICE'
+      ? `<button onclick="showToast('${q.ticket} completed')" class="text-xs px-3 py-1.5 rounded-md font-medium" style="background:#f3f4f6;color:#374151">Complete</button>`
+      : `<span class="text-xs" style="color:#9ca3af">Done</span>`;
+    return `<tr class="border-b hover:bg-gray-50/50 transition" style="border-color:#f0f0f0">
+      <td class="py-3 px-4 text-sm font-semibold" style="color:#1a1a1a">${q.ticket}</td>
+      <td class="py-3 px-4 text-sm" style="color:#1a1a1a">${q.name}</td>
+      <td class="py-3 px-4">${priorityBadge(q.priority)}</td>
+      <td class="py-3 px-4"><span class="badge" style="${sc.badge}">${statusLabel}</span></td>
+      <td class="py-3 px-4 text-sm" style="color:#666">${q.wait}</td>
+      <td class="py-3 px-4 text-sm" style="color:#666">${q.dept}</td>
+      <td class="py-3 px-4"><div class="flex gap-2">${actions}</div></td>
+    </tr>`;
+  }).join('');
+
+  return `
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Queue Management</h2>
+        <p class="text-sm mt-1" style="color:#666">Manage and monitor patient queue in real time</p>
+      </div>
+      <button onclick="showToast('Calling next patient: A-016 Teresa Lim')" class="btn-primary px-6 py-3 rounded-xl font-semibold text-sm flex items-center gap-2 shadow-lg shadow-green-900/20">
+        ${icon('megaphone')} Call Next Patient
+      </button>
+    </div>
+
+    <!-- Summary strip -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="border:1px solid #e5e7eb">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#fef3c7"><span style="color:#92400e">${icon('clock')}</span></div>
+        <div><p class="text-xs" style="color:#666">Waiting</p><p class="text-xl font-bold" style="color:#1a1a1a">${queueData.filter(q=>q.status==='WAITING').length}</p></div>
+      </div>
+      <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="border:1px solid #e5e7eb">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#dbeafe"><span style="color:#1e40af">${icon('megaphone')}</span></div>
+        <div><p class="text-xs" style="color:#666">Called</p><p class="text-xl font-bold" style="color:#1a1a1a">${queueData.filter(q=>q.status==='CALLED').length}</p></div>
+      </div>
+      <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="border:1px solid #e5e7eb">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#dcfce7"><span style="color:#166534">${icon('activity')}</span></div>
+        <div><p class="text-xs" style="color:#666">In Service</p><p class="text-xl font-bold" style="color:#1a1a1a">${queueData.filter(q=>q.status==='IN_SERVICE').length}</p></div>
+      </div>
+      <div class="bg-white rounded-lg p-4 shadow-sm flex items-center gap-3" style="border:1px solid #e5e7eb">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:#f3f4f6"><span style="color:#374151">${icon('check-circle')}</span></div>
+        <div><p class="text-xs" style="color:#666">Completed</p><p class="text-xl font-bold" style="color:#1a1a1a">${queueData.filter(q=>q.status==='COMPLETED').length}</p></div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="border:1px solid #e5e7eb">
+      <table class="w-full">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Ticket #</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Patient Name</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Priority</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Status</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Wait Time</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Dept</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ APPOINTMENTS ============
+function renderAppointments() {
+  const appts = [
+    { time:'09:00 AM', patient:'Elena Garcia', doctor:'Dr. Rivera', type:'Follow-up', status:'Completed' },
+    { time:'10:00 AM', patient:'Marco Villanueva', doctor:'Dr. Chen', type:'Consultation', status:'In Progress' },
+    { time:'11:00 AM', patient:'Sofia Tan', doctor:'Dr. Santos', type:'Lab Results', status:'Upcoming' },
+    { time:'01:00 PM', patient:'Diego Ramos', doctor:'Dr. Rivera', type:'Check-up', status:'Upcoming' },
+    { time:'02:30 PM', patient:'Ana Reyes', doctor:'Dr. Chen', type:'Follow-up', status:'Upcoming' },
+  ];
+  return `
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Appointments</h2>
+        <p class="text-sm mt-1" style="color:#666">Today's scheduled appointments</p>
+      </div>
+      <button class="btn-primary px-5 py-2.5 rounded-lg font-semibold text-sm">+ New Appointment</button>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="border:1px solid #e5e7eb">
+      <table class="w-full">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Time</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Patient</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Doctor</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Type</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${appts.map(a => {
+            const sc = a.status === 'Completed' ? 'background:#f3f4f6;color:#374151' : a.status === 'In Progress' ? 'background:#dcfce7;color:#166534' : 'background:#dbeafe;color:#1e40af';
+            return `<tr class="border-b hover:bg-gray-50/50 transition" style="border-color:#f0f0f0">
+              <td class="py-3 px-4 text-sm font-medium" style="color:#1a1a1a">${a.time}</td>
+              <td class="py-3 px-4 text-sm" style="color:#1a1a1a">${a.patient}</td>
+              <td class="py-3 px-4 text-sm" style="color:#666">${a.doctor}</td>
+              <td class="py-3 px-4 text-sm" style="color:#666">${a.type}</td>
+              <td class="py-3 px-4"><span class="badge" style="${sc}">${a.status}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ DISCHARGE ============
+function renderDischarge() {
+  const patients = [
+    { ticket:'A-008', name:'Ramon Aquino', admitted:'Jun 4', doctor:'Dr. Santos', status:'Ready' },
+    { ticket:'A-005', name:'Luz Fernandez', admitted:'Jun 3', doctor:'Dr. Rivera', status:'Pending Docs' },
+    { ticket:'A-012', name:'Maria Santos', admitted:'Jun 6', doctor:'Dr. Rivera', status:'Ready' },
+  ];
+  return `
+    <div class="mb-8">
+      <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Discharge</h2>
+      <p class="text-sm mt-1" style="color:#666">Manage patient discharge records</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="border:1px solid #e5e7eb">
+      <table class="w-full">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Ticket</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Patient</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Admitted</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Doctor</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Status</th>
+            <th class="text-left py-3 px-4 text-xs font-semibold uppercase tracking-wider" style="color:#666">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${patients.map(p => `<tr class="border-b hover:bg-gray-50/50 transition" style="border-color:#f0f0f0">
+            <td class="py-3 px-4 text-sm font-semibold" style="color:#1a1a1a">${p.ticket}</td>
+            <td class="py-3 px-4 text-sm" style="color:#1a1a1a">${p.name}</td>
+            <td class="py-3 px-4 text-sm" style="color:#666">${p.admitted}</td>
+            <td class="py-3 px-4 text-sm" style="color:#666">${p.doctor}</td>
+            <td class="py-3 px-4"><span class="badge" style="${p.status==='Ready'?'background:#dcfce7;color:#166534':'background:#fef3c7;color:#92400e'}">${p.status}</span></td>
+            <td class="py-3 px-4"><button onclick="showToast('${p.name} discharged successfully')" class="text-xs px-3 py-1.5 rounded-md font-medium btn-primary" ${p.status!=='Ready'?'disabled style="opacity:.5;cursor:not-allowed;background:#0b7d56;color:#fff"':''}>Discharge</button></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ ADMIN DASHBOARD ============
+function renderAdminDashboard() {
+  return `
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Admin Dashboard</h2>
+        <p class="text-sm mt-1" style="color:#666">System overview and recent activity</p>
+      </div>
+      <div class="flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg" style="background:#fff;color:#666;border:1px solid #e5e7eb">
+        ${icon('clock')}
+        <span id="adminClock"></span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-4 gap-5 mb-8">
+      ${adminStatCard('Total Users', '24', '#0b7d56', icons['users'])}
+      ${adminStatCard('Active Doctors', '8', '#0ea5e9', icons['activity'])}
+      ${adminStatCard("Today's Patients", '47', '#d97706', icons['check-circle'])}
+      ${adminStatCard('Pending Appts', '13', '#8b5cf6', icons['calendar-clock'])}
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="border:1px solid #e5e7eb">
+      <div class="px-6 py-4 border-b" style="border-color:#e5e7eb">
+        <h3 class="text-sm font-semibold" style="color:#1a1a1a">Recent Activity Log</h3>
+      </div>
+      <table class="w-full">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th class="text-left py-3 px-6 text-xs font-semibold uppercase tracking-wider" style="color:#666">Time</th>
+            <th class="text-left py-3 px-6 text-xs font-semibold uppercase tracking-wider" style="color:#666">User</th>
+            <th class="text-left py-3 px-6 text-xs font-semibold uppercase tracking-wider" style="color:#666">Action</th>
+            <th class="text-left py-3 px-6 text-xs font-semibold uppercase tracking-wider" style="color:#666">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${activityLog.map(a => `<tr class="border-b hover:bg-gray-50/50 transition" style="border-color:#f0f0f0">
+            <td class="py-3 px-6 text-sm font-mono" style="color:#666">${a.time}</td>
+            <td class="py-3 px-6 text-sm font-medium" style="color:#1a1a1a">${a.user}</td>
+            <td class="py-3 px-6 text-sm" style="color:#1a1a1a">${a.action}</td>
+            <td class="py-3 px-6 text-sm" style="color:#666">${a.detail}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function adminStatCard(label, value, color, iconSvg) {
+  return `
+    <div class="bg-white rounded-xl p-5 shadow-sm" style="border:1px solid #e5e7eb">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:${color}15"><span style="color:${color}">${iconSvg}</span></div>
+      </div>
+      <p class="text-[28px] font-bold" style="color:#1a1a1a">${value}</p>
+      <p class="text-sm mt-0.5" style="color:#666">${label}</p>
+    </div>`;
+}
+
+// ============ ADMIN USERS ============
+function renderAdminUsers() {
+  const users = [
+    { name:'Jane Doe', role:'Receptionist', email:'jane.doe@saintangelo.ph', status:'Active', last:'Today' },
+    { name:'Dr. Rivera', role:'Doctor', email:'rivera@saintangelo.ph', status:'Active', last:'Today' },
+    { name:'Dr. Chen', role:'Doctor', email:'chen@saintangelo.ph', status:'Active', last:'Today' },
+    { name:'Dr. Santos', role:'Doctor', email:'santos@saintangelo.ph', status:'Active', last:'Yesterday' },
+    { name:'Admin User', role:'Admin', email:'admin@saintangelo.ph', status:'Active', last:'Today' },
+    { name:'Maria Lopez', role:'Receptionist', email:'lopez@saintangelo.ph', status:'Inactive', last:'Jun 1' },
+  ];
+  return `
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-[28px] font-bold" style="color:#1a1a1a">User Management</h2>
+        <p class="text-sm mt-1" style="color:#666">Manage system users and permissions</p>
+      </div>
+      <button class="btn-primary px-5 py-2.5 rounded-lg font-semibold text-sm">+ Add User</button>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="border:1px solid #e5e7eb">
+      <table class="w-full">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Name</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Role</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Email</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Status</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Last Active</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${users.map(u => `<tr class="border-b hover:bg-gray-50/50 transition" style="border-color:#f0f0f0">
+            <td class="py-3 px-5 text-sm font-medium" style="color:#1a1a1a">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:#0b7d56">${u.name.split(' ').map(w=>w[0]).join('')}</div>
+                ${u.name}
+              </div>
+            </td>
+            <td class="py-3 px-5"><span class="badge" style="${u.role==='Admin'?'background:#f3e8ff;color:#7c3aed':u.role==='Doctor'?'background:#dbeafe;color:#1e40af':'background:#f3f4f6;color:#374151'}">${u.role}</span></td>
+            <td class="py-3 px-5 text-sm" style="color:#666">${u.email}</td>
+            <td class="py-3 px-5"><span class="w-2 h-2 rounded-full inline-block mr-1.5" style="background:${u.status==='Active'?'#22c55e':'#d1d5db'}"></span><span class="text-sm" style="color:#666">${u.status}</span></td>
+            <td class="py-3 px-5 text-sm" style="color:#666">${u.last}</td>
+            <td class="py-3 px-5">
+              <button class="text-xs px-3 py-1.5 rounded-md font-medium" style="background:#f3f4f6;color:#374151">Edit</button>
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ ADMIN LOGS ============
+function renderAdminLogs() {
+  return `
+    <div class="mb-8">
+      <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Activity Logs</h2>
+      <p class="text-sm mt-1" style="color:#666">Complete audit trail of system activity</p>
+    </div>
+    <div class="flex gap-3 mb-6">
+      <select class="border rounded-lg px-4 py-2 text-sm" style="border-color:#d1d5db">
+        <option>All Types</option><option>Registration</option><option>Queue</option><option>Admin</option><option>System</option>
+      </select>
+      <select class="border rounded-lg px-4 py-2 text-sm" style="border-color:#d1d5db">
+        <option>Today</option><option>Last 7 days</option><option>Last 30 days</option>
+      </select>
+      <input type="text" placeholder="Search logs..." class="border rounded-lg px-4 py-2 text-sm flex-1" style="border-color:#d1d5db">
+    </div>
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="border:1px solid #e5e7eb">
+      <table class="w-full">
+        <thead>
+          <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Timestamp</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">User</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Type</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Action</th>
+            <th class="text-left py-3 px-5 text-xs font-semibold uppercase tracking-wider" style="color:#666">Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${activityLog.map(a => {
+            const typeColors = { complete:'background:#dcfce7;color:#166534', register:'background:#dbeafe;color:#1e40af', call:'background:#fef3c7;color:#92400e', admin:'background:#f3e8ff;color:#7c3aed', system:'background:#f3f4f6;color:#374151', discharge:'background:#ffedd5;color:#9a3412' };
+            return `<tr class="border-b hover:bg-gray-50/50 transition" style="border-color:#f0f0f0">
+              <td class="py-3 px-5 text-sm font-mono" style="color:#666">Jun 6, ${a.time}</td>
+              <td class="py-3 px-5 text-sm font-medium" style="color:#1a1a1a">${a.user}</td>
+              <td class="py-3 px-5"><span class="badge" style="${typeColors[a.type]||typeColors.system}">${a.type}</span></td>
+              <td class="py-3 px-5 text-sm" style="color:#1a1a1a">${a.action}</td>
+              <td class="py-3 px-5 text-sm" style="color:#666">${a.detail}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============ ADMIN REPORTS ============
+function renderAdminReports() {
+  return `
+    <div class="mb-8">
+      <h2 class="text-[28px] font-bold" style="color:#1a1a1a">Reports</h2>
+      <p class="text-sm mt-1" style="color:#666">Generate and view system reports</p>
+    </div>
+    <div class="grid grid-cols-3 gap-6">
+      ${reportCard('Daily Queue Summary', 'Overview of queue statistics for the day', 'Jun 6, 2026')}
+      ${reportCard('Weekly Patient Report', 'Patient registration and visit trends', 'Jun 1 - Jun 6, 2026')}
+      ${reportCard('Monthly Analytics', 'Comprehensive monthly performance metrics', 'May 2026')}
+      ${reportCard('Staff Performance', 'Doctor and staff efficiency report', 'Jun 2026')}
+      ${reportCard('Wait Time Analysis', 'Average wait time trends and bottlenecks', 'Last 30 days')}
+      ${reportCard('Department Load', 'Patient distribution across departments', 'Jun 2026')}
+    </div>
+  `;
+}
+
+function reportCard(title, desc, period) {
+  return `
+    <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition" style="border:1px solid #e5e7eb">
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center mb-4" style="background:#f0fdf4">
+        <span style="color:#0b7d56">${icon('file-bar-chart')}</span>
+      </div>
+      <h3 class="text-sm font-semibold mb-1" style="color:#1a1a1a">${title}</h3>
+      <p class="text-xs mb-3" style="color:#666">${desc}</p>
+      <p class="text-xs mb-4" style="color:#9ca3af">${period}</p>
+      <button onclick="showToast('Generating ${title}...')" class="text-xs font-medium px-4 py-2 rounded-lg" style="background:#f0fdf4;color:#0b7d56">Generate Report</button>
+    </div>`;
+}
+
+// ============ PUBLIC VIEW ============
+function renderPublicView() {
+  const next = queueData.filter(q => q.status === 'WAITING').slice(0, 5);
+  const container = document.getElementById('publicNextQueue');
+  container.innerHTML = next.map(q => `
+    <div class="rounded-xl p-4" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12)">
+      <p class="text-2xl font-bold">${q.ticket}</p>
+      <p class="text-xs mt-1 text-white/60">${q.name}</p>
+    </div>
+  `).join('');
+  updatePublicClock();
+}
+
+function updatePublicClock() {
+  const el = document.getElementById('publicDateTime');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) + ' | ' + now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  }
+}
+
+// ============ CLOCK ============
+function updateClocks() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  const dateStr = now.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const full = dateStr + ' ' + timeStr;
+  ['dashClock', 'adminClock'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = full;
+  });
+  updatePublicClock();
+}
+
+// ============ TOAST ============
+function showToast(msg) {
+  const existing = document.getElementById('toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.id = 'toast';
+  toast.className = 'fixed bottom-6 right-6 px-5 py-3 rounded-xl shadow-2xl text-sm font-medium flex items-center gap-2 z-50';
+  toast.style.cssText = 'background:#0b7d56;color:#fff;animation:fadeIn .3s ease';
+  toast.innerHTML = `<span style="color:#86efac">${icon('check-circle')}</span> ${msg}`;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity .3s'; setTimeout(()=>toast.remove(),300); }, 3000);
+}
+
+// ============ INIT ============
+setInterval(updateClocks, 1000);
+updateClocks();
+</script>
+</body>
+</html>

@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dotion - Beautiful Docs & Knowledge Bases</title>
+<script>
+window.tailwind = window.tailwind || {};
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        primary: 'var(--accent)',
+        bg: 'var(--bg)',
+        fg: 'var(--fg)',
+        card: 'var(--card)',
+        border: 'var(--border)',
+        muted: 'var(--muted)',
+      },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif'],
+        manrope: ['Manrope', 'sans-serif'],
+        serif: ['Merriweather', 'serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      borderRadius: {
+        DEFAULT: '10px',
+      }
+    }
+  }
+}
+</script>
+<style>
+:root {
+  --accent: #ff9900;
+  --bg: #fcfcfc;
+  --fg: #0a0a0a;
+  --card: #ffffff;
+  --border: #d4d4d8;
+  --muted: #f1f1f2;
+}
+.dark {
+  --bg: #0a0a0a;
+  --fg: #fafafa;
+  --card: #171717;
+  --border: #3f3f46;
+  --muted: #27272a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  transition: background 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+
+/* Hero animated gradient */
+@keyframes heroGlow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30px, -20px) scale(1.1); }
+  50% { transform: translate(-20px, 20px) scale(0.95); }
+  75% { transform: translate(10px, 10px) scale(1.05); }
+}
+.hero-gradient {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+}
+.hero-gradient::before,
+.hero-gradient::after,
+.hero-gradient .glow-3 {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.4;
+  animation: heroGlow 8s ease-in-out infinite;
+}
+.hero-gradient::before {
+  width: 500px; height: 500px;
+  background: var(--accent);
+  top: -100px; left: 20%;
+}
+.hero-gradient::after {
+  width: 400px; height: 400px;
+  background: #e11d48;
+  bottom: -80px; right: 15%;
+  animation-delay: -3s;
+}
+.hero-gradient .glow-3 {
+  width: 350px; height: 350px;
+  background: #7c3aed;
+  top: 30%; left: 50%;
+  animation-delay: -5s;
+}
+
+/* Floating cards */
+@keyframes floatCard {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+}
+.float-card { animation: floatCard 4s ease-in-out infinite; }
+.float-card:nth-child(2) { animation-delay: -1.5s; }
+.float-card:nth-child(3) { animation-delay: -3s; }
+
+/* Glass */
+.glass {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* Page transitions */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Sidebar */
+.sidebar-item {
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  user-select: none;
+}
+.sidebar-item:hover { background: var(--muted); }
+.sidebar-item.active { background: var(--muted); font-weight: 500; }
+
+/* Toolbar button */
+.tb-btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: none;
+  background: transparent;
+  color: var(--fg);
+  font-family: 'Inter', sans-serif;
+}
+.tb-btn:hover { background: var(--muted); }
+
+/* Checkbox */
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.check-box {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.check-box.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.check-box.checked::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+.check-item.done span { text-decoration: line-through; opacity: 0.5; }
+
+/* Accent color dot */
+.accent-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid transparent;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.accent-dot:hover { transform: scale(1.15); }
+.accent-dot.active { border-color: var(--fg); }
+
+/* Table in editor */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.doc-table th {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg);
+  opacity: 0.6;
+}
+.doc-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Status pills */
+.pill {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Code block */
+.code-block {
+  background: var(--muted);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+}
+
+/* Template card */
+.template-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.template-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
+
+/* Settings panel */
+.settings-panel {
+  position: fixed;
+  right: -380px;
+  top: 0;
+  width: 360px;
+  height: 100vh;
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  z-index: 60;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: 28px;
+}
+.settings-panel.open { right: 0; }
+
+/* Toggle switch */
+.toggle-track {
+  width: 44px; height: 24px;
+  border-radius: 12px;
+  background: var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+}
+.toggle-track.on { background: var(--accent); }
+.toggle-knob {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 2px; left: 2px;
+  transition: left 0.2s;
+}
+.toggle-track.on .toggle-knob { left: 22px; }
+
+/* Feature card */
+.feature-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+}
+
+/* Testimonial */
+.testimonial-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+}
+
+/* Nav link */
+.nav-link {
+  position: relative;
+  transition: color 0.2s;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--accent);
+  transition: width 0.2s;
+}
+.nav-link:hover::after { width: 100%; }
+
+/* Gallery card hover */
+.gallery-card {
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.gallery-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+}
+
+/* Sidebar tree expand */
+.tree-children {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  padding-left: 20px;
+}
+.tree-children.open { max-height: 300px; }
+
+/* Page font classes */
+.doc-font-sans { font-family: 'Inter', sans-serif; }
+.doc-font-serif { font-family: 'Merriweather', serif; }
+.doc-font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Fade in */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.5s ease forwards; }
+.fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+.fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+@media (max-width: 700px) {
+  #landing-page > nav > div {
+    height: 64px !important;
+    padding: 0 24px !important;
+    max-width: none !important;
+  }
+  #landing-page > nav > div > div:first-child {
+    gap: 18px !important;
+    min-width: 0;
+  }
+  #landing-page > nav > div > div:first-child > div:nth-child(2) {
+    display: none !important;
+  }
+  #landing-page > nav > div > div:last-child {
+    gap: 6px !important;
+  }
+  #landing-page > nav > div > div:last-child button:last-child {
+    display: none !important;
+  }
+  #landing-page .hero-gradient {
+    padding-top: 96px !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== LANDING PAGE ===================== -->
+<div id="landing-page" class="page active">
+
+  <!-- Navbar -->
+  <nav style="position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,10,10,0.7);border-bottom:1px solid rgba(255,255,255,0.08);">
+    <div style="max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:32px;">
+        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="navigate('landing')">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--accent);"></div>
+          <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;color:#fafafa;">dotion</span>
+        </div>
+        <div style="display:flex;gap:24px;">
+          <a href="#features-section" class="nav-link" style="color:#a1a1aa;font-size:14px;text-decoration:none;">Features</a>
+          <a href="#" onclick="navigate('templates');return false;" class="nav-link" style="color:#a1a1aa;font-size:14px;text-decoration:none;">Templates</a>
+          <a href="#" class="nav-link" style="color:#a1a1aa;font-size:14px;text-decoration:none;">Docs</a>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button onclick="toggleTheme()" style="background:none;border:none;color:#a1a1aa;cursor:pointer;padding:8px;border-radius:6px;display:flex;align-items:center;" title="Toggle theme">
+          <svg id="theme-icon-landing" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Open App</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-gradient" style="min-height:100vh;display:flex;align-items:center;padding:100px 24px 60px;">
+    <div class="glow-3"></div>
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:60px;width:100%;flex-wrap:wrap;position:relative;z-index:2;">
+      <div style="flex:1;min-width:320px;" class="fade-in">
+        <div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--accent);border:1px solid rgba(255,153,0,0.3);margin-bottom:20px;">Now in public beta</div>
+        <h1 style="font-family:'Manrope',sans-serif;font-size:clamp(36px,5vw,56px);font-weight:800;line-height:1.1;color:#fafafa;margin-bottom:20px;">Build beautiful docs, courses, and knowledge bases</h1>
+        <p style="font-size:18px;color:#a1a1aa;line-height:1.6;margin-bottom:32px;max-width:500px;">The all-in-one workspace for modern teams. Create stunning documentation with a powerful block editor, publish anywhere, and collaborate in real-time.</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">Get Started Free</button>
+          <button onclick="navigate('templates')" style="background:rgba(255,255,255,0.08);color:#fafafa;border:1px solid rgba(255,255,255,0.12);padding:12px 28px;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Browse Templates</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:320px;display:flex;justify-content:center;position:relative;height:400px;" class="fade-in fade-in-delay-2">
+        <!-- Floating cards -->
+        <div class="float-card glass" style="position:absolute;top:20px;left:10%;width:260px;padding:20px;border-radius:12px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:#0f9d73;"></div>
+            <span style="font-size:12px;color:#a1a1aa;font-weight:500;">PUBLISHED</span>
+          </div>
+          <div style="font-family:'Manrope',sans-serif;font-weight:700;color:#fafafa;margin-bottom:8px;">API Reference v2</div>
+          <div style="font-size:13px;color:#71717a;">Complete endpoint docs with interactive examples</div>
+        </div>
+        <div class="float-card glass" style="position:absolute;top:140px;right:5%;width:240px;padding:20px;border-radius:12px;">
+          <div style="display:flex;gap:6px;margin-bottom:12px;">
+            <div style="width:28px;height:4px;border-radius:2px;background:var(--accent);"></div>
+            <div style="width:28px;height:4px;border-radius:2px;background:var(--accent);opacity:0.5;"></div>
+            <div style="width:28px;height:4px;border-radius:2px;background:var(--accent);opacity:0.2;"></div>
+          </div>
+          <div style="font-family:'Manrope',sans-serif;font-weight:700;color:#fafafa;margin-bottom:8px;">Course Builder</div>
+          <div style="font-size:13px;color:#71717a;">3 modules, 12 lessons</div>
+        </div>
+        <div class="float-card glass" style="position:absolute;bottom:20px;left:20%;width:220px;padding:16px;border-radius:12px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:24px;height:24px;border-radius:6px;background:rgba(124,58,237,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;">📋</div>
+            <span style="font-size:13px;color:#fafafa;font-weight:500;">Meeting Notes</span>
+          </div>
+          <div style="display:flex;gap:4px;">
+            <div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#ff9900,#e11d48);"></div>
+            <div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#0f9d73,#7c3aed);margin-left:-6px;"></div>
+            <span style="font-size:12px;color:#71717a;margin-left:6px;">2 collaborators</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section style="padding:80px 24px;background:var(--bg);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <h2 style="font-family:'Manrope',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;">Start with a template</h2>
+        <p style="color:#71717a;font-size:16px;">Beautiful, ready-to-use templates for every use case</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+        <div class="gallery-card" onclick="navigate('workspace')">
+          <div style="height:140px;background:linear-gradient(135deg,#ff9900 0%,#e11d48 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:40px;">📘</span>
+          </div>
+          <div style="padding:20px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">Team Handbook</h3>
+            <p style="font-size:13px;color:#71717a;">Onboarding guides, policies, and team culture docs</p>
+          </div>
+        </div>
+        <div class="gallery-card" onclick="navigate('workspace')">
+          <div style="height:140px;background:linear-gradient(135deg,#0f9d73 0%,#059669 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:40px;">🔗</span>
+          </div>
+          <div style="padding:20px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">API Reference</h3>
+            <p style="font-size:13px;color:#71717a;">Interactive API docs with code examples</p>
+          </div>
+        </div>
+        <div class="gallery-card" onclick="navigate('templates')">
+          <div style="height:140px;background:linear-gradient(135deg,#7c3aed 0%,#a855f7 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:40px;">🎓</span>
+          </div>
+          <div style="padding:20px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">Online Course</h3>
+            <p style="font-size:13px;color:#71717a;">Structured lessons with progress tracking</p>
+          </div>
+        </div>
+        <div class="gallery-card" onclick="navigate('workspace')">
+          <div style="height:140px;background:linear-gradient(135deg,#d97706 0%,#f59e0b 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
+            <span style="font-size:40px;">📝</span>
+          </div>
+          <div style="padding:20px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">Product PRD</h3>
+            <p style="font-size:13px;color:#71717a;">Requirements docs for product launches</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features-section" style="padding:80px 24px;background:var(--muted);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <h2 style="font-family:'Manrope',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;">Everything you need</h2>
+        <p style="color:#71717a;font-size:16px;">A powerful editor packed with features for every workflow</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;">
+        <div class="feature-card">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,153,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">⌨️</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Code Blocks</h3>
+          <p style="font-size:14px;color:#71717a;line-height:1.6;">Syntax-highlighted code blocks with 50+ language support. Copy with one click, inline code too.</p>
+        </div>
+        <div class="feature-card">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(15,157,115,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">📊</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Tables</h3>
+          <p style="font-size:14px;color:#71717a;line-height:1.6;">Rich data tables with sorting, filtering, and beautiful styling. Perfect for specs and comparisons.</p>
+        </div>
+        <div class="feature-card">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">🔤</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Custom Fonts</h3>
+          <p style="font-size:14px;color:#71717a;line-height:1.6;">Switch between sans-serif, serif, and monospace. Your docs, your style, your brand identity.</p>
+        </div>
+        <div class="feature-card">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(217,119,6,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">⚙️</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Page Options</h3>
+          <p style="font-size:14px;color:#71717a;line-height:1.6;">Customize each page with cover images, icons, layout options, and metadata. Make every page unique.</p>
+        </div>
+        <div class="feature-card">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,29,72,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">🌐</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Publishing</h3>
+          <p style="font-size:14px;color:#71717a;line-height:1.6;">One-click publish to the web. Custom domains, SEO settings, and beautiful public pages.</p>
+        </div>
+        <div class="feature-card">
+          <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,153,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">🎓</div>
+          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Course Mode</h3>
+          <p style="font-size:14px;color:#71717a;line-height:1.6;">Transform docs into structured courses with modules, lessons, progress tracking, and certificates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section style="padding:80px 24px;background:var(--bg);">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div style="text-align:center;margin-bottom:48px;">
+        <h2 style="font-family:'Manrope',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;">Loved by teams</h2>
+        <p style="color:#71717a;font-size:16px;">See what people are saying about Dotion</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+        <div class="testimonial-card">
+          <div style="font-size:24px;color:var(--accent);margin-bottom:12px;">"</div>
+          <p style="font-size:15px;line-height:1.7;margin-bottom:20px;">Dotion replaced our entire docs stack. The editor is incredibly smooth and the published pages look better than anything we had before.</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff9900,#e11d48);"></div>
+            <div>
+              <div style="font-weight:600;font-size:14px;">Sarah Chen</div>
+              <div style="font-size:12px;color:#71717a;">VP Engineering, Acme</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div style="font-size:24px;color:var(--accent);margin-bottom:12px;">"</div>
+          <p style="font-size:15px;line-height:1.7;margin-bottom:20px;">We moved our entire knowledge base to Dotion in a week. The course mode is a game-changer for onboarding new team members.</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0f9d73,#7c3aed);"></div>
+            <div>
+              <div style="font-weight:600;font-size:14px;">Marcus Wright</div>
+              <div style="font-size:12px;color:#71717a;">CTO, Basecamp Labs</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div style="font-size:24px;color:var(--accent);margin-bottom:12px;">"</div>
+          <p style="font-size:15px;line-height:1.7;margin-bottom:20px;">Finally, docs that look as good as our product. The design quality is outstanding and the team collaboration features are top-notch.</p>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#d97706);"></div>
+            <div>
+              <div style="font-weight:600;font-size:14px;">Priya Patel</div>
+              <div style="font-size:12px;color:#71717a;">Head of Product, Stripe</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="padding:40px 24px;border-top:1px solid var(--border);background:var(--bg);">
+    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
+        <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;">dotion</span>
+      </div>
+      <div style="font-size:13px;color:#71717a;">Built with care. Open source and free forever.</div>
+      <div style="display:flex;gap:20px;">
+        <a href="#" style="color:#71717a;font-size:13px;text-decoration:none;">GitHub</a>
+        <a href="#" style="color:#71717a;font-size:13px;text-decoration:none;">Twitter</a>
+        <a href="#" style="color:#71717a;font-size:13px;text-decoration:none;">Discord</a>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ===================== WORKSPACE PAGE ===================== -->
+<div id="workspace-page" class="page">
+  <div style="display:flex;height:100vh;overflow:hidden;">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" style="width:260px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width 0.3s,padding 0.3s;overflow:hidden;">
+      <div style="padding:16px 16px 8px;display:flex;align-items:center;justify-content:space-between;" id="sidebar-header">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
+          <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:15px;" id="sidebar-title">My Workspace</span>
+        </div>
+        <button onclick="toggleSidebar()" style="background:none;border:none;color:var(--fg);cursor:pointer;padding:4px;border-radius:4px;opacity:0.5;display:flex;" title="Collapse sidebar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+        </button>
+      </div>
+
+      <div style="padding:8px 12px;" id="sidebar-content">
+        <button onclick="alert('New page created!')" style="width:100%;padding:8px 12px;border-radius:6px;border:1px dashed var(--border);background:transparent;color:var(--fg);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;transition:background 0.15s;" onmouseover="this.style.background='var(--muted)'" onmouseout="this.style.background='transparent'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          New Page
+        </button>
+      </div>
+
+      <div style="padding:4px 12px;flex:1;overflow-y:auto;" id="sidebar-tree">
+        <div style="font-size:11px;font-weight:600;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;padding:12px 12px 6px;">Pages</div>
+
+        <div class="sidebar-item active" onclick="selectPage(this,'Meeting Notes')">
+          <span>📋</span><span>Meeting Notes</span>
+        </div>
+        <div class="sidebar-item" onclick="selectPage(this,'To-Do List')">
+          <span>✅</span><span>To-Do List</span>
+        </div>
+
+        <!-- Project Brief with children -->
+        <div>
+          <div class="sidebar-item" onclick="toggleTree(this)" style="justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span>🚀</span><span>Project Brief</span>
+            </div>
+            <svg class="tree-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.2s;"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="tree-children">
+            <div class="sidebar-item" onclick="selectPage(this,'Timeline')"><span>📅</span><span>Timeline</span></div>
+            <div class="sidebar-item" onclick="selectPage(this,'Resources')"><span>📎</span><span>Resources</span></div>
+          </div>
+        </div>
+
+        <div class="sidebar-item" onclick="selectPage(this,'README')">
+          <span>📕</span><span>README</span>
+        </div>
+
+        <!-- Documentation with children -->
+        <div>
+          <div class="sidebar-item" onclick="toggleTree(this)" style="justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span>📚</span><span>Documentation</span>
+            </div>
+            <svg class="tree-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.2s;"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+          <div class="tree-children">
+            <div class="sidebar-item" onclick="selectPage(this,'API Reference')"><span>🧠</span><span>API Reference</span></div>
+          </div>
+        </div>
+
+        <div class="sidebar-item" onclick="selectPage(this,'Course Hub')">
+          <span>🎓</span><span>Course Hub</span>
+        </div>
+      </div>
+
+      <div style="padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;" id="sidebar-footer">
+        <div class="sidebar-item" onclick="toggleSettings()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <span>Settings</span>
+        </div>
+        <div class="sidebar-item" onclick="toggleTheme()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="theme-label-sidebar">Dark Mode</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Collapsed sidebar toggle -->
+    <button id="sidebar-expand" onclick="toggleSidebar()" style="display:none;position:fixed;top:12px;left:12px;z-index:40;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;color:var(--fg);" title="Expand sidebar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+
+    <!-- Editor area -->
+    <main style="flex:1;overflow-y:auto;position:relative;" id="editor-main">
+      <!-- Cover -->
+      <div style="height:200px;background:linear-gradient(135deg,var(--accent) 0%,#e11d48 50%,#7c3aed 100%);position:relative;">
+        <div style="position:absolute;bottom:-32px;left:72px;width:64px;height:64px;border-radius:14px;background:var(--card);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">📋</div>
+      </div>
+
+      <!-- Doc content -->
+      <div id="doc-content" class="doc-font-sans" style="max-width:740px;margin:0 auto;padding:52px 32px 80px;">
+        <!-- Title -->
+        <h1 style="font-family:'Manrope',sans-serif;font-size:40px;font-weight:800;margin-bottom:8px;line-height:1.2;" contenteditable="true">Meeting Notes</h1>
+        <div style="font-size:13px;color:#71717a;margin-bottom:32px;display:flex;gap:16px;">
+          <span>Last edited just now</span>
+          <span>by You</span>
+        </div>
+
+        <!-- Toolbar -->
+        <div style="display:flex;flex-wrap:wrap;gap:2px;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:32px;position:sticky;top:0;z-index:10;">
+          <button class="tb-btn" title="Bold"><b>B</b></button>
+          <button class="tb-btn" title="Italic"><i>I</i></button>
+          <button class="tb-btn" title="Underline" style="text-decoration:underline;">U</button>
+          <button class="tb-btn" title="Code" style="font-family:'JetBrains Mono',monospace;font-size:12px;">&lt;/&gt;</button>
+          <div style="width:1px;background:var(--border);margin:4px 6px;"></div>
+          <button class="tb-btn" title="Heading 1" style="font-weight:700;">H1</button>
+          <button class="tb-btn" title="Heading 2" style="font-weight:600;">H2</button>
+          <button class="tb-btn" title="Heading 3">H3</button>
+          <div style="width:1px;background:var(--border);margin:4px 6px;"></div>
+          <button class="tb-btn" title="Bullet List">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+          </button>
+          <button class="tb-btn" title="Numbered List">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="1" y="8" fill="currentColor" font-size="8" font-weight="600">1</text><text x="1" y="14" fill="currentColor" font-size="8" font-weight="600">2</text><text x="1" y="20" fill="currentColor" font-size="8" font-weight="600">3</text></svg>
+          </button>
+          <button class="tb-btn" title="Quote">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/></svg>
+          </button>
+          <button class="tb-btn" title="Code Block" style="font-family:'JetBrains Mono',monospace;font-size:11px;">{ }</button>
+          <button class="tb-btn" title="Table">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          </button>
+          <div style="flex:1;"></div>
+          <button class="tb-btn" onclick="toggleSettings()" title="Page Settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
+
+        <!-- Document body -->
+        <div id="doc-body">
+          <!-- Heading -->
+          <h2 style="font-family:'Manrope',sans-serif;font-size:24px;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);">Weekly Standup — June 6, 2026</h2>
+
+          <!-- Attendees -->
+          <div style="margin-bottom:24px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;color:var(--fg);">Attendees</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(255,153,0,0.1);color:var(--accent);font-weight:500;">@sarah</span>
+              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(15,157,115,0.1);color:#0f9d73;font-weight:500;">@marcus</span>
+              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(124,58,237,0.1);color:#7c3aed;font-weight:500;">@priya</span>
+              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(225,29,72,0.1);color:#e11d48;font-weight:500;">@alex</span>
+            </div>
+          </div>
+
+          <!-- Agenda -->
+          <div style="margin-bottom:24px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Agenda</h3>
+            <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:6px;">
+              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
+                Sprint review and demo
+              </li>
+              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
+                Q3 roadmap discussion
+              </li>
+              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
+                Design system update
+              </li>
+              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
+                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
+                Open discussion and blockers
+              </li>
+            </ul>
+          </div>
+
+          <!-- Tasks -->
+          <div style="margin-bottom:24px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Action Items</h3>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div class="check-item done">
+                <div class="check-box checked" onclick="toggleCheck(this)"></div>
+                <span>Finalize API documentation for v2 endpoints</span>
+              </div>
+              <div class="check-item done">
+                <div class="check-box checked" onclick="toggleCheck(this)"></div>
+                <span>Review and merge PR #347 — auth refactor</span>
+              </div>
+              <div class="check-item">
+                <div class="check-box" onclick="toggleCheck(this)"></div>
+                <span>Set up staging environment for load testing</span>
+              </div>
+              <div class="check-item">
+                <div class="check-box" onclick="toggleCheck(this)"></div>
+                <span>Schedule design review with the product team</span>
+              </div>
+              <div class="check-item">
+                <div class="check-box" onclick="toggleCheck(this)"></div>
+                <span>Draft Q3 OKRs and share with leadership</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blockquote -->
+          <div style="margin-bottom:24px;">
+            <blockquote style="border-left:3px solid var(--accent);padding:12px 20px;background:var(--muted);border-radius:0 8px 8px 0;font-size:15px;line-height:1.7;font-style:italic;">
+              "We should prioritize the developer experience improvements before adding new features. Let's focus on making the existing tools delightful." — Sarah
+            </blockquote>
+          </div>
+
+          <!-- Code block -->
+          <div style="margin-bottom:24px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Code Snippet</h3>
+            <div class="code-block">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:0.05em;">typescript</span>
+                <button style="font-size:11px;background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;cursor:pointer;color:var(--fg);opacity:0.6;" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+              </div>
+<span style="color:#7c3aed;">const</span> <span style="color:#0f9d73;">fetchDocs</span> = <span style="color:#7c3aed;">async</span> (slug: <span style="color:#d97706;">string</span>) => {
+  <span style="color:#7c3aed;">const</span> res = <span style="color:#7c3aed;">await</span> fetch(<span style="color:#e11d48;">`/api/docs/${slug}`</span>);
+  <span style="color:#7c3aed;">return</span> res.json();
+};</div>
+          </div>
+
+          <!-- Table -->
+          <div style="margin-bottom:24px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Sprint Tasks</h3>
+            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+              <table class="doc-table">
+                <thead>
+                  <tr style="background:var(--muted);">
+                    <th>Task</th>
+                    <th>Owner</th>
+                    <th>Status</th>
+                    <th>Due</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight:500;">Auth service refactor</td>
+                    <td>Sarah</td>
+                    <td><span class="pill" style="background:rgba(15,157,115,0.1);color:#0f9d73;">Done</span></td>
+                    <td style="color:#71717a;">Jun 2</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:500;">API v2 endpoints</td>
+                    <td>Marcus</td>
+                    <td><span class="pill" style="background:rgba(255,153,0,0.1);color:#ff9900;">In Progress</span></td>
+                    <td style="color:#71717a;">Jun 8</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:500;">Dashboard redesign</td>
+                    <td>Priya</td>
+                    <td><span class="pill" style="background:rgba(255,153,0,0.1);color:#ff9900;">In Progress</span></td>
+                    <td style="color:#71717a;">Jun 10</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:500;">Load testing setup</td>
+                    <td>Alex</td>
+                    <td><span class="pill" style="background:rgba(113,113,122,0.1);color:#71717a;">To Do</span></td>
+                    <td style="color:#71717a;">Jun 12</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:500;">CI/CD pipeline optimization</td>
+                    <td>Sarah</td>
+                    <td><span class="pill" style="background:rgba(225,29,72,0.1);color:#e11d48;">Blocked</span></td>
+                    <td style="color:#71717a;">Jun 15</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Notes section -->
+          <div style="margin-bottom:24px;">
+            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Notes</h3>
+            <p style="font-size:15px;line-height:1.8;color:var(--fg);opacity:0.85;">
+              The team agreed to shift focus to developer tooling for the next two sprints. Marcus will lead the API v2 migration while Priya finalizes the new dashboard components. We'll reconvene on Friday for a quick sync on blockers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Settings Panel -->
+  <div id="settings-panel" class="settings-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+      <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;">Page Settings</h3>
+      <button onclick="toggleSettings()" style="background:none;border:none;color:var(--fg);cursor:pointer;padding:4px;border-radius:4px;opacity:0.5;display:flex;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Font selector -->
+    <div style="margin-bottom:28px;">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Font Family</label>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;" id="font-sans-label">
+          <input type="radio" name="doc-font" value="sans" checked onchange="setDocFont('sans')" style="accent-color:var(--accent);">
+          <div>
+            <div style="font-family:'Inter',sans-serif;font-weight:500;font-size:14px;">Sans-serif</div>
+            <div style="font-size:12px;color:#71717a;">Inter — clean and modern</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;">
+          <input type="radio" name="doc-font" value="serif" onchange="setDocFont('serif')" style="accent-color:var(--accent);">
+          <div>
+            <div style="font-family:'Merriweather',serif;font-weight:500;font-size:14px;">Serif</div>
+            <div style="font-size:12px;color:#71717a;">Merriweather — classic feel</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;">
+          <input type="radio" name="doc-font" value="mono" onchange="setDocFont('mono')" style="accent-color:var(--accent);">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;">Monospace</div>
+            <div style="font-size:12px;color:#71717a;">JetBrains Mono — for devs</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Accent color -->
+    <div style="margin-bottom:28px;">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Accent Color</label>
+      <div style="display:flex;gap:10px;">
+        <div class="accent-dot active" style="background:#ff9900;" onclick="setAccent('#ff9900',this)" title="Orange"></div>
+        <div class="accent-dot" style="background:#0f9d73;" onclick="setAccent('#0f9d73',this)" title="Emerald"></div>
+        <div class="accent-dot" style="background:#7c3aed;" onclick="setAccent('#7c3aed',this)" title="Violet"></div>
+        <div class="accent-dot" style="background:#d97706;" onclick="setAccent('#d97706',this)" title="Amber"></div>
+        <div class="accent-dot" style="background:#e11d48;" onclick="setAccent('#e11d48',this)" title="Rose"></div>
+      </div>
+    </div>
+
+    <!-- Layout -->
+    <div style="margin-bottom:28px;">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Layout</label>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
+          <input type="radio" name="layout" value="default" checked onchange="setLayout('740px')" style="accent-color:var(--accent);">
+          <span style="font-size:14px;">Default</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
+          <input type="radio" name="layout" value="wide" onchange="setLayout('960px')" style="accent-color:var(--accent);">
+          <span style="font-size:14px;">Wide</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
+          <input type="radio" name="layout" value="full" onchange="setLayout('100%')" style="accent-color:var(--accent);">
+          <span style="font-size:14px;">Full Width</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Publish toggle -->
+    <div style="margin-bottom:28px;">
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Publishing</label>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:8px;border:1px solid var(--border);">
+        <div>
+          <div style="font-size:14px;font-weight:500;">Publish to web</div>
+          <div style="font-size:12px;color:#71717a;">Make this page publicly accessible</div>
+        </div>
+        <div class="toggle-track" onclick="this.classList.toggle('on')">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export -->
+    <div>
+      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Export</label>
+      <button onclick="alert('PDF export started!')" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--muted);color:var(--fg);font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--muted)'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export as PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings overlay -->
+  <div id="settings-overlay" onclick="toggleSettings()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:55;"></div>
+</div>
+
+<!-- ===================== TEMPLATES PAGE ===================== -->
+<div id="templates-page" class="page">
+  <!-- Top bar -->
+  <div style="position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--border);padding:0 24px;">
+    <div style="max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:16px;">
+        <button onclick="navigate('landing')" style="background:none;border:none;cursor:pointer;color:var(--fg);display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:14px;padding:6px 10px;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='var(--muted)'" onmouseout="this.style.background='transparent'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
+          <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;">Template Gallery</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button onclick="toggleTheme()" style="background:none;border:none;color:var(--fg);cursor:pointer;padding:8px;border-radius:6px;display:flex;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Open App</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1200px;margin:0 auto;padding:48px 24px 80px;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <h1 style="font-family:'Manrope',sans-serif;font-size:36px;font-weight:800;margin-bottom:12px;">Choose a template</h1>
+      <p style="color:#71717a;font-size:16px;max-width:500px;margin:0 auto;">Jump-start your project with professionally designed templates. Customize everything to match your brand.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">📘</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Team Handbook</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Company culture, policies, benefits, and onboarding guides all in one place.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">🔗</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">API Reference</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Comprehensive API documentation with endpoints, examples, and authentication guides.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">🎓</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Online Course</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Structured lessons with modules, progress tracking, and interactive content blocks.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">📝</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Product PRD</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Product requirements documents with specs, user stories, and acceptance criteria.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">📋</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Meeting Notes</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Capture meeting agendas, decisions, action items, and follow-ups efficiently.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">🗺️</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Roadmap</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Product roadmap with quarters, milestones, and team assignments organized visually.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">🐛</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Bug Tracker</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Track and prioritize bugs with severity levels, reproduction steps, and assignments.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">📰</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Changelog</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Keep users updated with versioned release notes, new features, and improvements.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+      <div class="template-card">
+        <div style="font-size:36px;margin-bottom:12px;">🧪</div>
+        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Design System</h3>
+        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Document components, tokens, patterns, and guidelines for your design system.</p>
+        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// State
+let currentPage = 'landing';
+let sidebarOpen = true;
+let settingsOpen = false;
+let isDark = false;
+
+// Init from localStorage
+(function init() {
+  const savedTheme = localStorage.getItem('dotion-theme');
+  if (savedTheme === 'dark') {
+    isDark = true;
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+  }
+
+  const savedAccent = localStorage.getItem('dotion-accent');
+  if (savedAccent) {
+    document.documentElement.style.setProperty('--accent', savedAccent);
+    // Update active dot
+    document.querySelectorAll('.accent-dot').forEach(d => {
+      d.classList.toggle('active', d.style.background === savedAccent || rgbToHex(d.style.backgroundColor) === savedAccent);
+    });
+  }
+
+  const savedFont = localStorage.getItem('dotion-font');
+  if (savedFont) setDocFont(savedFont, true);
+
+  updateThemeLabels();
+})();
+
+function rgbToHex(rgb) {
+  if (!rgb || rgb.startsWith('#')) return rgb;
+  const m = rgb.match(/\d+/g);
+  if (!m) return rgb;
+  return '#' + m.slice(0,3).map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
+}
+
+// Navigation
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(page + '-page').classList.add('active');
+  currentPage = page;
+  window.scrollTo(0, 0);
+}
+
+// Theme
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.classList.toggle('dark', isDark);
+  document.documentElement.classList.toggle('light', !isDark);
+  localStorage.setItem('dotion-theme', isDark ? 'dark' : 'light');
+  updateThemeLabels();
+}
+
+function updateThemeLabels() {
+  const label = document.getElementById('theme-label-sidebar');
+  if (label) label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+
+// Sidebar
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  const sb = document.getElementById('sidebar');
+  const ex = document.getElementById('sidebar-expand');
+  if (sidebarOpen) {
+    sb.style.width = '260px';
+    sb.style.padding = '';
+    ex.style.display = 'none';
+    document.getElementById('sidebar-header').style.display = '';
+    document.getElementById('sidebar-content').style.display = '';
+    document.getElementById('sidebar-tree').style.display = '';
+    document.getElementById('sidebar-footer').style.display = '';
+  } else {
+    sb.style.width = '0';
+    sb.style.padding = '0';
+    ex.style.display = 'flex';
+    document.getElementById('sidebar-header').style.display = 'none';
+    document.getElementById('sidebar-content').style.display = 'none';
+    document.getElementById('sidebar-tree').style.display = 'none';
+    document.getElementById('sidebar-footer').style.display = 'none';
+  }
+}
+
+// Tree
+function toggleTree(el) {
+  const children = el.parentElement.querySelector('.tree-children');
+  const arrow = el.querySelector('.tree-arrow');
+  if (children) {
+    children.classList.toggle('open');
+    if (arrow) arrow.style.transform = children.classList.contains('open') ? 'rotate(90deg)' : '';
+  }
+}
+
+// Select page
+function selectPage(el, name) {
+  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  // Update title
+  const titleEl = document.querySelector('#doc-content h1');
+  if (titleEl) titleEl.textContent = name;
+}
+
+// Checkbox
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+  el.closest('.check-item').classList.toggle('done');
+}
+
+// Settings
+function toggleSettings() {
+  settingsOpen = !settingsOpen;
+  document.getElementById('settings-panel').classList.toggle('open', settingsOpen);
+  document.getElementById('settings-overlay').style.display = settingsOpen ? 'block' : 'none';
+}
+
+// Doc font
+function setDocFont(font, silent) {
+  const doc = document.getElementById('doc-content');
+  doc.classList.remove('doc-font-sans', 'doc-font-serif', 'doc-font-mono');
+  doc.classList.add('doc-font-' + font);
+  if (!silent) localStorage.setItem('dotion-font', font);
+  // Update radio
+  document.querySelectorAll('input[name="doc-font"]').forEach(r => {
+    r.checked = r.value === font;
+  });
+}
+
+// Accent color
+function setAccent(color, el) {
+  document.documentElement.style.setProperty('--accent', color);
+  localStorage.setItem('dotion-accent', color);
+  document.querySelectorAll('.accent-dot').forEach(d => d.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// Layout
+function setLayout(width) {
+  document.getElementById('doc-content').style.maxWidth = width;
+}
+</script>
+</body>
+</html>
