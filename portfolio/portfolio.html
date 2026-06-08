@@ -258,6 +258,17 @@
     }
     .hero:hover .hero-ripple { opacity: 1; }
 
+    .hero-shade {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(6,6,8,0.25) 0%, transparent 25%, transparent 45%, rgba(6,6,8,0.5) 65%, rgba(6,6,8,0.85) 82%, var(--bg) 100%),
+        linear-gradient(90deg, rgba(6,6,8,0.45) 0%, transparent 35%, transparent 65%, rgba(6,6,8,0.3) 100%),
+        radial-gradient(ellipse at 50% 100%, var(--bg), transparent 70%);
+    }
+
     .hero-content {
       position: absolute;
       bottom: clamp(6rem, 14rem, 20rem);
@@ -1069,6 +1080,7 @@
       <img src="Pictures/overlay-person.png" alt="" width="800" height="1000" loading="eager">
     </div>
     <canvas class="hero-ripple" id="heroRipple"></canvas>
+    <div class="hero-shade"></div>
     <div class="hero-content">
       <span class="section-label">Portfolio &mdash; 2026</span>
       <h1 class="hero-title">I build<br>systems<br>that <em>work.</em></h1>
