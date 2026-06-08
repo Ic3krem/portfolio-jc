@@ -225,6 +225,49 @@
         linear-gradient(90deg, rgba(6,6,8,0.3) 0%, transparent 30%, transparent 70%, rgba(6,6,8,0.3) 100%);
     }
 
+    .hero-person {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-person img {
+      height: 85%;
+      width: auto;
+      max-width: 55%;
+      object-fit: contain;
+      object-position: bottom right;
+      filter: brightness(0.85) contrast(1.05);
+      opacity: 0;
+      transform: translateY(2rem) scale(var(--hero-s, 1));
+      transition: transform 0.1s linear;
+    }
+    body.is-entered .hero-person img {
+      animation: fade-up 1.2s var(--ease) 0.3s forwards;
+    }
+    /* Subtle shadow on person to blend with scene */
+    .hero-person::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(6,6,8,0.4) 0%, transparent 35%, transparent 100%);
+      z-index: 1;
+    }
+    .hero-person::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: linear-gradient(to top, var(--bg) 0%, transparent 100%);
+      z-index: 1;
+    }
+
     .hero-content {
       position: absolute;
       bottom: clamp(6rem, 14rem, 20rem);
@@ -970,6 +1013,8 @@
         right: 2rem;
       }
       .hero-title { font-size: clamp(4.4rem, 9rem, 12rem); }
+      .hero-person img { height: 65%; max-width: 60%; opacity: 0.7; }
+      .hero-person::before { background: linear-gradient(90deg, rgba(6,6,8,0.55) 0%, transparent 50%); }
 
       .about { padding: 10rem 0 8rem; }
       .about-copy h2 { font-size: clamp(3rem, 4.4rem, 6rem); }
@@ -1031,6 +1076,9 @@
   <header class="hero" id="hero">
     <div class="hero-bg">
       <img src="Pictures/hero.png" alt="John Christopher Diaz" width="1920" height="1080" loading="eager" fetchpriority="high">
+    </div>
+    <div class="hero-person">
+      <img src="Pictures/overlay-person.png" alt="" width="800" height="1000" loading="eager">
     </div>
     <div class="hero-content">
       <span class="section-label">Portfolio &mdash; 2026</span>
