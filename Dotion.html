@@ -90,6 +90,12 @@ body {
 /* ─── PAGE ROUTING ───────────────────────────────────────── */
 .page { display: none; }
 .page.active { display: block; }
+.page.active#workspace-page, .page.active#templates-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
 
 /* ─── GRAIN OVERLAY ──────────────────────────────────────── */
 .grain::after {
@@ -1619,7 +1625,7 @@ body {
      WORKSPACE PAGE
 ════════════════════════════════════════════════════════ -->
 <div id="workspace-page" class="page">
-  <div style="display:flex; height:100vh; overflow:hidden;">
+  <div style="display:flex; flex:1; min-height:0; overflow:hidden;">
 
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
@@ -2105,6 +2111,9 @@ function navigate(page) {
     target.classList.add('active');
     currentPage = page;
     window.scrollTo(0, 0);
+    // Lock body scroll on app pages, unlock on landing
+    document.body.style.overflow = (page === 'workspace' || page === 'templates') ? 'hidden' : '';
+    document.body.style.height = (page === 'workspace' || page === 'templates') ? '100vh' : '';
     if (page === 'landing') initScrollReveal();
   }
 }
