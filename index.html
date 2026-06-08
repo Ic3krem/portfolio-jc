@@ -1,1329 +1,1008 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projects</title>
-<style>
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-
-  :root {
-    --surface-ground: oklch(7% 0.006 95);
-    --surface-deep: oklch(4% 0.004 95);
-    --surface-raised: oklch(11% 0.006 95);
-    --surface-graphite: oklch(15% 0.008 95);
-    --surface-graphite-2: oklch(19% 0.008 95);
-
-    --gold: oklch(84% 0.19 80.46);
-    --gold-pale: oklch(86% 0.07 84);
-    --gold-rich: oklch(77% 0.13 82);
-    --gold-deep: oklch(61% 0.085 78);
-    --gold-wash: oklch(77% 0.14 82 / 0.08);
-    --gold-wash-active: oklch(77% 0.14 82 / 0.16);
-
-    --patina: oklch(70% 0.12 188);
-    --patina-pale: oklch(82% 0.07 188);
-    --patina-deep: oklch(49% 0.08 188);
-
-    --text-bright: oklch(91% 0 0);
-    --text-body: oklch(88% 0 0);
-    --text-muted: oklch(72% 0 0);
-    --text-faint: oklch(62% 0 0);
-    --text-disabled: oklch(52% 0 0);
-
-    --hairline: oklch(78% 0 0 / 0.16);
-    --hairline-strong: oklch(74% 0.09 82 / 0.6);
-
-    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  html {
-    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
-    background: var(--surface-ground);
-    color: var(--text-body);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
-  }
-
-  body {
-    min-height: 100dvh;
-    overflow-x: hidden;
-  }
-
-  /* grain overlay */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.035;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 200px 200px;
-  }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--gold-deep); border-radius: 2px; }
-
-  /* mono labels */
-  .mono {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .mono-gold {
-    color: var(--gold-deep);
-  }
-
-  /* layout */
-  .page-wrap {
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 0 clamp(1.5rem, 4vw, 3.5rem);
-  }
-
-  /* ---- HEADER ---- */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    padding: 0 clamp(1.5rem, 4vw, 3.5rem);
-    backdrop-filter: blur(18px) saturate(1.25);
-    -webkit-backdrop-filter: blur(18px) saturate(1.25);
-    background: oklch(7% 0.006 95 / 0.82);
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  header .inner {
-    max-width: 1320px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 64px;
-  }
-
-  .wordmark {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .wordmark-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--gold);
-    border-radius: 1px;
-    flex-shrink: 0;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-  }
-
-  .header-right a {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-decoration: none;
-    letter-spacing: 0.01em;
-    transition: color 180ms var(--ease);
-  }
-
-  .header-right a:hover {
-    color: var(--gold-pale);
-  }
-
-  .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 12px 5px 10px;
-    border: 1px solid var(--hairline);
-    border-radius: 2px;
-    font-family: 'Space Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--patina);
-  }
-
-  .status-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--patina);
-    animation: pulse-dot 2.4s ease infinite;
-  }
-
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 oklch(70% 0.12 188 / 0.4); }
-    50% { opacity: 0.7; box-shadow: 0 0 0 4px oklch(70% 0.12 188 / 0); }
-  }
-
-  /* ---- HERO ---- */
-  .hero {
-    padding: clamp(4rem, 10vw, 8rem) 0 clamp(3rem, 6vw, 5rem);
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .hero-eyebrow {
-    margin-bottom: 20px;
-  }
-
-  .hero h1 {
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    font-weight: 300;
-    line-height: 1.04;
-    letter-spacing: -0.02em;
-    color: var(--text-bright);
-    max-width: 14ch;
-  }
-
-  .hero h1 em {
-    font-style: normal;
-    color: var(--gold);
-  }
-
-  .hero-sub {
-    margin-top: 28px;
-    font-size: 1.05rem;
-    font-weight: 400;
-    line-height: 1.7;
-    color: var(--text-muted);
-    max-width: 52ch;
-  }
-
-  .hero-meta {
-    margin-top: 48px;
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-  }
-
-  .hero-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .hero-stat-value {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: var(--text-bright);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .hero-stat-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-faint);
-  }
-
-  /* ---- SECTION ---- */
-  .section {
-    padding: clamp(3rem, 6vw, 5rem) 0;
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .section-head {
-    margin-bottom: clamp(2rem, 4vw, 3.5rem);
-  }
-
-  .section-head h2 {
-    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
-    font-weight: 300;
-    line-height: 1.08;
-    letter-spacing: -0.01em;
-    color: var(--text-bright);
-    margin-top: 14px;
-  }
-
-  /* ---- FEATURED DEPLOYMENT ---- */
-  .featured-project {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
-    min-height: 560px;
-    margin-bottom: 8px;
-    overflow: hidden;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 2px;
-    background:
-      linear-gradient(135deg, oklch(13% 0.014 102 / 0.98), oklch(8% 0.012 188 / 0.96)),
-      var(--surface-raised);
-    box-shadow: 0 28px 80px oklch(0% 0 0 / 0.32);
-    opacity: 0;
-    transform: translateY(18px);
-    animation: tile-in 820ms var(--ease-out) 40ms forwards;
-  }
-
-  .featured-project::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      linear-gradient(90deg, oklch(84% 0.19 80.46 / 0.12) 1px, transparent 1px),
-      linear-gradient(0deg, oklch(70% 0.12 188 / 0.08) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: linear-gradient(90deg, black, transparent 78%);
-    opacity: 0.28;
-    z-index: 0;
-  }
-
-  .featured-project::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 3px;
-    pointer-events: none;
-    background: radial-gradient(
-      560px circle at var(--mx, 72%) var(--my, 42%),
-      oklch(70% 0.12 188 / 0.2),
-      transparent 58%
-    );
-    opacity: 0;
-    transition: opacity 320ms var(--ease);
-    z-index: 1;
-  }
-
-  .featured-project:hover::after {
-    opacity: 1;
-  }
-
-  .feature-copy,
-  .feature-preview-wrap {
-    position: relative;
-    z-index: 2;
-  }
-
-  .feature-copy {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: clamp(2rem, 4vw, 3rem);
-    padding: clamp(1.5rem, 4vw, 3.5rem);
-    border-right: 1px solid var(--hairline);
-  }
-
-  .feature-label-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-bottom: 24px;
-  }
-
-  .feature-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 10px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 2px;
-    background: oklch(77% 0.14 82 / 0.08);
-  }
-
-  .feature-label-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--patina);
-    box-shadow: 0 0 0 4px oklch(70% 0.12 188 / 0.12);
-  }
-
-  .feature-domain {
-    color: var(--patina-pale);
-  }
-
-  .feature-title {
-    max-width: 11ch;
-    font-size: clamp(2.3rem, 5vw, 4.8rem);
-    font-weight: 300;
-    line-height: 0.98;
-    color: var(--text-bright);
-  }
-
-  .feature-title span {
-    display: block;
-    color: var(--gold);
-  }
-
-  .feature-desc {
-    max-width: 54ch;
-    margin-top: 22px;
-    color: var(--text-muted);
-    font-size: 1rem;
-    line-height: 1.72;
-  }
-
-  .feature-proof {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    border-top: 1px solid var(--hairline);
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .feature-proof-item {
-    padding: 16px 18px 16px 0;
-  }
-
-  .feature-proof-item + .feature-proof-item {
-    padding-left: 18px;
-    border-left: 1px solid var(--hairline);
-  }
-
-  .feature-proof strong {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--text-bright);
-    font-size: 1.05rem;
-    font-weight: 600;
-  }
-
-  .feature-proof span {
-    display: block;
-    color: var(--text-faint);
-    font-size: 0.78rem;
-    line-height: 1.45;
-  }
-
-  .feature-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .feature-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 42px;
-    padding: 10px 14px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 2px;
-    color: var(--surface-deep);
-    background: var(--gold);
-    font-size: 0.82rem;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform 180ms var(--ease), background 180ms var(--ease), border-color 180ms var(--ease);
-  }
-
-  .feature-action.secondary {
-    color: var(--text-body);
-    background: oklch(91% 0 0 / 0.03);
-    border-color: var(--hairline);
-  }
-
-  .feature-action:hover {
-    transform: translateY(-2px);
-    background: var(--gold-pale);
-  }
-
-  .feature-action.secondary:hover {
-    background: oklch(91% 0 0 / 0.08);
-    border-color: var(--hairline-strong);
-  }
-
-  .feature-action svg {
-    flex: 0 0 auto;
-  }
-
-  .feature-preview-wrap {
-    display: flex;
-    min-width: 0;
-    padding: clamp(1rem, 3vw, 2rem);
-    background:
-      linear-gradient(180deg, oklch(70% 0.12 188 / 0.1), transparent 34%),
-      oklch(4% 0.004 95 / 0.44);
-  }
-
-  .browser-frame {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    width: 100%;
-    min-width: 0;
-    min-height: 496px;
-    overflow: hidden;
-    border: 1px solid oklch(70% 0.12 188 / 0.32);
-    border-radius: 2px;
-    background: var(--surface-deep);
-    box-shadow: inset 0 0 0 1px oklch(91% 0 0 / 0.03);
-  }
-
-  .browser-bar {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
-    min-height: 44px;
-    padding: 0 12px;
-    border-bottom: 1px solid var(--hairline);
-    background: oklch(10% 0.012 188 / 0.92);
-  }
-
-  .browser-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .browser-dots span {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--hairline-strong);
-  }
-
-  .browser-url {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    color: var(--patina-pale);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-  }
-
-  .browser-status {
-    color: var(--gold-pale);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-
-  .browser-viewport {
-    position: relative;
-    flex: 1;
-    min-height: 452px;
-    overflow: hidden;
-    background: oklch(6% 0.01 188);
-  }
-
-  .embed-fallback {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 22px;
-    padding: clamp(1.25rem, 3vw, 2rem);
-    background:
-      linear-gradient(135deg, oklch(10% 0.025 188), oklch(6% 0.014 95) 58%),
-      var(--surface-deep);
-    opacity: 1;
-    transition: opacity 260ms var(--ease);
-    z-index: 1;
-  }
-
-  .browser-frame.is-embed-ready .embed-fallback {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .fallback-profile {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 16px;
-    align-items: center;
-  }
-
-  .fallback-avatar {
-    width: 58px;
-    height: 58px;
-    border: 1px solid var(--hairline-strong);
-    border-radius: 2px;
-    display: grid;
-    place-items: center;
-    color: var(--gold);
-    font-size: 1.35rem;
-    font-weight: 700;
-    background: oklch(77% 0.14 82 / 0.08);
-  }
-
-  .fallback-profile h4 {
-    color: var(--text-bright);
-    font-size: clamp(1.25rem, 2vw, 1.8rem);
-    line-height: 1.05;
-    font-weight: 500;
-  }
-
-  .fallback-profile p {
-    margin-top: 6px;
-    color: var(--patina-pale);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.08em;
-  }
-
-  .fallback-feed {
-    display: grid;
-    gap: 10px;
-  }
-
-  .fallback-post {
-    border: 1px solid var(--hairline);
-    border-radius: 2px;
-    padding: 14px;
-    background: oklch(91% 0 0 / 0.035);
-  }
-
-  .fallback-post strong {
-    color: var(--text-bright);
-    font-size: 0.88rem;
-    font-weight: 600;
-  }
-
-  .fallback-lines {
-    display: grid;
-    gap: 7px;
-    margin-top: 12px;
-  }
-
-  .fallback-lines span {
-    display: block;
-    height: 7px;
-    border-radius: 2px;
-    background: oklch(70% 0.12 188 / 0.22);
-  }
-
-  .fallback-lines span:nth-child(2) {
-    width: 78%;
-    background: oklch(84% 0.19 80.46 / 0.18);
-  }
-
-  .fallback-lines span:nth-child(3) {
-    width: 48%;
-  }
-
-  .fallback-open {
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    width: fit-content;
-    color: var(--gold-pale);
-    font-family: 'Space Mono', monospace;
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-  }
-
-  .feature-iframe {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    background: var(--surface-deep);
-    opacity: 0;
-    transition: opacity 260ms var(--ease);
-    z-index: 2;
-  }
-
-  .browser-frame.is-embed-ready .feature-iframe {
-    opacity: 1;
-  }
-
-  /* ---- BENTO GRID ---- */
-  .bento {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 8px;
-    scroll-margin-top: 88px;
-  }
-
-  .bento-tile {
-    background: var(--surface-raised);
-    border: 1px solid var(--hairline);
-    border-radius: 2px;
-    padding: clamp(1.5rem, 3vw, 2.5rem);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 320px;
-    cursor: pointer;
-    text-decoration: none;
-    color: inherit;
-    transition: background 180ms var(--ease), border-color 200ms var(--ease);
-    /* stagger animation */
-    opacity: 0;
-    transform: translateY(16px);
-    animation: tile-in 700ms var(--ease-out) forwards;
-  }
-
-  .bento-tile:nth-child(1) { animation-delay: 80ms; }
-  .bento-tile:nth-child(2) { animation-delay: 160ms; }
-  .bento-tile:nth-child(3) { animation-delay: 240ms; }
-  .bento-tile:nth-child(4) { animation-delay: 320ms; }
-  .bento-tile:nth-child(5) { animation-delay: 400ms; }
-  .bento-tile:nth-child(6) { animation-delay: 480ms; }
-  .bento-tile:nth-child(7) { animation-delay: 560ms; }
-
-  @keyframes tile-in {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .bento-tile:hover {
-    background: var(--surface-graphite);
-    border-color: var(--hairline-strong);
-  }
-
-  /* spotlight border effect */
-  .bento-tile::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: 3px;
-    background: radial-gradient(
-      400px circle at var(--mx, 50%) var(--my, 50%),
-      oklch(84% 0.19 80.46 / 0.15),
-      transparent 60%
-    );
-    opacity: 0;
-    transition: opacity 300ms var(--ease);
-    pointer-events: none;
-    z-index: 1;
-  }
-
-  .bento-tile:hover::before {
-    opacity: 1;
-  }
-
-  /* tile sizing */
-  .span-8 { grid-column: span 8; }
-  .span-7 { grid-column: span 7; }
-  .span-6 { grid-column: span 6; }
-  .span-5 { grid-column: span 5; }
-  .span-4 { grid-column: span 4; }
-
-  @media (max-width: 900px) {
-    .featured-project {
-      grid-template-columns: 1fr;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Development Projects | John Christopher Diaz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="portfolio/glass-motion.css">
+  <style>
+    :root {
+      --ink: #f8f7f2;
+      --muted: rgba(248, 247, 242, 0.68);
+      --faint: rgba(248, 247, 242, 0.46);
+      --charcoal: #050604;
+      --charcoal-soft: #11100b;
+      --olive-glass: rgba(51, 45, 30, 0.62);
+      --olive-border: rgba(212, 191, 135, 0.22);
+      --gold: #d6a109;
+      --gold-soft: rgba(214, 161, 9, 0.18);
+      --teal: #72d8c1;
+      --panel: rgba(255, 255, 255, 0.075);
+      --panel-strong: rgba(255, 255, 255, 0.12);
+      --panel-line: rgba(255, 255, 255, 0.16);
+      --shadow: 0 26px 74px rgba(0, 0, 0, 0.38);
+      --max: 1460px;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      color-scheme: dark;
+      scroll-behavior: smooth;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Plus Jakarta Sans', "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 80% 10%, rgba(138, 101, 4, 0.24), transparent 28rem),
+        radial-gradient(circle at 14% 38%, rgba(114, 216, 193, 0.13), transparent 22rem),
+        linear-gradient(180deg, rgba(5, 6, 4, 0.94), rgba(5, 6, 4, 0.98)),
+        url("portfolio/Pictures/Download Topography Textures Animated background.jpg") center / 780px auto repeat;
+      line-height: 1.5;
+      text-rendering: geometricPrecision;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      content: "";
+      background:
+        linear-gradient(180deg, rgba(5, 6, 4, 0.18), rgba(5, 6, 4, 0.72)),
+        radial-gradient(circle at 50% 0, rgba(255, 255, 255, 0.08), transparent 25rem);
+      pointer-events: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .nav {
+      position: sticky;
+      top: 20px;
+      z-index: 10;
+      display: flex;
+      gap: 26px;
+      justify-content: center;
+      width: max-content;
+      max-width: calc(100% - 34px);
+      padding: 18px 34px;
+      margin: 20px auto 0;
+      border: 1px solid var(--olive-border);
+      border-radius: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.035)),
+        var(--olive-glass);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(24px) saturate(160%);
+    }
+
+    .nav a {
+      position: relative;
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .nav a::after {
+      position: absolute;
+      right: 0;
+      bottom: -7px;
+      left: 0;
+      height: 2px;
+      content: "";
+      transform: scaleX(0);
+      transform-origin: right;
+      background: var(--gold);
+      transition: transform 220ms ease;
+    }
+
+    .nav a:hover::after,
+    .nav a:focus-visible::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+
+    .shell {
+      width: min(var(--max), calc(100% - 96px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.48fr);
+      gap: 56px;
+      align-items: end;
+      min-height: 700px;
+      padding: 112px 0 82px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-family: 'Fraunces', serif;
+      font-weight: 200;
+      font-size: clamp(3.7rem, 7.4vw, 8.35rem);
+      line-height: 0.88;
+      letter-spacing: -0.045em;
+    }
+
+    .lede {
+      max-width: 750px;
+      margin-top: 32px;
+      color: var(--muted);
+      font-size: 1.24rem;
+      font-weight: 800;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 38px;
+    }
+
+    .button,
+    .filter-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      border: 1px solid var(--panel-line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.86rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      cursor: pointer;
+      transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, color 180ms ease;
+    }
+
+    .button {
+      gap: 10px;
+      padding: 0 19px;
+    }
+
+    .button.primary,
+    .filter-button[aria-pressed="true"] {
+      border-color: rgba(214, 161, 9, 0.58);
+      background: rgba(214, 161, 9, 0.18);
+      color: var(--ink);
+    }
+
+    .button:hover,
+    .button:focus-visible,
+    .filter-button:hover,
+    .filter-button:focus-visible {
+      transform: translateY(-3px);
+      border-color: rgba(214, 161, 9, 0.58);
+      background: rgba(214, 161, 9, 0.14);
+      outline: none;
+    }
+
+    .metrics {
+      display: grid;
+      gap: 12px;
+      padding: 20px;
+      border: 1px solid var(--olive-border);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at var(--mx, 82%) var(--my, 18%), rgba(214, 161, 9, 0.2), transparent 15rem),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035)),
+        rgba(74, 64, 39, 0.42);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(24px) saturate(150%);
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 18px;
+      align-items: center;
+      padding: 18px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.11);
+    }
+
+    .metric:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .metric:last-child {
+      padding-bottom: 0;
+    }
+
+    .metric strong {
+      color: var(--gold);
+      font-size: 2.45rem;
+      line-height: 1;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 900;
+    }
+
+    .section {
+      padding: 76px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      scroll-margin-top: 120px;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(240px, 0.42fr) minmax(0, 1fr);
+      gap: 64px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      max-width: 420px;
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 3.4rem;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+    }
+
+    .section-head p {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .featured-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(340px, 1fr);
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid rgba(212, 191, 135, 0.24);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at var(--mx, 76%) var(--my, 18%), rgba(214, 161, 9, 0.16), transparent 22rem),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.035)),
+        rgba(255, 255, 255, 0.06);
+      box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(24px) saturate(150%);
+    }
+
+    .featured-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 490px;
+      padding: 40px;
+      border-right: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .featured-copy small,
+    .card-meta,
+    .chip,
+    .browser-url,
+    .status-pill {
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .featured-copy small {
+      color: var(--gold);
+    }
+
+    .featured-copy h2 {
+      max-width: 570px;
+      margin-top: 24px;
+      font-size: 4.7rem;
+    }
+
+    .featured-copy p {
+      max-width: 620px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .proof-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin-top: 34px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .proof-row span {
+      min-height: 88px;
+      padding: 16px;
+      background: rgba(5, 6, 4, 0.42);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+    }
+
+    .proof-row strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+
+    .featured-visual {
+      min-height: 490px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 74% 24%, rgba(114, 216, 193, 0.22), transparent 18rem),
+        radial-gradient(circle at 20% 78%, rgba(214, 161, 9, 0.17), transparent 16rem),
+        rgba(5, 6, 4, 0.46);
+    }
+
+    .browser-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 430px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 16px;
+      background: rgba(5, 6, 4, 0.66);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 28px 70px rgba(0, 0, 0, 0.34);
+    }
+
+    .browser-bar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 46px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(74, 64, 39, 0.52);
+    }
+
+    .dots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.26);
+    }
+
+    .browser-url {
+      overflow: hidden;
+      color: var(--muted);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .browser-preview {
+      display: grid;
+      grid-template-columns: 0.72fr 1fr;
+      gap: 22px;
       min-height: 0;
+      padding: 24px;
+      flex: 1;
     }
 
-    .feature-copy {
-      border-right: 0;
-      border-bottom: 1px solid var(--hairline);
+    .preview-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.07);
     }
 
-    .feature-proof {
-      grid-template-columns: 1fr;
+    .preview-panel h3 {
+      font-size: 1.5rem;
+      line-height: 1.04;
     }
 
-    .feature-proof-item,
-    .feature-proof-item + .feature-proof-item {
-      padding: 14px 0;
-      border-left: 0;
+    .preview-panel p {
+      color: var(--muted);
+      font-weight: 800;
     }
 
-    .feature-proof-item + .feature-proof-item {
-      border-top: 1px solid var(--hairline);
+    .status-pill {
+      width: max-content;
+      padding: 8px 10px;
+      border: 1px solid rgba(114, 216, 193, 0.35);
+      border-radius: 999px;
+      color: var(--teal);
+      background: rgba(114, 216, 193, 0.08);
     }
 
-    .browser-frame {
-      min-height: 420px;
+    .preview-feed {
+      display: grid;
+      gap: 12px;
+      align-content: start;
     }
 
-    .feature-iframe {
-      min-height: 0;
+    .feed-row {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.055);
     }
 
-    .bento { grid-template-columns: 1fr; }
-    .span-8,.span-7,.span-6,.span-5,.span-4 { grid-column: span 1; }
-  }
+    .feed-icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 12px;
+      background: var(--gold-soft);
+      color: var(--gold);
+      font-weight: 900;
+    }
 
-  /* tile content */
-  .tile-top {
-    position: relative;
-    z-index: 2;
-  }
+    .feed-row strong {
+      display: block;
+      font-size: 0.92rem;
+    }
 
-  .tile-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 10px;
-    border: 1px solid var(--hairline);
-    border-radius: 2px;
-    margin-bottom: 20px;
-  }
+    .feed-row span {
+      color: var(--faint);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
 
-  .tile-tag-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-  }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
 
-  .tile-title {
-    font-size: clamp(1.2rem, 2vw, 1.5rem);
-    font-weight: 600;
-    color: var(--text-bright);
-    line-height: 1.25;
-    margin-bottom: 10px;
-  }
+    .filter-button {
+      padding: 0 18px;
+    }
 
-  .tile-desc {
-    font-size: 0.92rem;
-    color: var(--text-muted);
-    line-height: 1.65;
-    max-width: 50ch;
-  }
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
 
-  .tile-bottom {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 32px;
-    padding-top: 16px;
-    border-top: 1px solid var(--hairline);
-  }
+    .project-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 380px;
+      grid-column: span 4;
+      overflow: hidden;
+      border: 1px solid var(--panel-line);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at var(--mx, 80%) var(--my, 12%), color-mix(in srgb, var(--accent) 28%, transparent), transparent 18rem),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)),
+        var(--panel);
+      box-shadow: 0 28px 74px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(24px) saturate(150%);
+      transition: transform 220ms var(--ease-out), border-color 220ms ease, background 220ms ease, opacity 180ms ease, box-shadow 220ms ease, filter 220ms ease;
+    }
 
-  .tile-stack {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
+    .project-card:hover,
+    .project-card:focus-visible {
+      transform: translateY(-8px);
+      border-color: color-mix(in srgb, var(--accent) 58%, white 12%);
+      box-shadow: 0 38px 96px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      filter: brightness(1.06);
+      outline: none;
+    }
 
-  .tile-chip {
-    font-family: 'Space Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border: 1px solid var(--hairline);
-    border-radius: 2px;
-    color: var(--text-faint);
-    white-space: nowrap;
-  }
+    .project-card.is-hidden {
+      display: none;
+    }
 
-  .tile-arrow {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gold-deep);
-    transition: color 180ms var(--ease), transform 180ms var(--ease);
-  }
+    .thumb {
+      position: relative;
+      display: grid;
+      min-height: 172px;
+      padding: 22px;
+      place-items: center;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.2)),
+        rgba(255, 255, 255, 0.045);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
 
-  .bento-tile:hover .tile-arrow {
-    color: var(--gold);
-    transform: translateX(3px);
-  }
+    .thumb svg {
+      width: min(100%, 250px);
+      height: 128px;
+      color: var(--accent);
+      opacity: 0.92;
+    }
 
-  /* decorative canvas shapes inside tiles */
-  .tile-visual {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 55%;
-    height: 60%;
-    opacity: 0.06;
-    pointer-events: none;
-    z-index: 0;
-    transition: opacity 300ms var(--ease);
-  }
+    .card-body {
+      display: grid;
+      gap: 18px;
+      padding: 24px;
+      flex: 1;
+    }
 
-  .bento-tile:hover .tile-visual {
-    opacity: 0.12;
-  }
+    .card-meta {
+      color: color-mix(in srgb, var(--accent) 74%, white);
+    }
 
-  /* ---- FOOTER ---- */
-  footer {
-    padding: clamp(2rem, 4vw, 3rem) 0;
-    background: var(--surface-deep);
-  }
+    .card-body h3 {
+      font-size: 1.55rem;
+      line-height: 1.05;
+    }
 
-  .footer-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+    .card-body p {
+      color: var(--muted);
+      font-size: 0.98rem;
+      font-weight: 800;
+    }
 
-  .footer-copy {
-    font-size: 0.78rem;
-    color: var(--text-faint);
-  }
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
 
-  .footer-links {
-    display: flex;
-    gap: 20px;
-  }
+    .chip {
+      padding: 7px 9px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.055);
+      color: rgba(255, 255, 255, 0.78);
+    }
 
-  .footer-links a {
-    font-size: 0.78rem;
-    color: var(--text-faint);
-    text-decoration: none;
-    transition: color 180ms var(--ease);
-  }
+    .open-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-top: 4px;
+      color: var(--ink);
+      font-weight: 900;
+    }
 
-  .footer-links a:hover {
-    color: var(--gold-pale);
-  }
+    .open-row svg {
+      flex: 0 0 auto;
+      transition: transform 180ms ease;
+    }
 
-  /* gold seam */
-  footer::before {
-    content: '';
-    display: block;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold-deep), var(--gold), var(--gold-deep), transparent);
-    margin-bottom: clamp(2rem, 4vw, 3rem);
-  }
+    .project-card:hover .open-row svg,
+    .project-card:focus-visible .open-row svg {
+      transform: translate(4px, -4px);
+    }
 
-  /* reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    .featured-project,
-    .bento-tile { animation: none; opacity: 1; transform: none; }
-    .featured-project::after,
-    .bento-tile::before { display: none; }
-  }
-</style>
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: space-between;
+      padding: 70px 0 90px;
+      color: rgba(255, 255, 255, 0.72);
+      font-weight: 800;
+    }
+
+    .footer a {
+      color: var(--gold);
+    }
+
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+
+    [data-reveal].is-visible {
+      animation: reveal-rise 680ms var(--ease-out) forwards;
+    }
+
+    @keyframes reveal-rise {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :root {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .shell {
+        width: min(var(--max), calc(100% - 64px));
+      }
+
+      .hero,
+      .section-head,
+      .featured-card {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 5.35rem;
+      }
+
+      .featured-copy {
+        min-height: 0;
+        border-right: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .project-card {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .nav {
+        position: relative;
+        top: auto;
+        gap: 16px;
+        overflow-x: auto;
+        justify-content: flex-start;
+      }
+
+      .shell {
+        width: calc(100% - 34px);
+      }
+
+      .hero {
+        min-height: 0;
+        padding: 72px 0 54px;
+      }
+
+      h1 {
+        font-size: 3.7rem;
+      }
+
+      h2,
+      .featured-copy h2 {
+        font-size: 2.65rem;
+      }
+
+      .lede {
+        font-size: 1.05rem;
+      }
+
+      .metrics,
+      .featured-copy,
+      .featured-visual {
+        padding: 22px;
+      }
+
+      .proof-row,
+      .browser-preview {
+        grid-template-columns: 1fr;
+      }
+
+      .project-card {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 460px) {
+      .nav a {
+        font-size: 0.72rem;
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+
+      .metric {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .hero-actions,
+      .toolbar {
+        display: grid;
+      }
+
+      .button,
+      .filter-button {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <nav class="nav" aria-label="Development navigation">
+    <a href="portfolio/portfolio.html">Portfolio</a>
+    <a href="#featured">Featured</a>
+    <a href="#archive">Archive</a>
+    <a href="https://github.com/Ic3krem" target="_blank" rel="noopener">GitHub</a>
+  </nav>
 
-<!-- HEADER -->
-<header>
-  <div class="inner">
-    <a href="#" class="wordmark">
-      <span class="wordmark-dot"></span>
-      Projects
-    </a>
-    <div class="header-right">
-      <a href="https://github.com/Ic3krem" target="_blank" rel="noopener">GitHub</a>
-      <div class="status-pill">
-        <span class="status-dot"></span>
-        7 Projects
+  <header class="shell hero">
+    <div>
+      <h1>Development projects.</h1>
+      <p class="lede">A standalone gallery of systems, dashboards, civic tools, and hardware-backed builds from John Christopher Diaz. Each card opens the compiled HTML walkthrough for that project.</p>
+      <div class="hero-actions" aria-label="Primary project actions">
+        <a class="button primary" href="#archive">
+          Browse projects
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+        </a>
+        <a class="button" href="portfolio/portfolio.html#work">Back to portfolio</a>
       </div>
     </div>
-  </div>
-</header>
+    <aside class="metrics" aria-label="Development archive summary">
+      <div class="metric"><strong class="motion-number" data-count-to="6" data-pad="true">06</strong><span>standalone project walkthroughs</span></div>
+      <div class="metric"><strong class="motion-number" data-count-to="4" data-pad="true">04</strong><span>product domains across civic, health, enterprise, and productivity</span></div>
+      <div class="metric"><strong class="motion-number" data-count-to="1" data-pad="true">01</strong><span>live social platform featured above the archive</span></div>
+    </aside>
+  </header>
 
-<!-- HERO -->
-<div class="page-wrap">
-  <section class="hero">
-    <p class="mono mono-gold hero-eyebrow">Portfolio / Standalone Builds</p>
-    <h1>Selected <em>works</em> and systems</h1>
-    <p class="hero-sub">
-      Full-stack applications rebuilt as standalone HTML experiences.
-      Each project preserves the original design language, interaction patterns,
-      and data architecture of its source repository.
-    </p>
-    <div class="hero-meta">
-      <div class="hero-stat">
-        <span class="hero-stat-value">7</span>
-        <span class="hero-stat-label">Projects</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-value">5</span>
-        <span class="hero-stat-label">Languages</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-value">4</span>
-        <span class="hero-stat-label">Platforms</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROJECTS -->
-  <section class="section">
-    <div class="section-head">
-      <p class="mono mono-gold">Index</p>
-      <h2>Projects</h2>
-    </div>
-
-    <article class="featured-project" aria-labelledby="heronshub-title">
-      <div class="feature-copy">
-        <div>
-          <div class="feature-label-row">
-            <div class="feature-label">
-              <span class="feature-label-dot"></span>
-              <span class="mono" style="font-size:0.6rem">Highlighted Project</span>
+  <main class="shell">
+    <section class="section" id="featured" data-reveal>
+      <article class="featured-card">
+        <div class="featured-copy">
+          <div>
+            <small>Featured live build</small>
+            <h2>HeronsHub Social</h2>
+            <p>A production social platform for community publishing and profile-centered discovery, shown here as the live build that sits above the standalone rebuild archive.</p>
+            <div class="proof-row" aria-label="Featured project proof points">
+              <span><strong>Live URL</strong>heronshub.social</span>
+              <span><strong>Focus</strong>community workflow</span>
+              <span><strong>Role</strong>featured project</span>
             </div>
-            <span class="mono feature-domain">heronshub.social</span>
           </div>
-          <h3 class="feature-title" id="heronshub-title">HeronsHub <span>Social</span></h3>
-          <p class="feature-desc">
-            A deployed social platform presented as a live portfolio showcase,
-            with the production site embedded directly into this project index
-            so visitors can inspect the real experience without leaving the page.
-          </p>
-        </div>
-
-        <div class="feature-proof" aria-label="HeronsHub project highlights">
-          <div class="feature-proof-item">
-            <strong>Live Build</strong>
-            <span>Production deployment at heronshub.social</span>
-          </div>
-          <div class="feature-proof-item">
-            <strong>Social UX</strong>
-            <span>Community-first flows and profile-centered discovery</span>
-          </div>
-          <div class="feature-proof-item">
-            <strong>Featured</strong>
-            <span>Promoted above the standalone rebuild archive</span>
+          <div class="hero-actions">
+            <a class="button primary" href="https://heronshub.social/" target="_blank" rel="noopener">
+              Open live project
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
+            </a>
+            <a class="button" href="#archive">View archive</a>
           </div>
         </div>
-
-        <div class="feature-actions">
-          <a class="feature-action" href="https://heronshub.social/" target="_blank" rel="noopener">
-            Open live project
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-          <a class="feature-action secondary" href="#bento-grid">
-            Browse archive
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="feature-preview-wrap">
-        <div class="browser-frame" data-embed-frame aria-label="Embedded HeronsHub.social preview">
-          <div class="browser-bar">
-            <div class="browser-dots" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
+        <div class="featured-visual" aria-hidden="true">
+          <div class="browser-shell">
+            <div class="browser-bar">
+              <div class="dots"><span></span><span></span><span></span></div>
+              <div class="browser-url">https://heronshub.social/</div>
+              <div class="status-pill">Live</div>
             </div>
-            <div class="browser-url">https://heronshub.social/</div>
-            <div class="browser-status">Live</div>
-          </div>
-          <div class="browser-viewport">
-            <div class="embed-fallback" aria-hidden="true">
-              <div class="fallback-profile">
-                <div class="fallback-avatar">H</div>
+            <div class="browser-preview">
+              <div class="preview-panel">
+                <span class="status-pill">Community</span>
                 <div>
-                  <h4>HeronsHub Social</h4>
-                  <p>Production preview fallback</p>
+                  <h3>Posts, profiles, and moderated spaces.</h3>
+                  <p>Social product work anchored around daily publishing behavior.</p>
                 </div>
               </div>
-              <div class="fallback-feed">
-                <div class="fallback-post">
-                  <strong>Live deployment embedded here</strong>
-                  <div class="fallback-lines">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
-                <div class="fallback-post">
-                  <strong>Open the project for the full social experience</strong>
-                  <div class="fallback-lines">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </div>
-                </div>
+              <div class="preview-feed">
+                <div class="feed-row"><span class="feed-icon">H</span><span><strong>Home feed</strong><span>recent updates and discovery</span></span></div>
+                <div class="feed-row"><span class="feed-icon">P</span><span><strong>Profiles</strong><span>identity, activity, and connection context</span></span></div>
+                <div class="feed-row"><span class="feed-icon">M</span><span><strong>Moderation</strong><span>safer community operations</span></span></div>
+                <div class="feed-row"><span class="feed-icon">S</span><span><strong>Sharing</strong><span>social loops built for return visits</span></span></div>
               </div>
-              <a class="fallback-open" href="https://heronshub.social/" target="_blank" rel="noopener" tabindex="-1">
-                Open heronshub.social
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-              </a>
             </div>
-            <iframe
-              class="feature-iframe"
-              title="HeronsHub.social live project preview"
-              src="https://heronshub.social/"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox">
-            </iframe>
           </div>
         </div>
+      </article>
+    </section>
+
+    <section class="section" id="archive">
+      <div class="section-head">
+        <h2>Standalone HTML builds</h2>
+        <p>These are the development projects mapped from the compiled standalone pages. Use the filters for a quick scan, then open any card for the full interactive project presentation.</p>
       </div>
-    </article>
 
-    <div class="bento" id="bento-grid">
-
-      <!-- 1. SaintAngelo - span 8 -->
-      <a href="SaintAngelo.html" class="bento-tile span-8" data-color="76,168,130">
-        <div class="tile-top">
-          <div class="tile-tag">
-            <span class="tile-tag-dot" style="background:#0b7d56"></span>
-            <span class="mono" style="font-size:0.6rem">Healthcare</span>
-          </div>
-          <h3 class="tile-title">SaintAngelo</h3>
-          <p class="tile-desc">
-            Hospital queue management system with priority-based triage,
-            real-time ticket tracking, receptionist and admin dashboards,
-            and a public waiting-room display.
-          </p>
-        </div>
-        <div class="tile-bottom">
-          <div class="tile-stack">
-            <span class="tile-chip">Java</span>
-            <span class="tile-chip">JavaFX</span>
-            <span class="tile-chip">MySQL</span>
-          </div>
-          <span class="tile-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </span>
-        </div>
-        <svg class="tile-visual" viewBox="0 0 200 200"><rect x="20" y="40" width="160" height="20" rx="2" fill="#0b7d56"/><rect x="20" y="70" width="120" height="14" rx="2" fill="#0b7d56"/><rect x="20" y="94" width="140" height="14" rx="2" fill="#0b7d56"/><rect x="20" y="118" width="100" height="14" rx="2" fill="#0b7d56"/><circle cx="160" cy="140" r="30" fill="none" stroke="#0b7d56" stroke-width="3"/><text x="148" y="146" font-size="16" fill="#0b7d56" font-weight="700">A15</text></svg>
-      </a>
-
-      <!-- 2. AFHM - span 4 -->
-      <a href="AFHM.html" class="bento-tile span-4" data-color="86,180,233">
-        <div class="tile-top">
-          <div class="tile-tag">
-            <span class="tile-tag-dot" style="background:#56b4e9"></span>
-            <span class="mono" style="font-size:0.6rem">IoT</span>
-          </div>
-          <h3 class="tile-title">AFHM</h3>
-          <p class="tile-desc">
-            Automated flood and hazard monitoring dashboard with live sensor
-            simulation, animated water visualization, and threshold alerting.
-          </p>
-        </div>
-        <div class="tile-bottom">
-          <div class="tile-stack">
-            <span class="tile-chip">Arduino</span>
-            <span class="tile-chip">Python</span>
-          </div>
-          <span class="tile-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </span>
-        </div>
-        <svg class="tile-visual" viewBox="0 0 200 200"><path d="M0 130 Q50 100 100 120 T200 110 V200 H0Z" fill="#56b4e9"/><path d="M0 140 Q50 115 100 130 T200 120 V200 H0Z" fill="#56b4e9" opacity="0.5"/><line x1="0" y1="90" x2="200" y2="90" stroke="#f5a623" stroke-width="1" stroke-dasharray="6 4"/><line x1="0" y1="60" x2="200" y2="60" stroke="#e94560" stroke-width="1" stroke-dasharray="6 4"/></svg>
-      </a>
-
-      <!-- 3. Dotion - span 5 -->
-      <a href="Dotion.html" class="bento-tile span-5" data-color="255,153,0">
-        <div class="tile-top">
-          <div class="tile-tag">
-            <span class="tile-tag-dot" style="background:#ff9900"></span>
-            <span class="mono" style="font-size:0.6rem">Productivity</span>
-          </div>
-          <h3 class="tile-title">Dotion</h3>
-          <p class="tile-desc">
-            Notion-inspired editorial workspace with rich-text editing,
-            page hierarchy, course mode, template gallery, and per-page
-            font and accent customization.
-          </p>
-        </div>
-        <div class="tile-bottom">
-          <div class="tile-stack">
-            <span class="tile-chip">Next.js</span>
-            <span class="tile-chip">React</span>
-            <span class="tile-chip">Supabase</span>
-          </div>
-          <span class="tile-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </span>
-        </div>
-        <svg class="tile-visual" viewBox="0 0 200 200"><rect x="10" y="20" width="80" height="8" rx="1" fill="#ff9900"/><rect x="10" y="38" width="170" height="6" rx="1" fill="#ff9900" opacity="0.6"/><rect x="10" y="52" width="150" height="6" rx="1" fill="#ff9900" opacity="0.6"/><rect x="10" y="66" width="160" height="6" rx="1" fill="#ff9900" opacity="0.6"/><rect x="10" y="86" width="60" height="8" rx="1" fill="#ff9900"/><rect x="10" y="104" width="170" height="6" rx="1" fill="#ff9900" opacity="0.4"/><rect x="10" y="118" width="140" height="6" rx="1" fill="#ff9900" opacity="0.4"/><rect x="10" y="140" width="56" height="56" rx="2" fill="none" stroke="#ff9900" stroke-width="1.5"/><rect x="76" y="140" width="56" height="56" rx="2" fill="none" stroke="#ff9900" stroke-width="1.5"/><rect x="142" y="140" width="56" height="56" rx="2" fill="none" stroke="#ff9900" stroke-width="1.5"/></svg>
-      </a>
-
-      <!-- 4. Radia - span 7 -->
-      <a href="Radia.html" class="bento-tile span-7" data-color="79,70,229">
-        <div class="tile-top">
-          <div class="tile-tag">
-            <span class="tile-tag-dot" style="background:#4f46e5"></span>
-            <span class="mono" style="font-size:0.6rem">Enterprise</span>
-          </div>
-          <h3 class="tile-title">Radia</h3>
-          <p class="tile-desc">
-            All-in-one HR management workspace with kanban task boards,
-            interactive org chart, employee onboarding courses,
-            SOPs knowledge base, and multi-platform integration connectors.
-          </p>
-        </div>
-        <div class="tile-bottom">
-          <div class="tile-stack">
-            <span class="tile-chip">Next.js</span>
-            <span class="tile-chip">React</span>
-            <span class="tile-chip">Tailwind</span>
-            <span class="tile-chip">Supabase</span>
-          </div>
-          <span class="tile-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </span>
-        </div>
-        <svg class="tile-visual" viewBox="0 0 200 200"><rect x="10" y="10" width="44" height="80" rx="2" fill="none" stroke="#4f46e5" stroke-width="1.5"/><rect x="60" y="10" width="44" height="80" rx="2" fill="none" stroke="#4f46e5" stroke-width="1.5"/><rect x="110" y="10" width="44" height="80" rx="2" fill="none" stroke="#4f46e5" stroke-width="1.5"/><rect x="160" y="10" width="44" height="80" rx="2" fill="none" stroke="#4f46e5" stroke-width="1.5"/><rect x="16" y="20" width="32" height="6" rx="1" fill="#4f46e5" opacity="0.5"/><rect x="16" y="32" width="24" height="4" rx="1" fill="#4f46e5" opacity="0.3"/><rect x="66" y="20" width="32" height="6" rx="1" fill="#4f46e5" opacity="0.5"/><rect x="116" y="20" width="32" height="6" rx="1" fill="#4f46e5" opacity="0.5"/><circle cx="100" cy="150" r="28" fill="none" stroke="#4f46e5" stroke-width="1.5"/><circle cx="100" cy="150" r="12" fill="#4f46e5" opacity="0.2"/><line x1="100" y1="122" x2="60" y2="100" stroke="#4f46e5" stroke-width="1"/><line x1="100" y1="122" x2="140" y2="100" stroke="#4f46e5" stroke-width="1"/></svg>
-      </a>
-
-      <!-- 5. SipatGov - span 4 -->
-      <a href="SipatGov.html" class="bento-tile span-4" data-color="206,17,38">
-        <div class="tile-top">
-          <div class="tile-tag">
-            <span class="tile-tag-dot" style="background:#CE1126"></span>
-            <span class="mono" style="font-size:0.6rem">Civic Tech</span>
-          </div>
-          <h3 class="tile-title">SipatGov</h3>
-          <p class="tile-desc">
-            Philippine civic transparency platform for tracking government
-            promises, infrastructure projects, and community-reported
-            governance concerns.
-          </p>
-        </div>
-        <div class="tile-bottom">
-          <div class="tile-stack">
-            <span class="tile-chip">React Native</span>
-            <span class="tile-chip">Python</span>
-            <span class="tile-chip">FastAPI</span>
-          </div>
-          <span class="tile-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </span>
-        </div>
-        <svg class="tile-visual" viewBox="0 0 200 200"><path d="M100 20 L140 50 L140 110 C140 150 100 180 100 180 C100 180 60 150 60 110 L60 50 Z" fill="none" stroke="#CE1126" stroke-width="2"/><circle cx="100" cy="90" r="18" fill="#CE1126" opacity="0.2"/><path d="M92 90 L98 96 L108 84" fill="none" stroke="#CE1126" stroke-width="2.5"/></svg>
-      </a>
-
-      <!-- 6. AlphaFitness - span 8 -->
-      <a href="AlphaFitness.html" class="bento-tile span-8" data-color="29,41,129">
-        <div class="tile-top">
-          <div class="tile-tag">
-            <span class="tile-tag-dot" style="background:#1D2981"></span>
-            <span class="mono" style="font-size:0.6rem">Health & Fitness</span>
-          </div>
-          <h3 class="tile-title">AlphaFitness</h3>
-          <p class="tile-desc">
-            University gym management system featuring attendance logging,
-            working BMI calculator with classification, equipment-based workout
-            tracking, and a role-separated admin panel for student fitness monitoring.
-          </p>
-        </div>
-        <div class="tile-bottom">
-          <div class="tile-stack">
-            <span class="tile-chip">Java</span>
-            <span class="tile-chip">Swing</span>
-          </div>
-          <span class="tile-arrow">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg>
-          </span>
-        </div>
-        <svg class="tile-visual" viewBox="0 0 200 200"><rect x="30" y="80" width="16" height="60" rx="2" fill="#1D2981"/><rect x="56" y="60" width="16" height="80" rx="2" fill="#1D2981" opacity="0.8"/><rect x="82" y="90" width="16" height="50" rx="2" fill="#1D2981" opacity="0.6"/><rect x="108" y="50" width="16" height="90" rx="2" fill="#1D2981"/><rect x="134" y="70" width="16" height="70" rx="2" fill="#1D2981" opacity="0.7"/><rect x="160" y="100" width="16" height="40" rx="2" fill="#1D2981" opacity="0.5"/><line x1="20" y1="145" x2="190" y2="145" stroke="#1D2981" stroke-width="1" opacity="0.4"/></svg>
-      </a>
-
-    </div>
-  </section>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="page-wrap">
-    <div class="footer-inner">
-      <span class="footer-copy">&copy; 2026 Ic3krem</span>
-      <div class="footer-links">
-        <a href="https://github.com/Ic3krem" target="_blank" rel="noopener">GitHub</a>
+      <div class="toolbar" aria-label="Filter development projects">
+        <button class="filter-button" type="button" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter-button" type="button" data-filter="systems" aria-pressed="false">Systems</button>
+        <button class="filter-button" type="button" data-filter="web" aria-pressed="false">Web apps</button>
+        <button class="filter-button" type="button" data-filter="civic" aria-pressed="false">Civic</button>
+        <button class="filter-button" type="button" data-filter="hardware" aria-pressed="false">Hardware</button>
       </div>
-    </div>
-  </div>
-</footer>
 
-<script>
-// Spotlight border tracking
-document.querySelectorAll('.featured-project, .bento-tile').forEach(tile => {
-  tile.addEventListener('mousemove', e => {
-    const rect = tile.getBoundingClientRect();
-    tile.style.setProperty('--mx', ((e.clientX - rect.left) / rect.width * 100) + '%');
-    tile.style.setProperty('--my', ((e.clientY - rect.top) / rect.height * 100) + '%');
-  });
-});
+      <div class="project-grid" id="projectGrid">
+        <a class="project-card" href="SaintAngelo.html" data-tags="systems health" style="--accent:#56c98f" data-spotlight data-reveal>
+          <span class="thumb">
+            <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
+              <rect x="18" y="20" width="184" height="22" rx="4" fill="currentColor"/>
+              <rect x="18" y="54" width="138" height="14" rx="3" fill="currentColor" opacity=".72"/>
+              <rect x="18" y="78" width="164" height="14" rx="3" fill="currentColor" opacity=".52"/>
+              <circle cx="168" cy="104" r="24" stroke="currentColor" stroke-width="4"/>
+              <text x="153" y="110" font-size="16" fill="currentColor" font-weight="900">A15</text>
+            </svg>
+          </span>
+          <span class="card-body">
+            <span class="card-meta">Healthcare queue system</span>
+            <h3>SaintAngelo</h3>
+            <p>Priority-based hospital triage with ticket tracking, receptionist and admin dashboards, and a waiting-room display.</p>
+            <span class="stack"><span class="chip">Java</span><span class="chip">JavaFX</span><span class="chip">MySQL</span></span>
+            <span class="open-row">Open project <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+          </span>
+        </a>
 
-// Scroll-reveal with IntersectionObserver (re-trigger stagger on scroll)
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.animationPlayState = 'running';
-    }
-  });
-}, { threshold: 0.1 });
+        <a class="project-card" href="AFHM.html" data-tags="systems hardware" style="--accent:#67bff4" data-spotlight data-reveal>
+          <span class="thumb">
+            <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
+              <path d="M0 96 Q55 70 110 86 T220 78 V140 H0Z" fill="currentColor"/>
+              <path d="M0 116 Q55 90 110 104 T220 94 V140 H0Z" fill="currentColor" opacity=".46"/>
+              <line x1="12" y1="58" x2="208" y2="58" stroke="currentColor" stroke-width="3" stroke-dasharray="8 7"/>
+              <line x1="12" y1="34" x2="208" y2="34" stroke="#d6a109" stroke-width="3" stroke-dasharray="8 7"/>
+            </svg>
+          </span>
+          <span class="card-body">
+            <span class="card-meta">IoT monitoring dashboard</span>
+            <h3>AFHM</h3>
+            <p>Automated flood and hazard monitoring with live sensor simulation, water visualization, and threshold alerts.</p>
+            <span class="stack"><span class="chip">Arduino</span><span class="chip">Python</span></span>
+            <span class="open-row">Open project <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+          </span>
+        </a>
 
-document.querySelectorAll('.bento-tile').forEach(tile => {
-  tile.style.animationPlayState = 'paused';
-  observer.observe(tile);
-});
+        <a class="project-card" href="Dotion.html" data-tags="web systems" style="--accent:#d9b044" data-spotlight data-reveal>
+          <span class="thumb">
+            <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
+              <rect x="20" y="18" width="84" height="10" rx="2" fill="currentColor"/>
+              <rect x="20" y="42" width="174" height="7" rx="2" fill="currentColor" opacity=".64"/>
+              <rect x="20" y="60" width="148" height="7" rx="2" fill="currentColor" opacity=".48"/>
+              <rect x="20" y="84" width="52" height="42" rx="5" stroke="currentColor" stroke-width="3"/>
+              <rect x="84" y="84" width="52" height="42" rx="5" stroke="currentColor" stroke-width="3"/>
+              <rect x="148" y="84" width="52" height="42" rx="5" stroke="currentColor" stroke-width="3"/>
+            </svg>
+          </span>
+          <span class="card-body">
+            <span class="card-meta">Productivity workspace</span>
+            <h3>Dotion</h3>
+            <p>Notion-inspired editor with page hierarchy, course mode, templates, and per-page font and accent controls.</p>
+            <span class="stack"><span class="chip">Next.js</span><span class="chip">React</span><span class="chip">Supabase</span></span>
+            <span class="open-row">Open project <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+          </span>
+        </a>
 
-// Make direct links such as index.html#bento-grid land cleanly below the fixed header.
-const jumpToHashTarget = () => {
-  if (!window.location.hash) return;
-  const target = document.querySelector(window.location.hash);
-  if (!target) return;
-  const root = document.documentElement;
-  const previousScrollBehavior = root.style.scrollBehavior;
-  root.style.scrollBehavior = 'auto';
-  window.scrollTo({
-    top: target.getBoundingClientRect().top + window.scrollY - 88,
-    behavior: 'auto'
-  });
-  root.style.scrollBehavior = previousScrollBehavior;
-  if (target.id === 'bento-grid') {
-    document.querySelectorAll('.bento-tile').forEach(tile => {
-      tile.style.animationPlayState = 'running';
+        <a class="project-card" href="Radia.html" data-tags="web systems" style="--accent:#a786ff" data-spotlight data-reveal>
+          <span class="thumb">
+            <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
+              <rect x="16" y="18" width="42" height="60" rx="5" stroke="currentColor" stroke-width="3"/>
+              <rect x="68" y="18" width="42" height="60" rx="5" stroke="currentColor" stroke-width="3"/>
+              <rect x="120" y="18" width="42" height="60" rx="5" stroke="currentColor" stroke-width="3"/>
+              <rect x="172" y="18" width="32" height="60" rx="5" stroke="currentColor" stroke-width="3"/>
+              <circle cx="110" cy="112" r="20" stroke="currentColor" stroke-width="3"/>
+              <circle cx="110" cy="112" r="8" fill="currentColor" opacity=".28"/>
+              <line x1="110" y1="92" x2="70" y2="80" stroke="currentColor" stroke-width="2"/>
+              <line x1="110" y1="92" x2="150" y2="80" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </span>
+          <span class="card-body">
+            <span class="card-meta">Enterprise HR workspace</span>
+            <h3>Radia</h3>
+            <p>All-in-one HR system with kanban boards, org chart, onboarding courses, SOPs, and integration connectors.</p>
+            <span class="stack"><span class="chip">Next.js</span><span class="chip">React</span><span class="chip">Tailwind</span><span class="chip">Supabase</span></span>
+            <span class="open-row">Open project <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+          </span>
+        </a>
+
+        <a class="project-card" href="SipatGov.html" data-tags="civic web systems" style="--accent:#e56f54" data-spotlight data-reveal>
+          <span class="thumb">
+            <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
+              <path d="M110 10 L160 46 L160 92 C160 122 110 136 110 136 C110 136 60 122 60 92 L60 46 Z" stroke="currentColor" stroke-width="4"/>
+              <circle cx="110" cy="74" r="23" fill="currentColor" opacity=".2"/>
+              <path d="M98 74 L107 83 L124 62" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="card-body">
+            <span class="card-meta">Civic transparency platform</span>
+            <h3>SipatGov</h3>
+            <p>Philippine civic tech for tracking government promises, infrastructure projects, and community reports.</p>
+            <span class="stack"><span class="chip">React Native</span><span class="chip">Python</span><span class="chip">FastAPI</span></span>
+            <span class="open-row">Open project <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+          </span>
+        </a>
+
+        <a class="project-card" href="AlphaFitness.html" data-tags="systems health" style="--accent:#7892da" data-spotlight data-reveal>
+          <span class="thumb">
+            <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
+              <rect x="26" y="64" width="18" height="54" rx="4" fill="currentColor" opacity=".95"/>
+              <rect x="58" y="42" width="18" height="76" rx="4" fill="currentColor" opacity=".78"/>
+              <rect x="90" y="76" width="18" height="42" rx="4" fill="currentColor" opacity=".58"/>
+              <rect x="122" y="28" width="18" height="90" rx="4" fill="currentColor"/>
+              <rect x="154" y="52" width="18" height="66" rx="4" fill="currentColor" opacity=".72"/>
+              <rect x="186" y="86" width="18" height="32" rx="4" fill="currentColor" opacity=".48"/>
+              <line x1="18" y1="122" x2="208" y2="122" stroke="currentColor" stroke-width="3" opacity=".4"/>
+            </svg>
+          </span>
+          <span class="card-body">
+            <span class="card-meta">University gym system</span>
+            <h3>AlphaFitness</h3>
+            <p>Attendance logging, BMI classification, equipment-based workout tracking, and role-separated admin tools.</p>
+            <span class="stack"><span class="chip">Java</span><span class="chip">Swing</span></span>
+            <span class="open-row">Open project <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>&copy; 2026 John Christopher Diaz</span>
+      <span><a href="portfolio/portfolio.html#work">Return to portfolio</a> or <a href="https://github.com/Ic3krem" target="_blank" rel="noopener">visit GitHub</a></span>
+    </footer>
+  </main>
+
+  <script>
+    const revealObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+    document.querySelectorAll('[data-spotlight]').forEach(card => {
+      card.addEventListener('pointermove', event => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${((event.clientX - rect.left) / rect.width) * 100}%`);
+        card.style.setProperty('--my', `${((event.clientY - rect.top) / rect.height) * 100}%`);
+      });
     });
-  }
-};
 
-window.requestAnimationFrame(jumpToHashTarget);
-window.addEventListener('load', () => window.setTimeout(jumpToHashTarget, 0));
+    const filterButtons = Array.from(document.querySelectorAll('[data-filter]'));
+    const projectCards = Array.from(document.querySelectorAll('.project-card'));
 
-// Keep a polished fallback if the external deployment cannot be reached.
-const embedFrame = document.querySelector('[data-embed-frame]');
-const embedIframe = embedFrame?.querySelector('.feature-iframe');
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const filter = button.dataset.filter;
+        filterButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
 
-if (embedFrame && embedIframe) {
-  const revealEmbed = () => embedFrame.classList.add('is-embed-ready');
-  const keepFallback = () => embedFrame.classList.remove('is-embed-ready');
-
-  if ('fetch' in window && 'AbortController' in window) {
-    const controller = new AbortController();
-    let reachable = false;
-
-    fetch(embedIframe.src, {
-      mode: 'no-cors',
-      cache: 'no-store',
-      signal: controller.signal
-    })
-      .then(() => {
-        reachable = true;
-        revealEmbed();
-      })
-      .catch(keepFallback);
-
-    window.setTimeout(() => {
-      if (!reachable) {
-        controller.abort();
-        keepFallback();
-      }
-    }, 3200);
-  } else {
-    embedIframe.addEventListener('load', revealEmbed, { once: true });
-    window.setTimeout(keepFallback, 3600);
-  }
-}
-</script>
-
+        projectCards.forEach(card => {
+          const tags = card.dataset.tags.split(' ');
+          const shouldShow = filter === 'all' || tags.includes(filter);
+          card.classList.toggle('is-hidden', !shouldShow);
+        });
+      });
+    });
+  </script>
+  <script type="module" src="portfolio/glass-motion.js"></script>
 </body>
 </html>

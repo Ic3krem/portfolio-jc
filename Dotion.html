@@ -1,460 +1,1456 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dotion - Beautiful Docs & Knowledge Bases</title>
-<script>
-window.tailwind = window.tailwind || {};
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      colors: {
-        primary: 'var(--accent)',
-        bg: 'var(--bg)',
-        fg: 'var(--fg)',
-        card: 'var(--card)',
-        border: 'var(--border)',
-        muted: 'var(--muted)',
-      },
-      fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        manrope: ['Manrope', 'sans-serif'],
-        serif: ['Merriweather', 'serif'],
-        mono: ['JetBrains Mono', 'monospace'],
-      },
-      borderRadius: {
-        DEFAULT: '10px',
-      }
-    }
-  }
-}
-</script>
+<title>Dotion — Editorial Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ─── RESET ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+/* ─── DESIGN TOKENS ─────────────────────────────────────── */
 :root {
-  --accent: #ff9900;
-  --bg: #fcfcfc;
-  --fg: #0a0a0a;
-  --card: #ffffff;
-  --border: #d4d4d8;
-  --muted: #f1f1f2;
-}
-.dark {
-  --bg: #0a0a0a;
-  --fg: #fafafa;
-  --card: #171717;
-  --border: #3f3f46;
-  --muted: #27272a;
+  /* Accent — warm amber */
+  --accent:        oklch(75% 0.18 55);
+  --accent-dim:    oklch(75% 0.18 55 / 0.15);
+  --accent-glow:   oklch(75% 0.18 55 / 0.35);
+
+  /* Transition speed */
+  --t-fast:   cubic-bezier(0.16, 1, 0.3, 1);
+  --t-spring: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* Dark theme (default) */
+[data-theme="dark"] {
+  --bg:         oklch(10% 0.02 280);
+  --bg-raised:  oklch(13% 0.02 280);
+  --bg-float:   oklch(15% 0.025 280);
+  --fg:         oklch(94% 0.008 60);
+  --fg-muted:   oklch(55% 0.01 60);
+  --fg-faint:   oklch(35% 0.01 60);
+  --border:     oklch(22% 0.015 280);
+  --border-dim: oklch(18% 0.012 280);
+  --glass-bg:   oklch(14% 0.02 280 / 0.65);
+  --glass-border: oklch(100% 0 0 / 0.08);
+  --sidebar-bg: oklch(12% 0.02 280);
+  --card-bg:    oklch(14% 0.02 280);
+  --muted-bg:   oklch(16% 0.02 280);
+  --code-bg:    oklch(12.5% 0.02 280);
+  --scrollbar:  oklch(25% 0.015 280);
+}
+
+/* Light theme — warm cream */
+[data-theme="light"] {
+  --bg:         oklch(97% 0.01 80);
+  --bg-raised:  oklch(100% 0 0);
+  --bg-float:   oklch(99% 0.005 80);
+  --fg:         oklch(18% 0.015 60);
+  --fg-muted:   oklch(48% 0.015 60);
+  --fg-faint:   oklch(68% 0.01 60);
+  --border:     oklch(86% 0.012 80);
+  --border-dim: oklch(90% 0.01 80);
+  --glass-bg:   oklch(98% 0.008 80 / 0.75);
+  --glass-border: oklch(0% 0 0 / 0.07);
+  --sidebar-bg: oklch(98% 0.009 80);
+  --card-bg:    oklch(100% 0 0);
+  --muted-bg:   oklch(95% 0.012 80);
+  --code-bg:    oklch(93% 0.01 80);
+  --scrollbar:  oklch(80% 0.012 80);
+}
+
+/* ─── BASE ───────────────────────────────────────────────── */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   background: var(--bg);
   color: var(--fg);
-  transition: background 0.3s, color 0.3s;
   overflow-x: hidden;
+  transition: background 0.35s var(--t-fast), color 0.35s var(--t-fast);
+  line-height: 1.6;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 10px; }
 
-/* Hero animated gradient */
-@keyframes heroGlow {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(30px, -20px) scale(1.1); }
-  50% { transform: translate(-20px, 20px) scale(0.95); }
-  75% { transform: translate(10px, 10px) scale(1.05); }
-}
-.hero-gradient {
-  position: relative;
-  overflow: hidden;
-  background: #0a0a0a;
-}
-.hero-gradient::before,
-.hero-gradient::after,
-.hero-gradient .glow-3 {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.4;
-  animation: heroGlow 8s ease-in-out infinite;
-}
-.hero-gradient::before {
-  width: 500px; height: 500px;
-  background: var(--accent);
-  top: -100px; left: 20%;
-}
-.hero-gradient::after {
-  width: 400px; height: 400px;
-  background: #e11d48;
-  bottom: -80px; right: 15%;
-  animation-delay: -3s;
-}
-.hero-gradient .glow-3 {
-  width: 350px; height: 350px;
-  background: #7c3aed;
-  top: 30%; left: 50%;
-  animation-delay: -5s;
-}
+/* ─── TYPOGRAPHY SCALE ───────────────────────────────────── */
+.t-display   { font-family: 'Instrument Serif', Georgia, serif; }
+.t-body      { font-family: 'Inter', system-ui, sans-serif; }
+.t-mono      { font-family: 'JetBrains Mono', 'Courier New', monospace; }
 
-/* Floating cards */
-@keyframes floatCard {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(1deg); }
-}
-.float-card { animation: floatCard 4s ease-in-out infinite; }
-.float-card:nth-child(2) { animation-delay: -1.5s; }
-.float-card:nth-child(3) { animation-delay: -3s; }
+/* Doc font overrides */
+.doc-font-sans  { font-family: 'Inter', system-ui, sans-serif; }
+.doc-font-serif { font-family: 'Instrument Serif', Georgia, serif; }
+.doc-font-mono  { font-family: 'JetBrains Mono', monospace; }
 
-/* Glass */
-.glass {
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255,255,255,0.12);
-}
-
-/* Page transitions */
+/* ─── PAGE ROUTING ───────────────────────────────────────── */
 .page { display: none; }
 .page.active { display: block; }
 
-/* Sidebar */
-.sidebar-item {
-  padding: 6px 12px;
+/* ─── GRAIN OVERLAY ──────────────────────────────────────── */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────── */
+@keyframes blobDrift1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%      { transform: translate(60px,-40px) scale(1.12); }
+  66%      { transform: translate(-30px,50px) scale(0.94); }
+}
+@keyframes blobDrift2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%      { transform: translate(-50px,30px) scale(1.08); }
+  66%      { transform: translate(40px,-60px) scale(1.15); }
+}
+@keyframes blobDrift3 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(30px,40px) scale(0.9); }
+}
+@keyframes floatUp {
+  0%,100% { transform: translateY(0px) rotate(0deg); }
+  50%      { transform: translateY(-14px) rotate(0.8deg); }
+}
+@keyframes floatUp2 {
+  0%,100% { transform: translateY(0px) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(-0.5deg); }
+}
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes revealFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+@keyframes settingsIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes settingsOut {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
+.reveal { animation: revealUp 0.65s var(--t-fast) both; }
+.reveal-d1 { animation-delay: 0.08s; }
+.reveal-d2 { animation-delay: 0.16s; }
+.reveal-d3 { animation-delay: 0.26s; }
+.reveal-d4 { animation-delay: 0.38s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── NAVBAR ─────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 80;
+  height: 60px;
+  display: flex; align-items: center;
+  padding: 0 32px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid var(--glass-border);
+  transition: background 0.35s var(--t-fast);
+}
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; text-decoration: none;
+}
+.nav-logo-dot {
+  width: 22px; height: 22px;
   border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  user-select: none;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.3s var(--t-spring);
 }
-.sidebar-item:hover { background: var(--muted); }
-.sidebar-item.active { background: var(--muted); font-weight: 500; }
-
-/* Toolbar button */
-.tb-btn {
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.15s;
-  border: none;
-  background: transparent;
+.nav-logo:hover .nav-logo-dot { transform: rotate(15deg) scale(1.1); }
+.nav-logo-dot svg { width: 12px; height: 12px; color: oklch(10% 0 0); fill: currentColor; }
+.nav-logo-text {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 20px;
   color: var(--fg);
-  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.01em;
 }
-.tb-btn:hover { background: var(--muted); }
+.nav-links {
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-link {
+  position: relative;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: var(--fg-muted);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.2s var(--t-fast), background 0.2s var(--t-fast);
+  cursor: pointer;
+  background: none; border: none; font-family: inherit;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 12px; right: 12px;
+  height: 1.5px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--t-fast);
+  border-radius: 2px;
+}
+.nav-link:hover { color: var(--fg); }
+.nav-link:hover::after { transform: scaleX(1); }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
 
-/* Checkbox */
-.check-item {
+/* Icon button */
+.icon-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: transparent;
+  color: var(--fg-muted);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s var(--t-fast), color 0.2s var(--t-fast);
+}
+.icon-btn:hover { background: var(--border-dim); color: var(--fg); }
+
+/* Primary button */
+.btn-primary {
+  padding: 8px 20px;
+  background: var(--accent);
+  color: oklch(10% 0.02 280);
+  border: none;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s var(--t-fast), transform 0.2s var(--t-spring);
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+/* Ghost button */
+.btn-ghost {
+  padding: 8px 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  color: var(--fg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s var(--t-fast), transform 0.2s var(--t-spring);
+}
+.btn-ghost:hover { background: var(--border-dim); transform: translateY(-1px); }
+
+/* ─── HERO ───────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 4px 0;
+  overflow: hidden;
+  background: var(--bg);
 }
-.check-box {
-  width: 18px; height: 18px;
-  border-radius: 4px;
-  border: 2px solid var(--border);
+[data-theme="dark"] .hero { background: oklch(9% 0.025 280); }
+[data-theme="light"] .hero { background: oklch(96% 0.014 80); }
+
+.hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(110px);
+  pointer-events: none;
+  will-change: transform;
+}
+.hero-blob-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, oklch(75% 0.18 55 / 0.28), transparent 70%);
+  top: -80px; left: 15%;
+  animation: blobDrift1 12s ease-in-out infinite;
+}
+.hero-blob-2 {
+  width: 480px; height: 480px;
+  background: radial-gradient(circle, oklch(60% 0.14 310 / 0.22), transparent 70%);
+  bottom: -60px; right: 10%;
+  animation: blobDrift2 14s ease-in-out infinite;
+  animation-delay: -5s;
+}
+.hero-blob-3 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, oklch(65% 0.16 160 / 0.18), transparent 70%);
+  top: 40%; left: 50%;
+  animation: blobDrift3 10s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+.hero-inner {
+  position: relative; z-index: 2;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 120px 40px 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+  width: 100%;
+}
+.hero-kicker {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 14px 5px 8px;
+  border: 1px solid var(--accent-glow);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 24px;
+  background: var(--accent-dim);
+}
+.hero-kicker-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: revealFade 2s ease-in-out infinite alternate;
+}
+.hero-h1 {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(44px, 5.5vw, 72px);
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-bottom: 24px;
+}
+.hero-h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--fg-muted);
+  line-height: 1.7;
+  max-width: 460px;
+  margin-bottom: 40px;
+}
+.hero-cta {
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.hero-visual {
+  position: relative;
+  height: 440px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Floating cards */
+.float-card {
+  position: absolute;
+  border-radius: 16px;
+  padding: 20px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px oklch(0% 0 0 / 0.18), inset 0 1px 0 oklch(100% 0 0 / 0.06);
+}
+.float-card-1 {
+  top: 24px; left: 0;
+  width: 260px;
+  animation: floatUp 5s ease-in-out infinite;
+}
+.float-card-2 {
+  top: 120px; right: 0;
+  width: 240px;
+  animation: floatUp2 6.5s ease-in-out infinite;
+  animation-delay: -2s;
+}
+.float-card-3 {
+  bottom: 32px; left: 60px;
+  width: 220px;
+  animation: floatUp 7s ease-in-out infinite;
+  animation-delay: -4s;
+}
+.card-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-faint);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.card-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 17px;
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+.card-sub {
+  font-size: 12px;
+  color: var(--fg-muted);
+  line-height: 1.5;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.progress-track {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.avatar-stack {
+  display: flex; align-items: center;
+  margin-top: 12px; gap: 0;
+}
+.avatar {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--glass-bg);
+  margin-right: -6px;
+}
+
+/* ─── SECTION HEADING ────────────────────────────────────── */
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-bottom: 16px;
+}
+.section-body {
+  font-size: 16px;
+  color: var(--fg-muted);
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+/* ─── GALLERY SECTION ────────────────────────────────────── */
+.gallery-section {
+  padding: 100px 40px;
+  background: var(--bg-raised);
+  border-top: 1px solid var(--border-dim);
+  border-bottom: 1px solid var(--border-dim);
+}
+.gallery-section-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.gallery-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.gallery-card {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-dim);
   cursor: pointer;
+  transition: transform 0.35s var(--t-spring), box-shadow 0.35s var(--t-fast), border-color 0.25s var(--t-fast);
+  background: var(--card-bg);
+}
+.gallery-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px oklch(0% 0 0 / 0.14);
+  border-color: var(--border);
+}
+.gallery-thumb {
+  height: 150px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  position: relative;
+  overflow: hidden;
+}
+.gallery-info {
+  padding: 18px 20px 20px;
+}
+.gallery-info h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--fg);
+  margin-bottom: 6px;
+}
+.gallery-info p {
+  font-size: 13px;
+  color: var(--fg-muted);
+  line-height: 1.55;
+}
+
+/* ─── FEATURES SECTION ───────────────────────────────────── */
+.features-section {
+  padding: 100px 40px;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+[data-theme="dark"] .features-section {
+  background: oklch(9.5% 0.022 280);
+}
+.features-section-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.features-header {
+  max-width: 560px;
+  margin-bottom: 64px;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  border: 1px solid var(--border-dim);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.feature-cell {
+  background: var(--card-bg);
+  padding: 32px 28px;
+  transition: background 0.2s var(--t-fast);
+  position: relative;
+}
+.feature-cell:hover { background: var(--muted-bg); }
+.feature-cell::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: var(--border-dim);
+}
+.feature-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--accent-dim);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+  color: var(--accent);
+}
+.feature-icon svg { width: 18px; height: 18px; }
+.feature-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 19px;
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+.feature-desc {
+  font-size: 14px;
+  color: var(--fg-muted);
+  line-height: 1.65;
+}
+
+/* ─── TESTIMONIALS SECTION ───────────────────────────────── */
+.testimonials-section {
+  padding: 100px 40px;
+  border-top: 1px solid var(--border-dim);
+  background: var(--bg-raised);
+}
+.testimonials-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.testimonials-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+.testimonial-card {
+  border: 1px solid var(--border-dim);
+  border-radius: 16px;
+  padding: 32px;
+  background: var(--card-bg);
+  position: relative;
+  overflow: hidden;
+}
+.testimonial-card::before {
+  content: '\201C';
+  position: absolute;
+  top: 16px; right: 24px;
+  font-family: 'Instrument Serif', serif;
+  font-size: 80px;
+  color: var(--accent);
+  opacity: 0.2;
+  line-height: 1;
+  pointer-events: none;
+}
+.testimonial-text {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--fg);
+  margin-bottom: 24px;
+}
+.testimonial-author {
+  display: flex; align-items: center; gap: 12px;
+}
+.author-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
   flex-shrink: 0;
-  transition: all 0.2s;
+}
+.author-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fg);
+  line-height: 1.3;
+}
+.author-role {
+  font-size: 12px;
+  color: var(--fg-muted);
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────── */
+.footer {
+  padding: 40px;
+  border-top: 1px solid var(--border-dim);
+  background: var(--bg);
+}
+.footer-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex; align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-tagline {
+  font-size: 13px;
+  color: var(--fg-faint);
+}
+.footer-links {
+  display: flex; gap: 20px;
+}
+.footer-link {
+  font-size: 13px;
+  color: var(--fg-faint);
+  text-decoration: none;
+  transition: color 0.2s var(--t-fast);
+}
+.footer-link:hover { color: var(--fg-muted); }
+
+/* ─── WORKSPACE ──────────────────────────────────────────── */
+#workspace-page {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-dim);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.35s var(--t-fast);
+}
+.sidebar.collapsed { width: 0; }
+
+.sidebar-header {
+  padding: 14px 14px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.ws-logo {
+  display: flex; align-items: center; gap: 8px;
+  cursor: pointer;
+}
+.ws-logo-mark {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.ws-logo-mark svg { width: 10px; height: 10px; color: oklch(10% 0 0); }
+.ws-logo-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: 16px;
+  color: var(--fg);
+}
+
+.sidebar-new-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: calc(100% - 24px);
+  margin: 6px 12px 4px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+  background: transparent;
+  color: var(--fg-faint);
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: background 0.2s var(--t-fast), color 0.2s var(--t-fast), border-color 0.2s var(--t-fast);
+  flex-shrink: 0;
+}
+.sidebar-new-btn:hover {
+  background: var(--border-dim);
+  color: var(--fg-muted);
+  border-color: var(--border);
+}
+
+.sidebar-section-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-faint);
+  padding: 12px 16px 5px;
+}
+
+.sidebar-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: background 0.18s var(--t-fast), color 0.18s var(--t-fast);
+  white-space: nowrap;
+  overflow: hidden;
+  user-select: none;
+}
+.sidebar-item:hover { background: var(--border-dim); color: var(--fg); }
+.sidebar-item.active {
+  background: var(--accent-dim);
+  color: var(--fg);
+  font-weight: 500;
+}
+.sidebar-item .item-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+.sidebar-item.parent-item {
+  justify-content: space-between;
+}
+.tree-children {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s var(--t-fast);
+  padding-left: 18px;
+}
+.tree-children.open { max-height: 400px; }
+.tree-arrow {
+  flex-shrink: 0;
+  transition: transform 0.25s var(--t-fast);
+  opacity: 0.4;
+}
+.tree-arrow.open { transform: rotate(90deg); }
+
+.sidebar-footer {
+  padding: 8px;
+  border-top: 1px solid var(--border-dim);
+  flex-shrink: 0;
+}
+
+.sidebar-expand-btn {
+  display: none;
+  position: fixed;
+  top: 12px; left: 12px;
+  z-index: 50;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s var(--t-fast);
+}
+.sidebar-expand-btn:hover { background: var(--muted-bg); }
+.sidebar-expand-btn.visible { display: flex; }
+
+/* Editor main */
+.editor-main {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Cover */
+.doc-cover {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+}
+.doc-cover-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg,
+    oklch(75% 0.18 55) 0%,
+    oklch(60% 0.14 310) 50%,
+    oklch(65% 0.16 160) 100%
+  );
+}
+.doc-icon-float {
+  position: absolute;
+  bottom: -28px; left: 68px;
+  width: 58px; height: 58px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 3px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 4px 16px oklch(0% 0 0 / 0.12);
+}
+
+/* Doc content */
+.doc-content {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 52px 40px 100px;
+}
+.doc-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  margin-bottom: 6px;
+  outline: none;
+}
+.doc-meta {
+  font-size: 12.5px;
+  color: var(--fg-faint);
+  margin-bottom: 32px;
+  display: flex; gap: 14px;
+}
+
+/* Toolbar */
+.doc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1px;
+  padding: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-dim);
+  border-radius: 10px;
+  margin-bottom: 32px;
+  position: sticky;
+  top: 10px;
+  z-index: 20;
+  box-shadow: 0 4px 20px oklch(0% 0 0 / 0.08);
+}
+.tb-btn {
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--fg-muted);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s var(--t-fast), color 0.15s var(--t-fast);
+  display: flex; align-items: center; justify-content: center;
+  line-height: 1;
+}
+.tb-btn:hover { background: var(--border-dim); color: var(--fg); }
+.tb-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border-dim);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+.tb-spacer { flex: 1; }
+
+/* Doc body elements */
+.doc-body h2 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--fg);
+  margin: 32px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-dim);
+  letter-spacing: -0.015em;
+}
+.doc-body h3 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--fg);
+  margin: 24px 0 10px;
+}
+.doc-body p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--fg);
+  opacity: 0.88;
+}
+.doc-body ul, .doc-body ol {
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.doc-body li {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--fg);
+  opacity: 0.88;
+}
+
+/* Mention pills */
+.mention {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Agenda list */
+.agenda-list { list-style: none; padding: 0; }
+.agenda-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 0;
+  font-size: 15px;
+  border-bottom: 1px solid var(--border-dim);
+}
+.agenda-item:last-child { border: none; }
+.agenda-bullet {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+/* Checkboxes */
+.check-list { display: flex; flex-direction: column; gap: 3px; }
+.check-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0;
+  cursor: pointer;
+}
+.check-box {
+  width: 17px; height: 17px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s var(--t-fast);
 }
 .check-box.checked {
   background: var(--accent);
   border-color: var(--accent);
 }
 .check-box.checked::after {
-  content: '✓';
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
+  content: '';
+  width: 9px; height: 5px;
+  border-left: 2px solid oklch(10% 0 0);
+  border-bottom: 2px solid oklch(10% 0 0);
+  transform: rotate(-45deg) translate(1px, -1px);
 }
-.check-item.done span { text-decoration: line-through; opacity: 0.5; }
+.check-item.done span {
+  text-decoration: line-through;
+  color: var(--fg-faint);
+}
+.check-label { font-size: 14.5px; color: var(--fg); }
 
-/* Accent color dot */
-.accent-dot {
-  width: 24px; height: 24px;
-  border-radius: 50%;
+/* Blockquote */
+.doc-blockquote {
+  margin: 20px 0;
+  padding: 14px 20px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-dim);
+  border-radius: 0 10px 10px 0;
+  font-size: 15px;
+  font-style: italic;
+  line-height: 1.75;
+  color: var(--fg-muted);
+}
+
+/* Code block */
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border-dim);
+  border-radius: 10px;
+  padding: 18px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.75;
+  overflow-x: auto;
+  margin: 20px 0;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.code-lang {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-faint);
+  font-family: 'Inter', sans-serif;
+}
+.code-copy-btn {
+  font-size: 11.5px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 3px 10px;
   cursor: pointer;
-  border: 3px solid transparent;
-  transition: border-color 0.2s, transform 0.15s;
+  color: var(--fg-faint);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s var(--t-fast), color 0.2s var(--t-fast);
 }
-.accent-dot:hover { transform: scale(1.15); }
-.accent-dot.active { border-color: var(--fg); }
+.code-copy-btn:hover { background: var(--border-dim); color: var(--fg-muted); }
 
-/* Table in editor */
+/* Table */
+.doc-table-wrap {
+  border: 1px solid var(--border-dim);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
 .doc-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13.5px;
 }
 .doc-table th {
   text-align: left;
-  padding: 10px 14px;
-  border-bottom: 2px solid var(--border);
+  padding: 10px 16px;
+  background: var(--muted-bg);
+  font-size: 11px;
   font-weight: 600;
-  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--fg);
-  opacity: 0.6;
+  letter-spacing: 0.06em;
+  color: var(--fg-faint);
+  border-bottom: 1px solid var(--border-dim);
 }
 .doc-table td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-dim);
+  color: var(--fg);
 }
+.doc-table tr:last-child td { border: none; }
+.doc-table tr:hover td { background: var(--border-dim); }
 
 /* Status pills */
 .pill {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
   font-weight: 500;
 }
 
-/* Code block */
-.code-block {
-  background: var(--muted);
-  border-radius: 8px;
-  padding: 16px 20px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  line-height: 1.7;
-  overflow-x: auto;
-  border: 1px solid var(--border);
-}
-
-/* Template card */
-.template-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 24px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
-}
-.template-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-}
-
-/* Settings panel */
+/* ─── SETTINGS PANEL ─────────────────────────────────────── */
 .settings-panel {
   position: fixed;
-  right: -380px;
-  top: 0;
-  width: 360px;
+  right: 0; top: 0;
+  width: 340px;
   height: 100vh;
-  background: var(--card);
-  border-left: 1px solid var(--border);
-  z-index: 60;
-  transition: right 0.3s ease;
+  background: var(--card-bg);
+  border-left: 1px solid var(--border-dim);
+  z-index: 70;
   overflow-y: auto;
-  padding: 28px;
+  padding: 24px;
+  transform: translateX(100%);
+  transition: transform 0.35s var(--t-fast);
+  box-shadow: -8px 0 32px oklch(0% 0 0 / 0.12);
 }
-.settings-panel.open { right: 0; }
+.settings-panel.open { transform: translateX(0); }
 
-/* Toggle switch */
+.settings-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.35);
+  z-index: 65;
+  backdrop-filter: blur(2px);
+}
+.settings-overlay.open { display: block; }
+
+.settings-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.settings-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  color: var(--fg);
+}
+.settings-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-faint);
+  margin-bottom: 10px;
+  display: block;
+}
+.settings-group { margin-bottom: 28px; }
+
+/* Font radio items */
+.font-radio {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--border-dim);
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: border-color 0.2s var(--t-fast), background 0.2s var(--t-fast);
+}
+.font-radio:hover { background: var(--border-dim); border-color: var(--border); }
+.font-radio input { accent-color: var(--accent); }
+.font-radio-name { font-size: 14px; font-weight: 500; color: var(--fg); }
+.font-radio-sub { font-size: 11.5px; color: var(--fg-faint); }
+
+/* Accent dots */
+.accent-dots { display: flex; gap: 10px; flex-wrap: wrap; }
+.accent-dot {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: transform 0.2s var(--t-spring), border-color 0.2s var(--t-fast), box-shadow 0.2s var(--t-fast);
+  flex-shrink: 0;
+}
+.accent-dot:hover { transform: scale(1.18); }
+.accent-dot.active {
+  border-color: var(--fg);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--fg);
+}
+
+/* Layout radio */
+.layout-radio {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-dim);
+  cursor: pointer;
+  margin-bottom: 6px;
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  transition: background 0.2s, border-color 0.2s;
+}
+.layout-radio:hover { background: var(--border-dim); color: var(--fg); }
+.layout-radio input { accent-color: var(--accent); }
+
+/* Toggle */
+.toggle-wrap {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-dim);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.toggle-info-name { font-size: 14px; font-weight: 500; color: var(--fg); }
+.toggle-info-sub { font-size: 12px; color: var(--fg-faint); margin-top: 2px; }
 .toggle-track {
-  width: 44px; height: 24px;
+  width: 42px; height: 23px;
   border-radius: 12px;
   background: var(--border);
   cursor: pointer;
   position: relative;
-  transition: background 0.2s;
+  transition: background 0.25s var(--t-fast);
+  flex-shrink: 0;
 }
 .toggle-track.on { background: var(--accent); }
 .toggle-knob {
-  width: 20px; height: 20px;
+  width: 19px; height: 19px;
   border-radius: 50%;
   background: white;
   position: absolute;
   top: 2px; left: 2px;
-  transition: left 0.2s;
+  transition: left 0.25s var(--t-spring);
+  box-shadow: 0 1px 4px oklch(0% 0 0 / 0.2);
 }
-.toggle-track.on .toggle-knob { left: 22px; }
+.toggle-track.on .toggle-knob { left: 21px; }
 
-/* Feature card */
-.feature-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.feature-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-}
-
-/* Testimonial */
-.testimonial-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px;
-}
-
-/* Nav link */
-.nav-link {
-  position: relative;
-  transition: color 0.2s;
-}
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px; left: 0;
-  width: 0; height: 2px;
-  background: var(--accent);
-  transition: width 0.2s;
-}
-.nav-link:hover::after { width: 100%; }
-
-/* Gallery card hover */
-.gallery-card {
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--card);
-  border: 1px solid var(--border);
-  transition: transform 0.2s, box-shadow 0.2s;
+/* Export btn */
+.export-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--border-dim);
+  background: var(--muted-bg);
+  color: var(--fg-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.2s var(--t-fast), color 0.2s var(--t-fast);
 }
-.gallery-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+.export-btn:hover { background: var(--border); color: var(--fg); }
+
+/* ─── TEMPLATES PAGE ─────────────────────────────────────── */
+#templates-page { min-height: 100vh; background: var(--bg); }
+
+.templates-topbar {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 32px;
 }
-
-/* Sidebar tree expand */
-.tree-children {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-  padding-left: 20px;
+.templates-topbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.tree-children.open { max-height: 300px; }
-
-/* Page font classes */
-.doc-font-sans { font-family: 'Inter', sans-serif; }
-.doc-font-serif { font-family: 'Merriweather', serif; }
-.doc-font-mono { font-family: 'JetBrains Mono', monospace; }
-
-/* Fade in */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+.back-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: none;
+  color: var(--fg-muted);
+  font-size: 13.5px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.2s var(--t-fast), color 0.2s var(--t-fast);
 }
-.fade-in { animation: fadeIn 0.5s ease forwards; }
-.fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
-.fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
-.fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
-.fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
+.back-btn:hover { background: var(--border-dim); color: var(--fg); }
 
-@media (max-width: 700px) {
-  #landing-page > nav > div {
-    height: 64px !important;
-    padding: 0 24px !important;
-    max-width: none !important;
+.templates-body {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 40px 100px;
+}
+.templates-hero {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+}
+.template-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-dim);
+  border-radius: 14px;
+  padding: 26px;
+  cursor: pointer;
+  transition: transform 0.35s var(--t-spring), box-shadow 0.3s var(--t-fast), border-color 0.25s var(--t-fast);
+}
+.template-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px oklch(0% 0 0 / 0.12);
+  border-color: var(--border);
+}
+.template-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+.template-name {
+  font-family: 'Instrument Serif', serif;
+  font-size: 19px;
+  color: var(--fg);
+  margin-bottom: 8px;
+}
+.template-desc {
+  font-size: 13.5px;
+  color: var(--fg-muted);
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+.template-use-btn {
+  padding: 7px 16px;
+  background: var(--accent);
+  color: oklch(10% 0.02 280);
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s var(--t-fast);
+}
+.template-use-btn:hover { opacity: 0.85; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    padding: 110px 24px 60px;
+    gap: 48px;
   }
-  #landing-page > nav > div > div:first-child {
-    gap: 18px !important;
-    min-width: 0;
-  }
-  #landing-page > nav > div > div:first-child > div:nth-child(2) {
-    display: none !important;
-  }
-  #landing-page > nav > div > div:last-child {
-    gap: 6px !important;
-  }
-  #landing-page > nav > div > div:last-child button:last-child {
-    display: none !important;
-  }
-  #landing-page .hero-gradient {
-    padding-top: 96px !important;
-  }
+  .hero-visual { height: 300px; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .features-grid { grid-template-columns: 1fr; }
+  .gallery-section, .features-section, .testimonials-section { padding: 64px 20px; }
+  .templates-body { padding: 40px 20px 80px; }
+  .doc-content { padding: 40px 20px 80px; }
+  .hero-visual { display: none; }
+  .settings-panel { width: 100% !important; }
+  .sidebar { width: 0 !important; }
+  .sidebar-expand-btn { display: flex !important; }
+  .doc-content { padding: 32px 16px 80px !important; }
+  .hero-inner { padding: 60px 20px 40px !important; }
+  .float-card-1, .float-card-2, .float-card-3 { display: none !important; }
+  .gallery-grid { grid-template-columns: 1fr !important; }
+  .templates-grid { grid-template-columns: 1fr !important; }
 }
 </style>
 </head>
 <body>
 
-<!-- ===================== LANDING PAGE ===================== -->
+<!-- ═══════════════════════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════════════════════ -->
 <div id="landing-page" class="page active">
 
   <!-- Navbar -->
-  <nav style="position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,10,10,0.7);border-bottom:1px solid rgba(255,255,255,0.08);">
-    <div style="max-width:1200px;margin:0 auto;padding:0 24px;height:64px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="display:flex;align-items:center;gap:32px;">
-        <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="navigate('landing')">
-          <div style="width:10px;height:10px;border-radius:50%;background:var(--accent);"></div>
-          <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;color:#fafafa;">dotion</span>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" onclick="navigate('landing')" href="#">
+        <div class="nav-logo-dot">
+          <svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 1L11 4V8L6 11L1 8V4Z"/></svg>
         </div>
-        <div style="display:flex;gap:24px;">
-          <a href="#features-section" class="nav-link" style="color:#a1a1aa;font-size:14px;text-decoration:none;">Features</a>
-          <a href="#" onclick="navigate('templates');return false;" class="nav-link" style="color:#a1a1aa;font-size:14px;text-decoration:none;">Templates</a>
-          <a href="#" class="nav-link" style="color:#a1a1aa;font-size:14px;text-decoration:none;">Docs</a>
-        </div>
+        <span class="nav-logo-text">dotion</span>
+      </a>
+      <div class="nav-links">
+        <a href="#features-section" class="nav-link">Features</a>
+        <button class="nav-link" onclick="navigate('templates')">Templates</button>
+        <a href="#" class="nav-link">Docs</a>
       </div>
-      <div style="display:flex;align-items:center;gap:16px;">
-        <button onclick="toggleTheme()" style="background:none;border:none;color:#a1a1aa;cursor:pointer;padding:8px;border-radius:6px;display:flex;align-items:center;" title="Toggle theme">
-          <svg id="theme-icon-landing" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      <div class="nav-actions">
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="theme-btn-landing">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Open App</button>
+        <button class="btn-primary" onclick="navigate('workspace')">Open App</button>
       </div>
     </div>
   </nav>
 
   <!-- Hero -->
-  <section class="hero-gradient" style="min-height:100vh;display:flex;align-items:center;padding:100px 24px 60px;">
-    <div class="glow-3"></div>
-    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:60px;width:100%;flex-wrap:wrap;position:relative;z-index:2;">
-      <div style="flex:1;min-width:320px;" class="fade-in">
-        <div style="display:inline-block;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--accent);border:1px solid rgba(255,153,0,0.3);margin-bottom:20px;">Now in public beta</div>
-        <h1 style="font-family:'Manrope',sans-serif;font-size:clamp(36px,5vw,56px);font-weight:800;line-height:1.1;color:#fafafa;margin-bottom:20px;">Build beautiful docs, courses, and knowledge bases</h1>
-        <p style="font-size:18px;color:#a1a1aa;line-height:1.6;margin-bottom:32px;max-width:500px;">The all-in-one workspace for modern teams. Create stunning documentation with a powerful block editor, publish anywhere, and collaborate in real-time.</p>
-        <div style="display:flex;gap:12px;flex-wrap:wrap;">
-          <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-1px)'" onmouseout="this.style.transform='translateY(0)'">Get Started Free</button>
-          <button onclick="navigate('templates')" style="background:rgba(255,255,255,0.08);color:#fafafa;border:1px solid rgba(255,255,255,0.12);padding:12px 28px;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Browse Templates</button>
+  <section class="hero grain">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+    <div class="hero-inner">
+      <div>
+        <div class="hero-kicker reveal">
+          <span class="hero-kicker-dot"></span>
+          Now in public beta
+        </div>
+        <h1 class="hero-h1 reveal reveal-d1">
+          Write docs that<br>feel <em>alive</em>
+        </h1>
+        <p class="hero-sub reveal reveal-d2">
+          An editorial workspace for teams who care about craft.
+          Rich-text editing, page hierarchy, course mode —
+          all in a single focused canvas.
+        </p>
+        <div class="hero-cta reveal reveal-d3">
+          <button class="btn-primary" onclick="navigate('workspace')">Start writing free</button>
+          <button class="btn-ghost" onclick="navigate('templates')">Browse templates</button>
         </div>
       </div>
-      <div style="flex:1;min-width:320px;display:flex;justify-content:center;position:relative;height:400px;" class="fade-in fade-in-delay-2">
-        <!-- Floating cards -->
-        <div class="float-card glass" style="position:absolute;top:20px;left:10%;width:260px;padding:20px;border-radius:12px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-            <div style="width:8px;height:8px;border-radius:50%;background:#0f9d73;"></div>
-            <span style="font-size:12px;color:#a1a1aa;font-weight:500;">PUBLISHED</span>
+      <div class="hero-visual reveal reveal-d2">
+        <!-- Card 1: Published doc -->
+        <div class="float-card float-card-1">
+          <div class="card-label">
+            <span class="status-dot" style="background: oklch(65% 0.16 160);"></span>
+            Published
           </div>
-          <div style="font-family:'Manrope',sans-serif;font-weight:700;color:#fafafa;margin-bottom:8px;">API Reference v2</div>
-          <div style="font-size:13px;color:#71717a;">Complete endpoint docs with interactive examples</div>
+          <div class="card-title">API Reference v2.1</div>
+          <div class="card-sub">Complete endpoint docs with interactive examples and authentication guides.</div>
+          <div class="progress-track">
+            <div class="progress-fill" style="width: 78%;"></div>
+          </div>
         </div>
-        <div class="float-card glass" style="position:absolute;top:140px;right:5%;width:240px;padding:20px;border-radius:12px;">
-          <div style="display:flex;gap:6px;margin-bottom:12px;">
-            <div style="width:28px;height:4px;border-radius:2px;background:var(--accent);"></div>
-            <div style="width:28px;height:4px;border-radius:2px;background:var(--accent);opacity:0.5;"></div>
-            <div style="width:28px;height:4px;border-radius:2px;background:var(--accent);opacity:0.2;"></div>
+        <!-- Card 2: Course mode -->
+        <div class="float-card float-card-2">
+          <div class="card-label">Course Mode</div>
+          <div class="card-title">Onboarding Track</div>
+          <div class="card-sub">3 modules · 12 lessons · 4h estimated</div>
+          <div style="display: flex; gap: 5px; margin-top: 12px;">
+            <div style="width: 28px; height: 5px; border-radius: 3px; background: var(--accent);"></div>
+            <div style="width: 28px; height: 5px; border-radius: 3px; background: var(--accent); opacity: 0.5;"></div>
+            <div style="width: 28px; height: 5px; border-radius: 3px; background: var(--border);"></div>
           </div>
-          <div style="font-family:'Manrope',sans-serif;font-weight:700;color:#fafafa;margin-bottom:8px;">Course Builder</div>
-          <div style="font-size:13px;color:#71717a;">3 modules, 12 lessons</div>
         </div>
-        <div class="float-card glass" style="position:absolute;bottom:20px;left:20%;width:220px;padding:16px;border-radius:12px;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-            <div style="width:24px;height:24px;border-radius:6px;background:rgba(124,58,237,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;">📋</div>
-            <span style="font-size:13px;color:#fafafa;font-weight:500;">Meeting Notes</span>
-          </div>
-          <div style="display:flex;gap:4px;">
-            <div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#ff9900,#e11d48);"></div>
-            <div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#0f9d73,#7c3aed);margin-left:-6px;"></div>
-            <span style="font-size:12px;color:#71717a;margin-left:6px;">2 collaborators</span>
+        <!-- Card 3: Collaboration -->
+        <div class="float-card float-card-3">
+          <div class="card-label">Collaborating</div>
+          <div class="card-title">Meeting Notes</div>
+          <div class="avatar-stack">
+            <div class="avatar" style="background: linear-gradient(135deg, oklch(75% 0.18 55), oklch(60% 0.14 310));"></div>
+            <div class="avatar" style="background: linear-gradient(135deg, oklch(65% 0.16 160), oklch(60% 0.14 310));"></div>
+            <div class="avatar" style="background: linear-gradient(135deg, oklch(60% 0.14 310), oklch(75% 0.18 55));"></div>
+            <span style="font-size: 11.5px; color: var(--fg-faint); margin-left: 10px;">3 editing</span>
           </div>
         </div>
       </div>
@@ -462,47 +1458,40 @@ body {
   </section>
 
   <!-- Gallery -->
-  <section style="padding:80px 24px;background:var(--bg);">
-    <div style="max-width:1200px;margin:0 auto;">
-      <div style="text-align:center;margin-bottom:48px;">
-        <h2 style="font-family:'Manrope',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;">Start with a template</h2>
-        <p style="color:#71717a;font-size:16px;">Beautiful, ready-to-use templates for every use case</p>
+  <section class="gallery-section">
+    <div class="gallery-section-inner">
+      <div class="gallery-header">
+        <div class="section-eyebrow">Templates</div>
+        <h2 class="section-title">Start with a template</h2>
+        <p class="section-body" style="margin: 0 auto;">Beautiful, ready-to-use starting points for every workflow — just open and write.</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
+      <div class="gallery-grid">
         <div class="gallery-card" onclick="navigate('workspace')">
-          <div style="height:140px;background:linear-gradient(135deg,#ff9900 0%,#e11d48 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:40px;">📘</span>
-          </div>
-          <div style="padding:20px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">Team Handbook</h3>
-            <p style="font-size:13px;color:#71717a;">Onboarding guides, policies, and team culture docs</p>
+          <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(75% 0.18 55 / 0.8), oklch(60% 0.14 310 / 0.8));">📘</div>
+          <div class="gallery-info">
+            <h3>Team Handbook</h3>
+            <p>Onboarding guides, policies, and team culture docs all in one place.</p>
           </div>
         </div>
         <div class="gallery-card" onclick="navigate('workspace')">
-          <div style="height:140px;background:linear-gradient(135deg,#0f9d73 0%,#059669 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:40px;">🔗</span>
-          </div>
-          <div style="padding:20px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">API Reference</h3>
-            <p style="font-size:13px;color:#71717a;">Interactive API docs with code examples</p>
+          <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(65% 0.16 160 / 0.8), oklch(55% 0.15 200 / 0.8));">🔗</div>
+          <div class="gallery-info">
+            <h3>API Reference</h3>
+            <p>Interactive API docs with code examples and endpoint specifications.</p>
           </div>
         </div>
         <div class="gallery-card" onclick="navigate('templates')">
-          <div style="height:140px;background:linear-gradient(135deg,#7c3aed 0%,#a855f7 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:40px;">🎓</span>
-          </div>
-          <div style="padding:20px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">Online Course</h3>
-            <p style="font-size:13px;color:#71717a;">Structured lessons with progress tracking</p>
+          <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(60% 0.14 310 / 0.8), oklch(65% 0.12 280 / 0.8));">🎓</div>
+          <div class="gallery-info">
+            <h3>Online Course</h3>
+            <p>Structured lessons with modules, progress tracking, and rich content.</p>
           </div>
         </div>
         <div class="gallery-card" onclick="navigate('workspace')">
-          <div style="height:140px;background:linear-gradient(135deg,#d97706 0%,#f59e0b 100%);border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:center;">
-            <span style="font-size:40px;">📝</span>
-          </div>
-          <div style="padding:20px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:6px;">Product PRD</h3>
-            <p style="font-size:13px;color:#71717a;">Requirements docs for product launches</p>
+          <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(72% 0.16 65 / 0.8), oklch(75% 0.18 55 / 0.8));">📝</div>
+          <div class="gallery-info">
+            <h3>Product PRD</h3>
+            <p>Requirements docs for product launches with specs and user stories.</p>
           </div>
         </div>
       </div>
@@ -510,85 +1499,95 @@ body {
   </section>
 
   <!-- Features -->
-  <section id="features-section" style="padding:80px 24px;background:var(--muted);">
-    <div style="max-width:1200px;margin:0 auto;">
-      <div style="text-align:center;margin-bottom:48px;">
-        <h2 style="font-family:'Manrope',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;">Everything you need</h2>
-        <p style="color:#71717a;font-size:16px;">A powerful editor packed with features for every workflow</p>
+  <section id="features-section" class="features-section grain">
+    <div class="features-section-inner">
+      <div class="features-header">
+        <div class="section-eyebrow">Capabilities</div>
+        <h2 class="section-title">Everything your<br>writing needs</h2>
+        <p class="section-body">A block editor that stays out of the way. Rich formatting, structured data, and course-building — woven into one seamless surface.</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:20px;">
-        <div class="feature-card">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,153,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">⌨️</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Code Blocks</h3>
-          <p style="font-size:14px;color:#71717a;line-height:1.6;">Syntax-highlighted code blocks with 50+ language support. Copy with one click, inline code too.</p>
+      <div class="features-grid">
+        <div class="feature-cell">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div class="feature-name">Code Blocks</div>
+          <div class="feature-desc">Syntax-highlighted code with 50+ language support. One-click copy. Inline code too.</div>
         </div>
-        <div class="feature-card">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(15,157,115,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">📊</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Tables</h3>
-          <p style="font-size:14px;color:#71717a;line-height:1.6;">Rich data tables with sorting, filtering, and beautiful styling. Perfect for specs and comparisons.</p>
+        <div class="feature-cell">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          </div>
+          <div class="feature-name">Data Tables</div>
+          <div class="feature-desc">Rich tables with sorting, filtering, and beautiful styling. Perfect for specs and comparisons.</div>
         </div>
-        <div class="feature-card">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">🔤</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Custom Fonts</h3>
-          <p style="font-size:14px;color:#71717a;line-height:1.6;">Switch between sans-serif, serif, and monospace. Your docs, your style, your brand identity.</p>
+        <div class="feature-cell">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 6h16M4 12h10M4 18h14"/></svg>
+          </div>
+          <div class="feature-name">Custom Typography</div>
+          <div class="feature-desc">Switch between Serif, Sans, and Mono. Every page can have its own editorial voice.</div>
         </div>
-        <div class="feature-card">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(217,119,6,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">⚙️</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Page Options</h3>
-          <p style="font-size:14px;color:#71717a;line-height:1.6;">Customize each page with cover images, icons, layout options, and metadata. Make every page unique.</p>
+        <div class="feature-cell">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="feature-name">Publishing</div>
+          <div class="feature-desc">One-click publish to the web. Custom domains, SEO, and beautiful public pages.</div>
         </div>
-        <div class="feature-card">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(225,29,72,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">🌐</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Publishing</h3>
-          <p style="font-size:14px;color:#71717a;line-height:1.6;">One-click publish to the web. Custom domains, SEO settings, and beautiful public pages.</p>
+        <div class="feature-cell">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <div class="feature-name">Course Mode</div>
+          <div class="feature-desc">Transform docs into structured courses with modules, lessons, and progress tracking.</div>
         </div>
-        <div class="feature-card">
-          <div style="width:40px;height:40px;border-radius:10px;background:rgba(255,153,0,0.1);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;">🎓</div>
-          <h3 style="font-family:'Manrope',sans-serif;font-weight:700;margin-bottom:8px;">Course Mode</h3>
-          <p style="font-size:14px;color:#71717a;line-height:1.6;">Transform docs into structured courses with modules, lessons, progress tracking, and certificates.</p>
+        <div class="feature-cell">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div class="feature-name">Page Settings</div>
+          <div class="feature-desc">Customize each page: cover, icon, layout width, accent color, and publication status.</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section style="padding:80px 24px;background:var(--bg);">
-    <div style="max-width:1200px;margin:0 auto;">
-      <div style="text-align:center;margin-bottom:48px;">
-        <h2 style="font-family:'Manrope',sans-serif;font-size:32px;font-weight:700;margin-bottom:12px;">Loved by teams</h2>
-        <p style="color:#71717a;font-size:16px;">See what people are saying about Dotion</p>
+  <section class="testimonials-section">
+    <div class="testimonials-inner">
+      <div class="testimonials-header">
+        <div class="section-eyebrow">Social proof</div>
+        <h2 class="section-title">Loved by teams</h2>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;">
+      <div class="testimonials-grid">
         <div class="testimonial-card">
-          <div style="font-size:24px;color:var(--accent);margin-bottom:12px;">"</div>
-          <p style="font-size:15px;line-height:1.7;margin-bottom:20px;">Dotion replaced our entire docs stack. The editor is incredibly smooth and the published pages look better than anything we had before.</p>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#ff9900,#e11d48);"></div>
+          <p class="testimonial-text">Dotion replaced our entire docs stack. The editor is incredibly smooth and the published pages look better than anything we had before. The serif mode is gorgeous.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg, oklch(75% 0.18 55), oklch(60% 0.14 310));"></div>
             <div>
-              <div style="font-weight:600;font-size:14px;">Sarah Chen</div>
-              <div style="font-size:12px;color:#71717a;">VP Engineering, Acme</div>
+              <div class="author-name">Sarah Chen</div>
+              <div class="author-role">VP Engineering, Acme</div>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
-          <div style="font-size:24px;color:var(--accent);margin-bottom:12px;">"</div>
-          <p style="font-size:15px;line-height:1.7;margin-bottom:20px;">We moved our entire knowledge base to Dotion in a week. The course mode is a game-changer for onboarding new team members.</p>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0f9d73,#7c3aed);"></div>
+          <p class="testimonial-text">We migrated our entire knowledge base in a week. Course mode is a game-changer for onboarding. I love that every page can have its own accent color and font.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg, oklch(65% 0.16 160), oklch(60% 0.14 310));"></div>
             <div>
-              <div style="font-weight:600;font-size:14px;">Marcus Wright</div>
-              <div style="font-size:12px;color:#71717a;">CTO, Basecamp Labs</div>
+              <div class="author-name">Marcus Wright</div>
+              <div class="author-role">CTO, Basecamp Labs</div>
             </div>
           </div>
         </div>
         <div class="testimonial-card">
-          <div style="font-size:24px;color:var(--accent);margin-bottom:12px;">"</div>
-          <p style="font-size:15px;line-height:1.7;margin-bottom:20px;">Finally, docs that look as good as our product. The design quality is outstanding and the team collaboration features are top-notch.</p>
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#d97706);"></div>
+          <p class="testimonial-text">Finally, docs that look as good as our product. The design quality is outstanding and the tree navigation makes finding anything instant.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background: linear-gradient(135deg, oklch(60% 0.14 310), oklch(75% 0.18 55));"></div>
             <div>
-              <div style="font-weight:600;font-size:14px;">Priya Patel</div>
-              <div style="font-size:12px;color:#71717a;">Head of Product, Stripe</div>
+              <div class="author-name">Priya Patel</div>
+              <div class="author-role">Head of Product, Stripe</div>
             </div>
           </div>
         </div>
@@ -597,248 +1596,234 @@ body {
   </section>
 
   <!-- Footer -->
-  <footer style="padding:40px 24px;border-top:1px solid var(--border);background:var(--bg);">
-    <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
-        <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;">dotion</span>
-      </div>
-      <div style="font-size:13px;color:#71717a;">Built with care. Open source and free forever.</div>
-      <div style="display:flex;gap:20px;">
-        <a href="#" style="color:#71717a;font-size:13px;text-decoration:none;">GitHub</a>
-        <a href="#" style="color:#71717a;font-size:13px;text-decoration:none;">Twitter</a>
-        <a href="#" style="color:#71717a;font-size:13px;text-decoration:none;">Discord</a>
+  <footer class="footer">
+    <div class="footer-inner">
+      <a class="nav-logo" onclick="navigate('landing')" href="#">
+        <div class="nav-logo-dot" style="width:18px;height:18px;border-radius:5px;">
+          <svg viewBox="0 0 12 12" fill="currentColor" style="width:9px;height:9px;"><path d="M6 1L11 4V8L6 11L1 8V4Z"/></svg>
+        </div>
+        <span style="font-family:'Instrument Serif',serif;font-size:16px;color:var(--fg);">dotion</span>
+      </a>
+      <span class="footer-tagline">Built with care. Open source and free forever.</span>
+      <div class="footer-links">
+        <a href="#" class="footer-link">GitHub</a>
+        <a href="#" class="footer-link">Twitter</a>
+        <a href="#" class="footer-link">Discord</a>
       </div>
     </div>
   </footer>
 </div>
 
-<!-- ===================== WORKSPACE PAGE ===================== -->
+
+<!-- ═══════════════════════════════════════════════════════
+     WORKSPACE PAGE
+════════════════════════════════════════════════════════ -->
 <div id="workspace-page" class="page">
-  <div style="display:flex;height:100vh;overflow:hidden;">
+  <div style="display:flex; height:100vh; overflow:hidden;">
 
     <!-- Sidebar -->
-    <aside id="sidebar" style="width:260px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width 0.3s,padding 0.3s;overflow:hidden;">
-      <div style="padding:16px 16px 8px;display:flex;align-items:center;justify-content:space-between;" id="sidebar-header">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
-          <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:15px;" id="sidebar-title">My Workspace</span>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header" id="sidebar-header">
+        <div class="ws-logo" onclick="navigate('landing')">
+          <div class="ws-logo-mark">
+            <svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 1L11 4V8L6 11L1 8V4Z"/></svg>
+          </div>
+          <span class="ws-logo-text">dotion</span>
         </div>
-        <button onclick="toggleSidebar()" style="background:none;border:none;color:var(--fg);cursor:pointer;padding:4px;border-radius:4px;opacity:0.5;display:flex;" title="Collapse sidebar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
+        <button class="icon-btn" onclick="toggleSidebar()" title="Collapse sidebar" style="width:28px;height:28px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
         </button>
       </div>
 
-      <div style="padding:8px 12px;" id="sidebar-content">
-        <button onclick="alert('New page created!')" style="width:100%;padding:8px 12px;border-radius:6px;border:1px dashed var(--border);background:transparent;color:var(--fg);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;transition:background 0.15s;" onmouseover="this.style.background='var(--muted)'" onmouseout="this.style.background='transparent'">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      <div id="sidebar-content">
+        <button class="sidebar-new-btn" onclick="alert('New page created!')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
           New Page
         </button>
       </div>
 
-      <div style="padding:4px 12px;flex:1;overflow-y:auto;" id="sidebar-tree">
-        <div style="font-size:11px;font-weight:600;color:#71717a;text-transform:uppercase;letter-spacing:0.05em;padding:12px 12px 6px;">Pages</div>
+      <div class="sidebar-tree" id="sidebar-tree">
+        <div class="sidebar-section-label">Pages</div>
 
-        <div class="sidebar-item active" onclick="selectPage(this,'Meeting Notes')">
-          <span>📋</span><span>Meeting Notes</span>
+        <div class="sidebar-item active" onclick="selectPage(this,'Meeting Notes','📋')">
+          <span class="item-icon">📋</span><span>Meeting Notes</span>
         </div>
-        <div class="sidebar-item" onclick="selectPage(this,'To-Do List')">
-          <span>✅</span><span>To-Do List</span>
+        <div class="sidebar-item" onclick="selectPage(this,'To-Do List','✅')">
+          <span class="item-icon">✅</span><span>To-Do List</span>
         </div>
 
-        <!-- Project Brief with children -->
+        <!-- Project Brief tree -->
         <div>
-          <div class="sidebar-item" onclick="toggleTree(this)" style="justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span>🚀</span><span>Project Brief</span>
+          <div class="sidebar-item parent-item" onclick="toggleTree(this)">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span class="item-icon">🚀</span><span>Project Brief</span>
             </div>
-            <svg class="tree-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.2s;"><path d="M9 18l6-6-6-6"/></svg>
+            <svg class="tree-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
           </div>
           <div class="tree-children">
-            <div class="sidebar-item" onclick="selectPage(this,'Timeline')"><span>📅</span><span>Timeline</span></div>
-            <div class="sidebar-item" onclick="selectPage(this,'Resources')"><span>📎</span><span>Resources</span></div>
+            <div class="sidebar-item" onclick="selectPage(this,'Timeline','📅')"><span class="item-icon">📅</span><span>Timeline</span></div>
+            <div class="sidebar-item" onclick="selectPage(this,'Resources','📎')"><span class="item-icon">📎</span><span>Resources</span></div>
           </div>
         </div>
 
-        <div class="sidebar-item" onclick="selectPage(this,'README')">
-          <span>📕</span><span>README</span>
+        <div class="sidebar-item" onclick="selectPage(this,'README','📕')">
+          <span class="item-icon">📕</span><span>README</span>
         </div>
 
-        <!-- Documentation with children -->
+        <!-- Documentation tree -->
         <div>
-          <div class="sidebar-item" onclick="toggleTree(this)" style="justify-content:space-between;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span>📚</span><span>Documentation</span>
+          <div class="sidebar-item parent-item" onclick="toggleTree(this)">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span class="item-icon">📚</span><span>Documentation</span>
             </div>
-            <svg class="tree-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="transition:transform 0.2s;"><path d="M9 18l6-6-6-6"/></svg>
+            <svg class="tree-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
           </div>
           <div class="tree-children">
-            <div class="sidebar-item" onclick="selectPage(this,'API Reference')"><span>🧠</span><span>API Reference</span></div>
+            <div class="sidebar-item" onclick="selectPage(this,'API Reference','🧠')"><span class="item-icon">🧠</span><span>API Reference</span></div>
           </div>
         </div>
 
-        <div class="sidebar-item" onclick="selectPage(this,'Course Hub')">
-          <span>🎓</span><span>Course Hub</span>
+        <div class="sidebar-item" onclick="selectPage(this,'Course Hub','🎓')">
+          <span class="item-icon">🎓</span><span>Course Hub</span>
         </div>
       </div>
 
-      <div style="padding:12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px;" id="sidebar-footer">
+      <div class="sidebar-footer" id="sidebar-footer">
         <div class="sidebar-item" onclick="toggleSettings()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <span>Settings</span>
         </div>
         <div class="sidebar-item" onclick="toggleTheme()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          <span id="theme-label-sidebar">Dark Mode</span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="theme-label-sidebar">Light Mode</span>
         </div>
       </div>
     </aside>
 
-    <!-- Collapsed sidebar toggle -->
-    <button id="sidebar-expand" onclick="toggleSidebar()" style="display:none;position:fixed;top:12px;left:12px;z-index:40;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px;cursor:pointer;color:var(--fg);" title="Expand sidebar">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    <!-- Expand button (shown when collapsed) -->
+    <button class="sidebar-expand-btn" id="sidebar-expand" onclick="toggleSidebar()" title="Expand sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
 
-    <!-- Editor area -->
-    <main style="flex:1;overflow-y:auto;position:relative;" id="editor-main">
+    <!-- Editor -->
+    <main class="editor-main" id="editor-main">
       <!-- Cover -->
-      <div style="height:200px;background:linear-gradient(135deg,var(--accent) 0%,#e11d48 50%,#7c3aed 100%);position:relative;">
-        <div style="position:absolute;bottom:-32px;left:72px;width:64px;height:64px;border-radius:14px;background:var(--card);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">📋</div>
+      <div class="doc-cover">
+        <div class="doc-cover-gradient"></div>
+        <div class="doc-icon-float" id="doc-page-icon">📋</div>
       </div>
 
       <!-- Doc content -->
-      <div id="doc-content" class="doc-font-sans" style="max-width:740px;margin:0 auto;padding:52px 32px 80px;">
-        <!-- Title -->
-        <h1 style="font-family:'Manrope',sans-serif;font-size:40px;font-weight:800;margin-bottom:8px;line-height:1.2;" contenteditable="true">Meeting Notes</h1>
-        <div style="font-size:13px;color:#71717a;margin-bottom:32px;display:flex;gap:16px;">
+      <div class="doc-content doc-font-sans" id="doc-content">
+        <h1 class="doc-title" contenteditable="true" id="doc-title">Meeting Notes</h1>
+        <div class="doc-meta">
           <span>Last edited just now</span>
           <span>by You</span>
         </div>
 
         <!-- Toolbar -->
-        <div style="display:flex;flex-wrap:wrap;gap:2px;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;margin-bottom:32px;position:sticky;top:0;z-index:10;">
-          <button class="tb-btn" title="Bold"><b>B</b></button>
-          <button class="tb-btn" title="Italic"><i>I</i></button>
+        <div class="doc-toolbar">
+          <button class="tb-btn" title="Bold"><strong>B</strong></button>
+          <button class="tb-btn" title="Italic"><em>I</em></button>
           <button class="tb-btn" title="Underline" style="text-decoration:underline;">U</button>
-          <button class="tb-btn" title="Code" style="font-family:'JetBrains Mono',monospace;font-size:12px;">&lt;/&gt;</button>
-          <div style="width:1px;background:var(--border);margin:4px 6px;"></div>
-          <button class="tb-btn" title="Heading 1" style="font-weight:700;">H1</button>
-          <button class="tb-btn" title="Heading 2" style="font-weight:600;">H2</button>
-          <button class="tb-btn" title="Heading 3">H3</button>
-          <div style="width:1px;background:var(--border);margin:4px 6px;"></div>
-          <button class="tb-btn" title="Bullet List">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+          <button class="tb-btn t-mono" title="Inline code" style="font-size:11px;">&lt;/&gt;</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" title="Heading 1" style="font-weight:700;font-size:12px;">H1</button>
+          <button class="tb-btn" title="Heading 2" style="font-weight:600;font-size:12px;">H2</button>
+          <button class="tb-btn" title="Heading 3" style="font-size:12px;">H3</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" title="Bullet list">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
           </button>
-          <button class="tb-btn" title="Numbered List">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><text x="1" y="8" fill="currentColor" font-size="8" font-weight="600">1</text><text x="1" y="14" fill="currentColor" font-size="8" font-weight="600">2</text><text x="1" y="20" fill="currentColor" font-size="8" font-weight="600">3</text></svg>
+          <button class="tb-btn" title="Numbered list">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4" stroke-linecap="round"/><path d="M4 10h2" stroke-linecap="round"/></svg>
           </button>
-          <button class="tb-btn" title="Quote">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V21z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/></svg>
+          <button class="tb-btn" title="Blockquote">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.757-2-2-2H5c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2-2-2h-3c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/></svg>
           </button>
-          <button class="tb-btn" title="Code Block" style="font-family:'JetBrains Mono',monospace;font-size:11px;">{ }</button>
+          <button class="tb-btn t-mono" title="Code block" style="font-size:11px;">{ }</button>
           <button class="tb-btn" title="Table">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
           </button>
-          <div style="flex:1;"></div>
-          <button class="tb-btn" onclick="toggleSettings()" title="Page Settings">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <div class="tb-spacer"></div>
+          <button class="tb-btn" onclick="toggleSettings()" title="Page settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           </button>
         </div>
 
         <!-- Document body -->
-        <div id="doc-body">
-          <!-- Heading -->
-          <h2 style="font-family:'Manrope',sans-serif;font-size:24px;font-weight:700;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border);">Weekly Standup — June 6, 2026</h2>
+        <div class="doc-body" id="doc-body">
+          <h2>Weekly Standup — June 7, 2026</h2>
 
-          <!-- Attendees -->
           <div style="margin-bottom:24px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;color:var(--fg);">Attendees</h3>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;">
-              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(255,153,0,0.1);color:var(--accent);font-weight:500;">@sarah</span>
-              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(15,157,115,0.1);color:#0f9d73;font-weight:500;">@marcus</span>
-              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(124,58,237,0.1);color:#7c3aed;font-weight:500;">@priya</span>
-              <span style="padding:4px 12px;border-radius:20px;font-size:13px;background:rgba(225,29,72,0.1);color:#e11d48;font-weight:500;">@alex</span>
+            <h3>Attendees</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
+              <span class="mention" style="background:oklch(75% 0.18 55 / 0.12);color:var(--accent);">@sarah</span>
+              <span class="mention" style="background:oklch(65% 0.16 160 / 0.12);color:oklch(65% 0.16 160);">@marcus</span>
+              <span class="mention" style="background:oklch(60% 0.14 310 / 0.12);color:oklch(60% 0.14 310);">@priya</span>
+              <span class="mention" style="background:oklch(62% 0.16 25 / 0.12);color:oklch(62% 0.16 25);">@alex</span>
             </div>
           </div>
 
-          <!-- Agenda -->
           <div style="margin-bottom:24px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Agenda</h3>
-            <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:6px;">
-              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
-                Sprint review and demo
-              </li>
-              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
-                Q3 roadmap discussion
-              </li>
-              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
-                Design system update
-              </li>
-              <li style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:15px;">
-                <div style="width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0;"></div>
-                Open discussion and blockers
-              </li>
+            <h3>Agenda</h3>
+            <ul class="agenda-list" style="margin-top:10px;">
+              <li class="agenda-item"><span class="agenda-bullet"></span>Sprint review and demo</li>
+              <li class="agenda-item"><span class="agenda-bullet"></span>Q3 roadmap discussion</li>
+              <li class="agenda-item"><span class="agenda-bullet"></span>Design system update</li>
+              <li class="agenda-item"><span class="agenda-bullet"></span>Open discussion and blockers</li>
             </ul>
           </div>
 
-          <!-- Tasks -->
           <div style="margin-bottom:24px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Action Items</h3>
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              <div class="check-item done">
-                <div class="check-box checked" onclick="toggleCheck(this)"></div>
-                <span>Finalize API documentation for v2 endpoints</span>
+            <h3>Action Items</h3>
+            <div class="check-list" style="margin-top:10px;">
+              <div class="check-item done" onclick="toggleCheck(this)">
+                <div class="check-box checked"></div>
+                <span class="check-label">Finalize API documentation for v2 endpoints</span>
               </div>
-              <div class="check-item done">
-                <div class="check-box checked" onclick="toggleCheck(this)"></div>
-                <span>Review and merge PR #347 — auth refactor</span>
+              <div class="check-item done" onclick="toggleCheck(this)">
+                <div class="check-box checked"></div>
+                <span class="check-label">Review and merge PR #347 — auth refactor</span>
               </div>
-              <div class="check-item">
-                <div class="check-box" onclick="toggleCheck(this)"></div>
-                <span>Set up staging environment for load testing</span>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <span class="check-label">Set up staging environment for load testing</span>
               </div>
-              <div class="check-item">
-                <div class="check-box" onclick="toggleCheck(this)"></div>
-                <span>Schedule design review with the product team</span>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <span class="check-label">Schedule design review with the product team</span>
               </div>
-              <div class="check-item">
-                <div class="check-box" onclick="toggleCheck(this)"></div>
-                <span>Draft Q3 OKRs and share with leadership</span>
+              <div class="check-item" onclick="toggleCheck(this)">
+                <div class="check-box"></div>
+                <span class="check-label">Draft Q3 OKRs and share with leadership</span>
               </div>
             </div>
           </div>
 
-          <!-- Blockquote -->
-          <div style="margin-bottom:24px;">
-            <blockquote style="border-left:3px solid var(--accent);padding:12px 20px;background:var(--muted);border-radius:0 8px 8px 0;font-size:15px;line-height:1.7;font-style:italic;">
-              "We should prioritize the developer experience improvements before adding new features. Let's focus on making the existing tools delightful." — Sarah
-            </blockquote>
-          </div>
+          <blockquote class="doc-blockquote">
+            "We should prioritize the developer experience improvements before adding new features. Let's focus on making the existing tools delightful." — Sarah
+          </blockquote>
 
-          <!-- Code block -->
           <div style="margin-bottom:24px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Code Snippet</h3>
+            <h3>Code Snippet</h3>
             <div class="code-block">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-                <span style="font-size:11px;opacity:0.5;text-transform:uppercase;letter-spacing:0.05em;">typescript</span>
-                <button style="font-size:11px;background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;cursor:pointer;color:var(--fg);opacity:0.6;" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
+              <div class="code-header">
+                <span class="code-lang">TypeScript</span>
+                <button class="code-copy-btn" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)">Copy</button>
               </div>
-<span style="color:#7c3aed;">const</span> <span style="color:#0f9d73;">fetchDocs</span> = <span style="color:#7c3aed;">async</span> (slug: <span style="color:#d97706;">string</span>) => {
-  <span style="color:#7c3aed;">const</span> res = <span style="color:#7c3aed;">await</span> fetch(<span style="color:#e11d48;">`/api/docs/${slug}`</span>);
-  <span style="color:#7c3aed;">return</span> res.json();
+<span style="color:oklch(60% 0.14 310);">const</span> <span style="color:oklch(65% 0.16 160);">fetchDocs</span> = <span style="color:oklch(60% 0.14 310);">async</span> (slug: <span style="color:oklch(72% 0.16 65);">string</span>) <span style="color:oklch(60% 0.14 310);">=></span> {
+  <span style="color:oklch(60% 0.14 310);">const</span> res = <span style="color:oklch(60% 0.14 310);">await</span> fetch(<span style="color:oklch(62% 0.16 25);">`/api/docs/${slug}`</span>);
+  <span style="color:oklch(60% 0.14 310);">return</span> res.json();
 };</div>
           </div>
 
-          <!-- Table -->
           <div style="margin-bottom:24px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Sprint Tasks</h3>
-            <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+            <h3>Sprint Tasks</h3>
+            <div class="doc-table-wrap">
               <table class="doc-table">
                 <thead>
-                  <tr style="background:var(--muted);">
+                  <tr>
                     <th>Task</th>
                     <th>Owner</th>
                     <th>Status</th>
@@ -849,125 +1834,119 @@ body {
                   <tr>
                     <td style="font-weight:500;">Auth service refactor</td>
                     <td>Sarah</td>
-                    <td><span class="pill" style="background:rgba(15,157,115,0.1);color:#0f9d73;">Done</span></td>
-                    <td style="color:#71717a;">Jun 2</td>
+                    <td><span class="pill" style="background:oklch(65% 0.16 160 / 0.12);color:oklch(65% 0.16 160);">Done</span></td>
+                    <td style="color:var(--fg-faint);">Jun 2</td>
                   </tr>
                   <tr>
                     <td style="font-weight:500;">API v2 endpoints</td>
                     <td>Marcus</td>
-                    <td><span class="pill" style="background:rgba(255,153,0,0.1);color:#ff9900;">In Progress</span></td>
-                    <td style="color:#71717a;">Jun 8</td>
+                    <td><span class="pill" style="background:var(--accent-dim);color:var(--accent);">In Progress</span></td>
+                    <td style="color:var(--fg-faint);">Jun 8</td>
                   </tr>
                   <tr>
                     <td style="font-weight:500;">Dashboard redesign</td>
                     <td>Priya</td>
-                    <td><span class="pill" style="background:rgba(255,153,0,0.1);color:#ff9900;">In Progress</span></td>
-                    <td style="color:#71717a;">Jun 10</td>
+                    <td><span class="pill" style="background:var(--accent-dim);color:var(--accent);">In Progress</span></td>
+                    <td style="color:var(--fg-faint);">Jun 10</td>
                   </tr>
                   <tr>
                     <td style="font-weight:500;">Load testing setup</td>
                     <td>Alex</td>
-                    <td><span class="pill" style="background:rgba(113,113,122,0.1);color:#71717a;">To Do</span></td>
-                    <td style="color:#71717a;">Jun 12</td>
+                    <td><span class="pill" style="background:oklch(50% 0.01 280 / 0.12);color:var(--fg-faint);">To Do</span></td>
+                    <td style="color:var(--fg-faint);">Jun 12</td>
                   </tr>
                   <tr>
-                    <td style="font-weight:500;">CI/CD pipeline optimization</td>
+                    <td style="font-weight:500;">CI/CD optimization</td>
                     <td>Sarah</td>
-                    <td><span class="pill" style="background:rgba(225,29,72,0.1);color:#e11d48;">Blocked</span></td>
-                    <td style="color:#71717a;">Jun 15</td>
+                    <td><span class="pill" style="background:oklch(62% 0.16 25 / 0.12);color:oklch(62% 0.16 25);">Blocked</span></td>
+                    <td style="color:var(--fg-faint);">Jun 15</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <!-- Notes section -->
-          <div style="margin-bottom:24px;">
-            <h3 style="font-family:'Manrope',sans-serif;font-size:18px;font-weight:600;margin-bottom:12px;">Notes</h3>
-            <p style="font-size:15px;line-height:1.8;color:var(--fg);opacity:0.85;">
-              The team agreed to shift focus to developer tooling for the next two sprints. Marcus will lead the API v2 migration while Priya finalizes the new dashboard components. We'll reconvene on Friday for a quick sync on blockers.
-            </p>
+          <div>
+            <h3>Notes</h3>
+            <p style="margin-top:10px;">The team agreed to shift focus to developer tooling for the next two sprints. Marcus will lead the API v2 migration while Priya finalizes the new dashboard components. We'll reconvene on Friday for a quick sync on blockers.</p>
           </div>
         </div>
       </div>
     </main>
   </div>
 
-  <!-- Settings Panel -->
+  <!-- Settings panel -->
   <div id="settings-panel" class="settings-panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
-      <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;">Page Settings</h3>
-      <button onclick="toggleSettings()" style="background:none;border:none;color:var(--fg);cursor:pointer;padding:4px;border-radius:4px;opacity:0.5;display:flex;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    <div class="settings-header">
+      <h3 class="settings-title">Page Settings</h3>
+      <button class="icon-btn" onclick="toggleSettings()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
 
-    <!-- Font selector -->
-    <div style="margin-bottom:28px;">
-      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Font Family</label>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;" id="font-sans-label">
-          <input type="radio" name="doc-font" value="sans" checked onchange="setDocFont('sans')" style="accent-color:var(--accent);">
-          <div>
-            <div style="font-family:'Inter',sans-serif;font-weight:500;font-size:14px;">Sans-serif</div>
-            <div style="font-size:12px;color:#71717a;">Inter — clean and modern</div>
-          </div>
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;">
-          <input type="radio" name="doc-font" value="serif" onchange="setDocFont('serif')" style="accent-color:var(--accent);">
-          <div>
-            <div style="font-family:'Merriweather',serif;font-weight:500;font-size:14px;">Serif</div>
-            <div style="font-size:12px;color:#71717a;">Merriweather — classic feel</div>
-          </div>
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.2s;">
-          <input type="radio" name="doc-font" value="mono" onchange="setDocFont('mono')" style="accent-color:var(--accent);">
-          <div>
-            <div style="font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;">Monospace</div>
-            <div style="font-size:12px;color:#71717a;">JetBrains Mono — for devs</div>
-          </div>
-        </label>
-      </div>
+    <!-- Font -->
+    <div class="settings-group">
+      <span class="settings-section-label">Font Family</span>
+      <label class="font-radio">
+        <input type="radio" name="doc-font" value="sans" checked onchange="setDocFont('sans')" style="accent-color:var(--accent);">
+        <div>
+          <div class="font-radio-name" style="font-family:'Inter',sans-serif;">Sans-serif</div>
+          <div class="font-radio-sub">Inter — clean and modern</div>
+        </div>
+      </label>
+      <label class="font-radio">
+        <input type="radio" name="doc-font" value="serif" onchange="setDocFont('serif')" style="accent-color:var(--accent);">
+        <div>
+          <div class="font-radio-name" style="font-family:'Instrument Serif',serif;font-size:15px;">Serif</div>
+          <div class="font-radio-sub">Instrument Serif — editorial</div>
+        </div>
+      </label>
+      <label class="font-radio">
+        <input type="radio" name="doc-font" value="mono" onchange="setDocFont('mono')" style="accent-color:var(--accent);">
+        <div>
+          <div class="font-radio-name" style="font-family:'JetBrains Mono',monospace;font-size:13px;">Monospace</div>
+          <div class="font-radio-sub">JetBrains Mono — for devs</div>
+        </div>
+      </label>
     </div>
 
     <!-- Accent color -->
-    <div style="margin-bottom:28px;">
-      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Accent Color</label>
-      <div style="display:flex;gap:10px;">
-        <div class="accent-dot active" style="background:#ff9900;" onclick="setAccent('#ff9900',this)" title="Orange"></div>
-        <div class="accent-dot" style="background:#0f9d73;" onclick="setAccent('#0f9d73',this)" title="Emerald"></div>
-        <div class="accent-dot" style="background:#7c3aed;" onclick="setAccent('#7c3aed',this)" title="Violet"></div>
-        <div class="accent-dot" style="background:#d97706;" onclick="setAccent('#d97706',this)" title="Amber"></div>
-        <div class="accent-dot" style="background:#e11d48;" onclick="setAccent('#e11d48',this)" title="Rose"></div>
+    <div class="settings-group">
+      <span class="settings-section-label">Accent Color</span>
+      <div class="accent-dots">
+        <div class="accent-dot active" style="background:oklch(75% 0.18 55);" onclick="setAccent('oklch(75% 0.18 55)',this)" title="Amber"></div>
+        <div class="accent-dot" style="background:oklch(65% 0.16 160);" onclick="setAccent('oklch(65% 0.16 160)',this)" title="Emerald"></div>
+        <div class="accent-dot" style="background:oklch(60% 0.14 310);" onclick="setAccent('oklch(60% 0.14 310)',this)" title="Violet"></div>
+        <div class="accent-dot" style="background:oklch(62% 0.16 25);" onclick="setAccent('oklch(62% 0.16 25)',this)" title="Rose"></div>
+        <div class="accent-dot" style="background:oklch(60% 0.14 230);" onclick="setAccent('oklch(60% 0.14 230)',this)" title="Sky"></div>
+        <div class="accent-dot" style="background:oklch(72% 0.16 65);" onclick="setAccent('oklch(72% 0.16 65)',this)" title="Gold"></div>
       </div>
     </div>
 
     <!-- Layout -->
-    <div style="margin-bottom:28px;">
-      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Layout</label>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
-          <input type="radio" name="layout" value="default" checked onchange="setLayout('740px')" style="accent-color:var(--accent);">
-          <span style="font-size:14px;">Default</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
-          <input type="radio" name="layout" value="wide" onchange="setLayout('960px')" style="accent-color:var(--accent);">
-          <span style="font-size:14px;">Wide</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;border:1px solid var(--border);cursor:pointer;">
-          <input type="radio" name="layout" value="full" onchange="setLayout('100%')" style="accent-color:var(--accent);">
-          <span style="font-size:14px;">Full Width</span>
-        </label>
-      </div>
+    <div class="settings-group">
+      <span class="settings-section-label">Layout Width</span>
+      <label class="layout-radio">
+        <input type="radio" name="layout" value="default" checked onchange="setLayout('740px')" style="accent-color:var(--accent);">
+        Default
+      </label>
+      <label class="layout-radio">
+        <input type="radio" name="layout" value="wide" onchange="setLayout('960px')" style="accent-color:var(--accent);">
+        Wide
+      </label>
+      <label class="layout-radio">
+        <input type="radio" name="layout" value="full" onchange="setLayout('100%')" style="accent-color:var(--accent);">
+        Full Width
+      </label>
     </div>
 
-    <!-- Publish toggle -->
-    <div style="margin-bottom:28px;">
-      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Publishing</label>
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:8px;border:1px solid var(--border);">
+    <!-- Publish -->
+    <div class="settings-group">
+      <span class="settings-section-label">Publishing</span>
+      <div class="toggle-wrap">
         <div>
-          <div style="font-size:14px;font-weight:500;">Publish to web</div>
-          <div style="font-size:12px;color:#71717a;">Make this page publicly accessible</div>
+          <div class="toggle-info-name">Publish to web</div>
+          <div class="toggle-info-sub">Make this page publicly accessible</div>
         </div>
         <div class="toggle-track" onclick="this.classList.toggle('on')">
           <div class="toggle-knob"></div>
@@ -976,130 +1955,138 @@ body {
     </div>
 
     <!-- Export -->
-    <div>
-      <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:#71717a;display:block;margin-bottom:10px;">Export</label>
-      <button onclick="alert('PDF export started!')" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--muted);color:var(--fg);font-size:14px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.15s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='var(--muted)'">
+    <div class="settings-group">
+      <span class="settings-section-label">Export</span>
+      <button class="export-btn" onclick="alert('PDF export started!')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Export as PDF
       </button>
     </div>
   </div>
 
-  <!-- Settings overlay -->
-  <div id="settings-overlay" onclick="toggleSettings()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:55;"></div>
+  <div id="settings-overlay" class="settings-overlay" onclick="toggleSettings()"></div>
 </div>
 
-<!-- ===================== TEMPLATES PAGE ===================== -->
+
+<!-- ═══════════════════════════════════════════════════════
+     TEMPLATES PAGE
+════════════════════════════════════════════════════════ -->
 <div id="templates-page" class="page">
   <!-- Top bar -->
-  <div style="position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:1px solid var(--border);padding:0 24px;">
-    <div style="max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;justify-content:space-between;">
+  <div class="templates-topbar">
+    <div class="templates-topbar-inner">
       <div style="display:flex;align-items:center;gap:16px;">
-        <button onclick="navigate('landing')" style="background:none;border:none;cursor:pointer;color:var(--fg);display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:14px;padding:6px 10px;border-radius:6px;transition:background 0.15s;" onmouseover="this.style.background='var(--muted)'" onmouseout="this.style.background='transparent'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <button class="back-btn" onclick="navigate('landing')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Back
         </button>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>
-          <span style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;">Template Gallery</span>
+        <div class="nav-logo">
+          <div class="nav-logo-dot" style="width:20px;height:20px;border-radius:6px;">
+            <svg viewBox="0 0 12 12" fill="currentColor" style="width:11px;height:11px;"><path d="M6 1L11 4V8L6 11L1 8V4Z"/></svg>
+          </div>
+          <span style="font-family:'Instrument Serif',serif;font-size:17px;color:var(--fg);">Template Gallery</span>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <button onclick="toggleTheme()" style="background:none;border:none;color:var(--fg);cursor:pointer;padding:8px;border-radius:6px;display:flex;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Open App</button>
+        <button class="btn-primary" onclick="navigate('workspace')">Open App</button>
       </div>
     </div>
   </div>
 
-  <div style="max-width:1200px;margin:0 auto;padding:48px 24px 80px;">
-    <div style="text-align:center;margin-bottom:48px;">
-      <h1 style="font-family:'Manrope',sans-serif;font-size:36px;font-weight:800;margin-bottom:12px;">Choose a template</h1>
-      <p style="color:#71717a;font-size:16px;max-width:500px;margin:0 auto;">Jump-start your project with professionally designed templates. Customize everything to match your brand.</p>
+  <div class="templates-body">
+    <div class="templates-hero">
+      <div class="section-eyebrow">Gallery</div>
+      <h1 class="section-title">Choose a template</h1>
+      <p class="section-body" style="margin: 0 auto; text-align: center;">Jump-start your project with professionally designed templates.<br>Customize everything to match your brand.</p>
     </div>
 
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">📘</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Team Handbook</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Company culture, policies, benefits, and onboarding guides all in one place.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+    <div class="templates-grid">
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">📘</span>
+        <div class="template-name">Team Handbook</div>
+        <div class="template-desc">Company culture, policies, benefits, and onboarding guides all in one structured space.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">🔗</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">API Reference</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Comprehensive API documentation with endpoints, examples, and authentication guides.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">🔗</span>
+        <div class="template-name">API Reference</div>
+        <div class="template-desc">Comprehensive API documentation with endpoints, examples, and authentication guides.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">🎓</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Online Course</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Structured lessons with modules, progress tracking, and interactive content blocks.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">🎓</span>
+        <div class="template-name">Online Course</div>
+        <div class="template-desc">Structured lessons with modules, progress tracking, and interactive content blocks.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">📝</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Product PRD</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Product requirements documents with specs, user stories, and acceptance criteria.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">📝</span>
+        <div class="template-name">Product PRD</div>
+        <div class="template-desc">Product requirements documents with specs, user stories, and acceptance criteria.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">📋</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Meeting Notes</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Capture meeting agendas, decisions, action items, and follow-ups efficiently.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">📋</span>
+        <div class="template-name">Meeting Notes</div>
+        <div class="template-desc">Capture meeting agendas, decisions, action items, and follow-ups efficiently.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">🗺️</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Roadmap</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Product roadmap with quarters, milestones, and team assignments organized visually.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">🗺️</span>
+        <div class="template-name">Roadmap</div>
+        <div class="template-desc">Product roadmap with quarters, milestones, and team assignments organized clearly.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">🐛</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Bug Tracker</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Track and prioritize bugs with severity levels, reproduction steps, and assignments.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">🐛</span>
+        <div class="template-name">Bug Tracker</div>
+        <div class="template-desc">Track and prioritize bugs with severity levels, reproduction steps, and assignments.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">📰</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Changelog</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Keep users updated with versioned release notes, new features, and improvements.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">📰</span>
+        <div class="template-name">Changelog</div>
+        <div class="template-desc">Keep users updated with versioned release notes, new features, and improvements.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
-      <div class="template-card">
-        <div style="font-size:36px;margin-bottom:12px;">🧪</div>
-        <h3 style="font-family:'Manrope',sans-serif;font-weight:700;font-size:18px;margin-bottom:6px;">Design System</h3>
-        <p style="font-size:14px;color:#71717a;line-height:1.6;margin-bottom:16px;">Document components, tokens, patterns, and guidelines for your design system.</p>
-        <button onclick="navigate('workspace')" style="background:var(--accent);color:#fff;border:none;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Use Template</button>
+      <div class="template-card" onclick="navigate('workspace')">
+        <span class="template-icon">🧪</span>
+        <div class="template-name">Design System</div>
+        <div class="template-desc">Document components, tokens, patterns, and guidelines for your design system.</div>
+        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
       </div>
     </div>
   </div>
 </div>
 
+
 <script>
-// State
+// ─── STATE ────────────────────────────────────────────────
 let currentPage = 'landing';
 let sidebarOpen = true;
 let settingsOpen = false;
-let isDark = false;
+let isDark = true;
 
-// Init from localStorage
+// ─── INIT ─────────────────────────────────────────────────
 (function init() {
   const savedTheme = localStorage.getItem('dotion-theme');
-  if (savedTheme === 'dark') {
+  if (savedTheme === 'light') {
+    isDark = false;
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
     isDark = true;
-    document.documentElement.classList.remove('light');
-    document.documentElement.classList.add('dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
   }
 
   const savedAccent = localStorage.getItem('dotion-accent');
   if (savedAccent) {
-    document.documentElement.style.setProperty('--accent', savedAccent);
-    // Update active dot
+    applyAccent(savedAccent);
     document.querySelectorAll('.accent-dot').forEach(d => {
-      d.classList.toggle('active', d.style.background === savedAccent || rgbToHex(d.style.backgroundColor) === savedAccent);
+      d.classList.remove('active');
+      if (d.style.background === savedAccent) d.classList.add('active');
     });
   }
 
@@ -1107,28 +2094,25 @@ let isDark = false;
   if (savedFont) setDocFont(savedFont, true);
 
   updateThemeLabels();
+  initScrollReveal();
 })();
 
-function rgbToHex(rgb) {
-  if (!rgb || rgb.startsWith('#')) return rgb;
-  const m = rgb.match(/\d+/g);
-  if (!m) return rgb;
-  return '#' + m.slice(0,3).map(x => parseInt(x).toString(16).padStart(2,'0')).join('');
-}
-
-// Navigation
+// ─── NAVIGATION ───────────────────────────────────────────
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(page + '-page').classList.add('active');
-  currentPage = page;
-  window.scrollTo(0, 0);
+  const target = document.getElementById(page + '-page');
+  if (target) {
+    target.classList.add('active');
+    currentPage = page;
+    window.scrollTo(0, 0);
+    if (page === 'landing') initScrollReveal();
+  }
 }
 
-// Theme
+// ─── THEME ────────────────────────────────────────────────
 function toggleTheme() {
   isDark = !isDark;
-  document.documentElement.classList.toggle('dark', isDark);
-  document.documentElement.classList.toggle('light', !isDark);
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
   localStorage.setItem('dotion-theme', isDark ? 'dark' : 'light');
   updateThemeLabels();
 }
@@ -1138,85 +2122,115 @@ function updateThemeLabels() {
   if (label) label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
 }
 
-// Sidebar
+// ─── SIDEBAR ──────────────────────────────────────────────
 function toggleSidebar() {
   sidebarOpen = !sidebarOpen;
   const sb = document.getElementById('sidebar');
   const ex = document.getElementById('sidebar-expand');
   if (sidebarOpen) {
-    sb.style.width = '260px';
-    sb.style.padding = '';
-    ex.style.display = 'none';
-    document.getElementById('sidebar-header').style.display = '';
-    document.getElementById('sidebar-content').style.display = '';
-    document.getElementById('sidebar-tree').style.display = '';
-    document.getElementById('sidebar-footer').style.display = '';
+    sb.classList.remove('collapsed');
+    ex.classList.remove('visible');
   } else {
-    sb.style.width = '0';
-    sb.style.padding = '0';
-    ex.style.display = 'flex';
-    document.getElementById('sidebar-header').style.display = 'none';
-    document.getElementById('sidebar-content').style.display = 'none';
-    document.getElementById('sidebar-tree').style.display = 'none';
-    document.getElementById('sidebar-footer').style.display = 'none';
+    sb.classList.add('collapsed');
+    ex.classList.add('visible');
   }
 }
 
-// Tree
+// ─── TREE ────────────────────────────────────────────────
 function toggleTree(el) {
-  const children = el.parentElement.querySelector('.tree-children');
+  const parent = el.parentElement;
+  const children = parent.querySelector('.tree-children');
   const arrow = el.querySelector('.tree-arrow');
   if (children) {
     children.classList.toggle('open');
-    if (arrow) arrow.style.transform = children.classList.contains('open') ? 'rotate(90deg)' : '';
+    if (arrow) arrow.classList.toggle('open');
   }
 }
 
-// Select page
-function selectPage(el, name) {
-  document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+// ─── PAGE SELECT ──────────────────────────────────────────
+function selectPage(el, name, icon) {
+  document.querySelectorAll('#sidebar .sidebar-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
-  // Update title
-  const titleEl = document.querySelector('#doc-content h1');
+  const titleEl = document.getElementById('doc-title');
   if (titleEl) titleEl.textContent = name;
+  const iconEl = document.getElementById('doc-page-icon');
+  if (iconEl && icon) iconEl.textContent = icon;
 }
 
-// Checkbox
+// ─── CHECKBOXES ───────────────────────────────────────────
 function toggleCheck(el) {
-  el.classList.toggle('checked');
-  el.closest('.check-item').classList.toggle('done');
+  const box = el.querySelector('.check-box');
+  if (!box) return;
+  box.classList.toggle('checked');
+  el.classList.toggle('done');
 }
 
-// Settings
+// ─── SETTINGS ─────────────────────────────────────────────
 function toggleSettings() {
   settingsOpen = !settingsOpen;
   document.getElementById('settings-panel').classList.toggle('open', settingsOpen);
-  document.getElementById('settings-overlay').style.display = settingsOpen ? 'block' : 'none';
+  document.getElementById('settings-overlay').classList.toggle('open', settingsOpen);
 }
 
-// Doc font
+// ─── DOC FONT ─────────────────────────────────────────────
 function setDocFont(font, silent) {
   const doc = document.getElementById('doc-content');
+  if (!doc) return;
   doc.classList.remove('doc-font-sans', 'doc-font-serif', 'doc-font-mono');
   doc.classList.add('doc-font-' + font);
   if (!silent) localStorage.setItem('dotion-font', font);
-  // Update radio
   document.querySelectorAll('input[name="doc-font"]').forEach(r => {
-    r.checked = r.value === font;
+    r.checked = (r.value === font);
   });
 }
 
-// Accent color
-function setAccent(color, el) {
+// ─── ACCENT COLOR ─────────────────────────────────────────
+function applyAccent(color) {
   document.documentElement.style.setProperty('--accent', color);
+  // Rebuild dependent vars
+  document.documentElement.style.setProperty('--accent-dim', color.replace(')', ' / 0.15)').replace('oklch(', 'oklch('));
+  document.documentElement.style.setProperty('--accent-glow', color.replace(')', ' / 0.35)').replace('oklch(', 'oklch('));
+}
+
+function setAccent(color, el) {
+  applyAccent(color);
   localStorage.setItem('dotion-accent', color);
   document.querySelectorAll('.accent-dot').forEach(d => d.classList.remove('active'));
   if (el) el.classList.add('active');
 }
 
-// Layout
+// ─── LAYOUT ───────────────────────────────────────────────
 function setLayout(width) {
-  document.getElementById('doc-content').style.maxWidth = width;
+  const doc = document.getElementById('doc-content');
+  if (doc) doc.style.maxWidth = width;
+}
+
+// ─── SCROLL REVEAL ────────────────────────────────────────
+function initScrollReveal() {
+  // Sections after hero: observe and add reveal class
+  const targets = document.querySelectorAll(
+    '.gallery-section .gallery-card, .features-section .feature-cell, .testimonials-section .testimonial-card'
+  );
+
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach(t => t.style.opacity = '1');
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        el.style.animation = `revealUp 0.6s cubic-bezier(0.16,1,0.3,1) ${i * 0.04}s both`;
+        observer.unobserve(el);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  targets.forEach(t => {
+    t.style.opacity = '0';
+    observer.observe(t);
+  });
 }
 </script>
 </body>
