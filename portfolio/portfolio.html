@@ -577,6 +577,18 @@
     }
     .work-card.is-featured h3 { font-size: 3.6rem; }
 
+    .embed-placeholder {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 50% 40%, rgba(94,196,171,0.08), transparent 60%), rgba(6,6,8,0.85);
+      backdrop-filter: blur(6px);
+    }
+
     .embed-label {
       position: absolute;
       top: 1.6rem;
@@ -1097,6 +1109,40 @@
               <rect x="48" y="96" width="140" height="5" rx="2" fill="currentColor" opacity="0.12"/>
             </svg>
             <iframe src="https://heronshub.social/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="HeronsHub Social live preview" id="heronsEmbed"></iframe>
+            <!-- Placeholder shown if iframe fails or times out -->
+            <div class="embed-placeholder" id="heronsPlaceholder" style="display:none;">
+              <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;">
+                <!-- Browser chrome -->
+                <rect x="20" y="16" width="360" height="228" rx="14" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+                <rect x="20" y="16" width="360" height="36" rx="14" fill="rgba(255,255,255,0.06)"/>
+                <rect x="20" y="50" width="360" height="2" fill="rgba(255,255,255,0.06)"/>
+                <circle cx="42" cy="34" r="5" fill="rgba(255,255,255,0.18)"/>
+                <circle cx="58" cy="34" r="5" fill="rgba(255,255,255,0.18)"/>
+                <circle cx="74" cy="34" r="5" fill="rgba(255,255,255,0.18)"/>
+                <rect x="120" y="28" width="140" height="12" rx="6" fill="rgba(255,255,255,0.06)"/>
+                <!-- Sidebar -->
+                <rect x="20" y="52" width="80" height="192" fill="rgba(255,255,255,0.03)"/>
+                <rect x="32" y="68" width="56" height="8" rx="3" fill="rgba(94,196,171,0.3)"/>
+                <rect x="32" y="88" width="48" height="6" rx="2" fill="rgba(255,255,255,0.08)"/>
+                <rect x="32" y="104" width="52" height="6" rx="2" fill="rgba(255,255,255,0.06)"/>
+                <rect x="32" y="120" width="44" height="6" rx="2" fill="rgba(255,255,255,0.06)"/>
+                <rect x="32" y="136" width="50" height="6" rx="2" fill="rgba(255,255,255,0.05)"/>
+                <!-- Feed cards -->
+                <rect x="114" y="64" width="252" height="52" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+                <circle cx="136" cy="90" r="12" fill="rgba(94,196,171,0.2)"/>
+                <rect x="156" y="80" width="80" height="8" rx="3" fill="rgba(255,255,255,0.12)"/>
+                <rect x="156" y="94" width="140" height="5" rx="2" fill="rgba(255,255,255,0.06)"/>
+                <rect x="114" y="126" width="252" height="52" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+                <circle cx="136" cy="152" r="12" fill="rgba(201,162,39,0.2)"/>
+                <rect x="156" y="142" width="96" height="8" rx="3" fill="rgba(255,255,255,0.12)"/>
+                <rect x="156" y="156" width="120" height="5" rx="2" fill="rgba(255,255,255,0.06)"/>
+                <rect x="114" y="188" width="252" height="44" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+                <circle cx="136" cy="210" r="12" fill="rgba(114,216,193,0.15)"/>
+                <rect x="156" y="202" width="72" height="8" rx="3" fill="rgba(255,255,255,0.10)"/>
+                <rect x="156" y="216" width="108" height="5" rx="2" fill="rgba(255,255,255,0.05)"/>
+              </svg>
+              <span style="display:block;margin-top:1.2rem;font-size:1.1rem;font-weight:600;color:rgba(234,232,225,0.45);letter-spacing:0.06em;text-transform:uppercase;">Live preview unavailable</span>
+            </div>
           </div>
           <div class="work-card-body">
             <span class="work-card-type">Featured — Live Platform</span>
@@ -1507,8 +1553,35 @@
 
     /* ===== HERONSHUB IFRAME LOAD ===== */
     const heronsEmbed = document.getElementById('heronsEmbed');
+    const heronsPlaceholder = document.getElementById('heronsPlaceholder');
     if (heronsEmbed) {
-      heronsEmbed.addEventListener('load', () => heronsEmbed.classList.add('is-loaded'));
+      let embedLoaded = false;
+      const embedTimeout = setTimeout(() => {
+        if (!embedLoaded && heronsPlaceholder) {
+          heronsEmbed.style.display = 'none';
+          heronsPlaceholder.style.display = 'flex';
+        }
+      }, 6000);
+      heronsEmbed.addEventListener('load', () => {
+        embedLoaded = true;
+        clearTimeout(embedTimeout);
+        try {
+          // If X-Frame-Options blocks it, accessing contentDocument throws
+          const doc = heronsEmbed.contentDocument || heronsEmbed.contentWindow.document;
+          if (doc && doc.body && doc.body.innerHTML.length > 100) {
+            heronsEmbed.classList.add('is-loaded');
+          } else { throw new Error('empty'); }
+        } catch(e) {
+          heronsEmbed.style.display = 'none';
+          if (heronsPlaceholder) heronsPlaceholder.style.display = 'flex';
+        }
+      });
+      heronsEmbed.addEventListener('error', () => {
+        embedLoaded = true;
+        clearTimeout(embedTimeout);
+        heronsEmbed.style.display = 'none';
+        if (heronsPlaceholder) heronsPlaceholder.style.display = 'flex';
+      });
     }
 
     /* ===== SMOOTH NAV SCROLL ===== */
