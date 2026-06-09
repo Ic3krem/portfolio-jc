@@ -478,6 +478,54 @@
       max-width: 48rem;
     }
 
+    /* Automation stats */
+    .auto-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.6rem;
+      margin: 4rem 0;
+      padding: 3.2rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.025);
+    }
+    .auto-stat { text-align: center; }
+    .auto-stat-num {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.8rem, 4.2rem, 5.5rem);
+      font-weight: 200;
+      line-height: 1;
+      color: var(--gold);
+    }
+    .auto-stat-label {
+      display: block;
+      margin-top: 0.8rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+    .auto-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 3rem;
+    }
+    .auto-tool {
+      padding: 0.7rem 1.6rem;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+      letter-spacing: 0.02em;
+    }
+    @media (max-width: 767px) {
+      .auto-stats { grid-template-columns: repeat(2, 1fr); padding: 2.4rem 1.6rem; }
+    }
+
     .work-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -1141,6 +1189,32 @@
             <h2 class="reveal reveal-d1">Projects and systems.</h2>
           </div>
           <p class="reveal reveal-d2">Applications, dashboards, civic tools, and hardware-backed systems — each built to solve a real problem.</p>
+        </div>
+
+        <!-- Automation Stats -->
+        <div class="auto-stats reveal">
+          <div class="auto-stat">
+            <span class="auto-stat-num">80</span>
+            <span class="auto-stat-label">Total Workflows</span>
+          </div>
+          <div class="auto-stat">
+            <span class="auto-stat-num">25</span>
+            <span class="auto-stat-label">Management</span>
+          </div>
+          <div class="auto-stat">
+            <span class="auto-stat-num">15</span>
+            <span class="auto-stat-label">RAG Systems</span>
+          </div>
+          <div class="auto-stat">
+            <span class="auto-stat-num">40</span>
+            <span class="auto-stat-label">Personalized Systems</span>
+          </div>
+          <div class="auto-tools" style="grid-column: 1 / -1;">
+            <span class="auto-tool">Zapier</span>
+            <span class="auto-tool">n8n</span>
+            <span class="auto-tool">Make</span>
+            <span class="auto-tool">GHL</span>
+          </div>
         </div>
 
         <!-- Featured: HeronsHub with live embed -->
