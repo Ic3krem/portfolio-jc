@@ -565,6 +565,16 @@
       border-radius: var(--radius);
       background: rgba(255,255,255,0.025);
     }
+    .auto-stats-title {
+      grid-column: 1 / -1;
+      margin-bottom: 1.2rem;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
     .auto-stat { text-align: center; }
     .auto-stat-num {
       font-family: 'Fraunces', serif;
@@ -580,23 +590,6 @@
       font-weight: 600;
       color: var(--muted);
       letter-spacing: 0.03em;
-    }
-    .auto-tools {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 3rem;
-    }
-    .auto-tool {
-      padding: 0.7rem 1.6rem;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--muted);
-      background: rgba(255,255,255,0.03);
-      letter-spacing: 0.02em;
     }
     @media (max-width: 767px) {
       .auto-stats { grid-template-columns: repeat(2, 1fr); padding: 2.4rem 1.6rem; }
@@ -1384,27 +1377,22 @@
 
         <!-- Automation Stats -->
         <div class="auto-stats reveal">
+          <p class="auto-stats-title">Automation Workflows</p>
           <div class="auto-stat">
-            <span class="auto-stat-num">80</span>
-            <span class="auto-stat-label">Total Workflows</span>
+            <span class="auto-stat-num">35</span>
+            <span class="auto-stat-label">n8n</span>
           </div>
           <div class="auto-stat">
-            <span class="auto-stat-num">25</span>
-            <span class="auto-stat-label">Management</span>
+            <span class="auto-stat-num">12</span>
+            <span class="auto-stat-label">Zapier</span>
           </div>
           <div class="auto-stat">
-            <span class="auto-stat-num">15</span>
-            <span class="auto-stat-label">RAG Systems</span>
+            <span class="auto-stat-num">16</span>
+            <span class="auto-stat-label">Make</span>
           </div>
           <div class="auto-stat">
-            <span class="auto-stat-num">40</span>
-            <span class="auto-stat-label">Personalized Systems</span>
-          </div>
-          <div class="auto-tools" style="grid-column: 1 / -1;">
-            <span class="auto-tool">Zapier</span>
-            <span class="auto-tool">n8n</span>
-            <span class="auto-tool">Make</span>
-            <span class="auto-tool">GHL</span>
+            <span class="auto-stat-num">5</span>
+            <span class="auto-stat-label">GHL</span>
           </div>
         </div>
 
