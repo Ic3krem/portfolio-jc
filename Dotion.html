@@ -248,6 +248,10 @@ body {
 
 /* Primary button */
 .btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   padding: 8px 20px;
   background: var(--accent);
   color: oklch(10% 0.02 280);
@@ -1395,7 +1399,7 @@ body {
         <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="theme-btn-landing">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <button class="btn-primary" onclick="navigate('workspace')">Open App</button>
+        <a class="btn-primary" href="DotionWorkspace.html">Open App</a>
       </div>
     </div>
   </nav>
@@ -1420,7 +1424,7 @@ body {
           all in a single focused canvas.
         </p>
         <div class="hero-cta reveal reveal-d3">
-          <button class="btn-primary" onclick="navigate('workspace')">Start writing free</button>
+          <a class="btn-primary" href="DotionWorkspace.html">Start writing free</a>
           <button class="btn-ghost" onclick="navigate('templates')">Browse templates</button>
         </div>
       </div>
@@ -1472,14 +1476,14 @@ body {
         <p class="section-body" style="margin: 0 auto;">Beautiful, ready-to-use starting points for every workflow — just open and write.</p>
       </div>
       <div class="gallery-grid">
-        <div class="gallery-card" onclick="navigate('workspace')">
+        <div class="gallery-card" onclick="navigate('templates')">
           <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(75% 0.18 55 / 0.8), oklch(60% 0.14 310 / 0.8));">📘</div>
           <div class="gallery-info">
             <h3>Team Handbook</h3>
             <p>Onboarding guides, policies, and team culture docs all in one place.</p>
           </div>
         </div>
-        <div class="gallery-card" onclick="navigate('workspace')">
+        <div class="gallery-card" onclick="navigate('templates')">
           <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(65% 0.16 160 / 0.8), oklch(55% 0.15 200 / 0.8));">🔗</div>
           <div class="gallery-info">
             <h3>API Reference</h3>
@@ -1493,7 +1497,7 @@ body {
             <p>Structured lessons with modules, progress tracking, and rich content.</p>
           </div>
         </div>
-        <div class="gallery-card" onclick="navigate('workspace')">
+        <div class="gallery-card" onclick="navigate('templates')">
           <div class="gallery-thumb" style="background: linear-gradient(135deg, oklch(72% 0.16 65 / 0.8), oklch(75% 0.18 55 / 0.8));">📝</div>
           <div class="gallery-info">
             <h3>Product PRD</h3>
@@ -1622,359 +1626,6 @@ body {
 
 
 <!-- ═══════════════════════════════════════════════════════
-     WORKSPACE PAGE
-════════════════════════════════════════════════════════ -->
-<div id="workspace-page" class="page">
-  <div style="display:flex; flex:1; min-height:0; overflow:hidden;">
-
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header" id="sidebar-header">
-        <div class="ws-logo" onclick="navigate('landing')">
-          <div class="ws-logo-mark">
-            <svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 1L11 4V8L6 11L1 8V4Z"/></svg>
-          </div>
-          <span class="ws-logo-text">dotion</span>
-        </div>
-        <button class="icon-btn" onclick="toggleSidebar()" title="Collapse sidebar" style="width:28px;height:28px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 17l-5-5 5-5M18 17l-5-5 5-5"/></svg>
-        </button>
-      </div>
-
-      <div id="sidebar-content">
-        <button class="sidebar-new-btn" onclick="alert('New page created!')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-          New Page
-        </button>
-      </div>
-
-      <div class="sidebar-tree" id="sidebar-tree">
-        <div class="sidebar-section-label">Pages</div>
-
-        <div class="sidebar-item active" onclick="selectPage(this,'Meeting Notes','📋')">
-          <span class="item-icon">📋</span><span>Meeting Notes</span>
-        </div>
-        <div class="sidebar-item" onclick="selectPage(this,'To-Do List','✅')">
-          <span class="item-icon">✅</span><span>To-Do List</span>
-        </div>
-
-        <!-- Project Brief tree -->
-        <div>
-          <div class="sidebar-item parent-item" onclick="toggleTree(this)">
-            <div style="display:flex;align-items:center;gap:7px;">
-              <span class="item-icon">🚀</span><span>Project Brief</span>
-            </div>
-            <svg class="tree-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-          <div class="tree-children">
-            <div class="sidebar-item" onclick="selectPage(this,'Timeline','📅')"><span class="item-icon">📅</span><span>Timeline</span></div>
-            <div class="sidebar-item" onclick="selectPage(this,'Resources','📎')"><span class="item-icon">📎</span><span>Resources</span></div>
-          </div>
-        </div>
-
-        <div class="sidebar-item" onclick="selectPage(this,'README','📕')">
-          <span class="item-icon">📕</span><span>README</span>
-        </div>
-
-        <!-- Documentation tree -->
-        <div>
-          <div class="sidebar-item parent-item" onclick="toggleTree(this)">
-            <div style="display:flex;align-items:center;gap:7px;">
-              <span class="item-icon">📚</span><span>Documentation</span>
-            </div>
-            <svg class="tree-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-          </div>
-          <div class="tree-children">
-            <div class="sidebar-item" onclick="selectPage(this,'API Reference','🧠')"><span class="item-icon">🧠</span><span>API Reference</span></div>
-          </div>
-        </div>
-
-        <div class="sidebar-item" onclick="selectPage(this,'Course Hub','🎓')">
-          <span class="item-icon">🎓</span><span>Course Hub</span>
-        </div>
-      </div>
-
-      <div class="sidebar-footer" id="sidebar-footer">
-        <div class="sidebar-item" onclick="toggleSettings()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          <span>Settings</span>
-        </div>
-        <div class="sidebar-item" onclick="toggleTheme()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-          <span id="theme-label-sidebar">Light Mode</span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Expand button (shown when collapsed) -->
-    <button class="sidebar-expand-btn" id="sidebar-expand" onclick="toggleSidebar()" title="Expand sidebar">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
-
-    <!-- Editor -->
-    <main class="editor-main" id="editor-main">
-      <!-- Cover -->
-      <div class="doc-cover">
-        <div class="doc-cover-gradient"></div>
-        <div class="doc-icon-float" id="doc-page-icon">📋</div>
-      </div>
-
-      <!-- Doc content -->
-      <div class="doc-content doc-font-sans" id="doc-content">
-        <h1 class="doc-title" contenteditable="true" id="doc-title">Meeting Notes</h1>
-        <div class="doc-meta">
-          <span>Last edited just now</span>
-          <span>by You</span>
-        </div>
-
-        <!-- Toolbar -->
-        <div class="doc-toolbar">
-          <button class="tb-btn" title="Bold"><strong>B</strong></button>
-          <button class="tb-btn" title="Italic"><em>I</em></button>
-          <button class="tb-btn" title="Underline" style="text-decoration:underline;">U</button>
-          <button class="tb-btn t-mono" title="Inline code" style="font-size:11px;">&lt;/&gt;</button>
-          <div class="tb-sep"></div>
-          <button class="tb-btn" title="Heading 1" style="font-weight:700;font-size:12px;">H1</button>
-          <button class="tb-btn" title="Heading 2" style="font-weight:600;font-size:12px;">H2</button>
-          <button class="tb-btn" title="Heading 3" style="font-size:12px;">H3</button>
-          <div class="tb-sep"></div>
-          <button class="tb-btn" title="Bullet list">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/></svg>
-          </button>
-          <button class="tb-btn" title="Numbered list">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4" stroke-linecap="round"/><path d="M4 10h2" stroke-linecap="round"/></svg>
-          </button>
-          <button class="tb-btn" title="Blockquote">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.757-2-2-2H5c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2-2-2h-3c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3z"/></svg>
-          </button>
-          <button class="tb-btn t-mono" title="Code block" style="font-size:11px;">{ }</button>
-          <button class="tb-btn" title="Table">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-          </button>
-          <div class="tb-spacer"></div>
-          <button class="tb-btn" onclick="toggleSettings()" title="Page settings">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-          </button>
-        </div>
-
-        <!-- Document body -->
-        <div class="doc-body" id="doc-body">
-          <h2>Weekly Standup — June 7, 2026</h2>
-
-          <div style="margin-bottom:24px;">
-            <h3>Attendees</h3>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;">
-              <span class="mention" style="background:oklch(75% 0.18 55 / 0.12);color:var(--accent);">@sarah</span>
-              <span class="mention" style="background:oklch(65% 0.16 160 / 0.12);color:oklch(65% 0.16 160);">@marcus</span>
-              <span class="mention" style="background:oklch(60% 0.14 310 / 0.12);color:oklch(60% 0.14 310);">@priya</span>
-              <span class="mention" style="background:oklch(62% 0.16 25 / 0.12);color:oklch(62% 0.16 25);">@alex</span>
-            </div>
-          </div>
-
-          <div style="margin-bottom:24px;">
-            <h3>Agenda</h3>
-            <ul class="agenda-list" style="margin-top:10px;">
-              <li class="agenda-item"><span class="agenda-bullet"></span>Sprint review and demo</li>
-              <li class="agenda-item"><span class="agenda-bullet"></span>Q3 roadmap discussion</li>
-              <li class="agenda-item"><span class="agenda-bullet"></span>Design system update</li>
-              <li class="agenda-item"><span class="agenda-bullet"></span>Open discussion and blockers</li>
-            </ul>
-          </div>
-
-          <div style="margin-bottom:24px;">
-            <h3>Action Items</h3>
-            <div class="check-list" style="margin-top:10px;">
-              <div class="check-item done" onclick="toggleCheck(this)">
-                <div class="check-box checked"></div>
-                <span class="check-label">Finalize API documentation for v2 endpoints</span>
-              </div>
-              <div class="check-item done" onclick="toggleCheck(this)">
-                <div class="check-box checked"></div>
-                <span class="check-label">Review and merge PR #347 — auth refactor</span>
-              </div>
-              <div class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <span class="check-label">Set up staging environment for load testing</span>
-              </div>
-              <div class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <span class="check-label">Schedule design review with the product team</span>
-              </div>
-              <div class="check-item" onclick="toggleCheck(this)">
-                <div class="check-box"></div>
-                <span class="check-label">Draft Q3 OKRs and share with leadership</span>
-              </div>
-            </div>
-          </div>
-
-          <blockquote class="doc-blockquote">
-            "We should prioritize the developer experience improvements before adding new features. Let's focus on making the existing tools delightful." — Sarah
-          </blockquote>
-
-          <div style="margin-bottom:24px;">
-            <h3>Code Snippet</h3>
-            <div class="code-block">
-              <div class="code-header">
-                <span class="code-lang">TypeScript</span>
-                <button class="code-copy-btn" onclick="this.textContent='Copied!';setTimeout(()=>this.textContent='Copy',1600)">Copy</button>
-              </div>
-<span style="color:oklch(60% 0.14 310);">const</span> <span style="color:oklch(65% 0.16 160);">fetchDocs</span> = <span style="color:oklch(60% 0.14 310);">async</span> (slug: <span style="color:oklch(72% 0.16 65);">string</span>) <span style="color:oklch(60% 0.14 310);">=></span> {
-  <span style="color:oklch(60% 0.14 310);">const</span> res = <span style="color:oklch(60% 0.14 310);">await</span> fetch(<span style="color:oklch(62% 0.16 25);">`/api/docs/${slug}`</span>);
-  <span style="color:oklch(60% 0.14 310);">return</span> res.json();
-};</div>
-          </div>
-
-          <div style="margin-bottom:24px;">
-            <h3>Sprint Tasks</h3>
-            <div class="doc-table-wrap">
-              <table class="doc-table">
-                <thead>
-                  <tr>
-                    <th>Task</th>
-                    <th>Owner</th>
-                    <th>Status</th>
-                    <th>Due</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style="font-weight:500;">Auth service refactor</td>
-                    <td>Sarah</td>
-                    <td><span class="pill" style="background:oklch(65% 0.16 160 / 0.12);color:oklch(65% 0.16 160);">Done</span></td>
-                    <td style="color:var(--fg-faint);">Jun 2</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:500;">API v2 endpoints</td>
-                    <td>Marcus</td>
-                    <td><span class="pill" style="background:var(--accent-dim);color:var(--accent);">In Progress</span></td>
-                    <td style="color:var(--fg-faint);">Jun 8</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:500;">Dashboard redesign</td>
-                    <td>Priya</td>
-                    <td><span class="pill" style="background:var(--accent-dim);color:var(--accent);">In Progress</span></td>
-                    <td style="color:var(--fg-faint);">Jun 10</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:500;">Load testing setup</td>
-                    <td>Alex</td>
-                    <td><span class="pill" style="background:oklch(50% 0.01 280 / 0.12);color:var(--fg-faint);">To Do</span></td>
-                    <td style="color:var(--fg-faint);">Jun 12</td>
-                  </tr>
-                  <tr>
-                    <td style="font-weight:500;">CI/CD optimization</td>
-                    <td>Sarah</td>
-                    <td><span class="pill" style="background:oklch(62% 0.16 25 / 0.12);color:oklch(62% 0.16 25);">Blocked</span></td>
-                    <td style="color:var(--fg-faint);">Jun 15</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div>
-            <h3>Notes</h3>
-            <p style="margin-top:10px;">The team agreed to shift focus to developer tooling for the next two sprints. Marcus will lead the API v2 migration while Priya finalizes the new dashboard components. We'll reconvene on Friday for a quick sync on blockers.</p>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-
-  <!-- Settings panel -->
-  <div id="settings-panel" class="settings-panel">
-    <div class="settings-header">
-      <h3 class="settings-title">Page Settings</h3>
-      <button class="icon-btn" onclick="toggleSettings()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <!-- Font -->
-    <div class="settings-group">
-      <span class="settings-section-label">Font Family</span>
-      <label class="font-radio">
-        <input type="radio" name="doc-font" value="sans" checked onchange="setDocFont('sans')" style="accent-color:var(--accent);">
-        <div>
-          <div class="font-radio-name" style="font-family:'Inter',sans-serif;">Sans-serif</div>
-          <div class="font-radio-sub">Inter — clean and modern</div>
-        </div>
-      </label>
-      <label class="font-radio">
-        <input type="radio" name="doc-font" value="serif" onchange="setDocFont('serif')" style="accent-color:var(--accent);">
-        <div>
-          <div class="font-radio-name" style="font-family:'Instrument Serif',serif;font-size:15px;">Serif</div>
-          <div class="font-radio-sub">Instrument Serif — editorial</div>
-        </div>
-      </label>
-      <label class="font-radio">
-        <input type="radio" name="doc-font" value="mono" onchange="setDocFont('mono')" style="accent-color:var(--accent);">
-        <div>
-          <div class="font-radio-name" style="font-family:'JetBrains Mono',monospace;font-size:13px;">Monospace</div>
-          <div class="font-radio-sub">JetBrains Mono — for devs</div>
-        </div>
-      </label>
-    </div>
-
-    <!-- Accent color -->
-    <div class="settings-group">
-      <span class="settings-section-label">Accent Color</span>
-      <div class="accent-dots">
-        <div class="accent-dot active" style="background:oklch(75% 0.18 55);" onclick="setAccent('oklch(75% 0.18 55)',this)" title="Amber"></div>
-        <div class="accent-dot" style="background:oklch(65% 0.16 160);" onclick="setAccent('oklch(65% 0.16 160)',this)" title="Emerald"></div>
-        <div class="accent-dot" style="background:oklch(60% 0.14 310);" onclick="setAccent('oklch(60% 0.14 310)',this)" title="Violet"></div>
-        <div class="accent-dot" style="background:oklch(62% 0.16 25);" onclick="setAccent('oklch(62% 0.16 25)',this)" title="Rose"></div>
-        <div class="accent-dot" style="background:oklch(60% 0.14 230);" onclick="setAccent('oklch(60% 0.14 230)',this)" title="Sky"></div>
-        <div class="accent-dot" style="background:oklch(72% 0.16 65);" onclick="setAccent('oklch(72% 0.16 65)',this)" title="Gold"></div>
-      </div>
-    </div>
-
-    <!-- Layout -->
-    <div class="settings-group">
-      <span class="settings-section-label">Layout Width</span>
-      <label class="layout-radio">
-        <input type="radio" name="layout" value="default" checked onchange="setLayout('740px')" style="accent-color:var(--accent);">
-        Default
-      </label>
-      <label class="layout-radio">
-        <input type="radio" name="layout" value="wide" onchange="setLayout('960px')" style="accent-color:var(--accent);">
-        Wide
-      </label>
-      <label class="layout-radio">
-        <input type="radio" name="layout" value="full" onchange="setLayout('100%')" style="accent-color:var(--accent);">
-        Full Width
-      </label>
-    </div>
-
-    <!-- Publish -->
-    <div class="settings-group">
-      <span class="settings-section-label">Publishing</span>
-      <div class="toggle-wrap">
-        <div>
-          <div class="toggle-info-name">Publish to web</div>
-          <div class="toggle-info-sub">Make this page publicly accessible</div>
-        </div>
-        <div class="toggle-track" onclick="this.classList.toggle('on')">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Export -->
-    <div class="settings-group">
-      <span class="settings-section-label">Export</span>
-      <button class="export-btn" onclick="alert('PDF export started!')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export as PDF
-      </button>
-    </div>
-  </div>
-
-  <div id="settings-overlay" class="settings-overlay" onclick="toggleSettings()"></div>
-</div>
-
-
-<!-- ═══════════════════════════════════════════════════════
      TEMPLATES PAGE
 ════════════════════════════════════════════════════════ -->
 <div id="templates-page" class="page">
@@ -1997,7 +1648,7 @@ body {
         <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
-        <button class="btn-primary" onclick="navigate('workspace')">Open App</button>
+        <a class="btn-primary" href="DotionWorkspace.html">Open App</a>
       </div>
     </div>
   </div>
@@ -2010,59 +1661,59 @@ body {
     </div>
 
     <div class="templates-grid">
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">📘</span>
         <div class="template-name">Team Handbook</div>
         <div class="template-desc">Company culture, policies, benefits, and onboarding guides all in one structured space.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">🔗</span>
         <div class="template-name">API Reference</div>
         <div class="template-desc">Comprehensive API documentation with endpoints, examples, and authentication guides.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">🎓</span>
         <div class="template-name">Online Course</div>
         <div class="template-desc">Structured lessons with modules, progress tracking, and interactive content blocks.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">📝</span>
         <div class="template-name">Product PRD</div>
         <div class="template-desc">Product requirements documents with specs, user stories, and acceptance criteria.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">📋</span>
         <div class="template-name">Meeting Notes</div>
         <div class="template-desc">Capture meeting agendas, decisions, action items, and follow-ups efficiently.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">🗺️</span>
         <div class="template-name">Roadmap</div>
         <div class="template-desc">Product roadmap with quarters, milestones, and team assignments organized clearly.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">🐛</span>
         <div class="template-name">Bug Tracker</div>
         <div class="template-desc">Track and prioritize bugs with severity levels, reproduction steps, and assignments.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">📰</span>
         <div class="template-name">Changelog</div>
         <div class="template-desc">Keep users updated with versioned release notes, new features, and improvements.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
-      <div class="template-card" onclick="navigate('workspace')">
+      <div class="template-card">
         <span class="template-icon">🧪</span>
         <div class="template-name">Design System</div>
         <div class="template-desc">Document components, tokens, patterns, and guidelines for your design system.</div>
-        <button class="template-use-btn" onclick="event.stopPropagation();navigate('workspace')">Use Template</button>
+        <button class="template-use-btn" type="button">Use Template</button>
       </div>
     </div>
   </div>
@@ -2071,9 +1722,6 @@ body {
 
 <script>
 // ─── STATE ────────────────────────────────────────────────
-let currentPage = 'landing';
-let sidebarOpen = true;
-let settingsOpen = false;
 let isDark = true;
 
 // ─── INIT ─────────────────────────────────────────────────
@@ -2087,17 +1735,6 @@ let isDark = true;
     document.documentElement.setAttribute('data-theme', 'dark');
   }
 
-  const savedAccent = localStorage.getItem('dotion-accent');
-  if (savedAccent) {
-    applyAccent(savedAccent);
-    document.querySelectorAll('.accent-dot').forEach(d => {
-      d.classList.remove('active');
-      if (d.style.background === savedAccent) d.classList.add('active');
-    });
-  }
-
-  const savedFont = localStorage.getItem('dotion-font');
-  if (savedFont) setDocFont(savedFont, true);
 
   updateThemeLabels();
   initScrollReveal();
@@ -2109,11 +1746,10 @@ function navigate(page) {
   const target = document.getElementById(page + '-page');
   if (target) {
     target.classList.add('active');
-    currentPage = page;
     window.scrollTo(0, 0);
     // Lock body scroll on app pages, unlock on landing
-    document.body.style.overflow = (page === 'workspace' || page === 'templates') ? 'hidden' : '';
-    document.body.style.height = (page === 'workspace' || page === 'templates') ? '100vh' : '';
+    document.body.style.overflow = page === 'templates' ? 'hidden' : '';
+    document.body.style.height = page === 'templates' ? '100vh' : '';
     if (page === 'landing') initScrollReveal();
   }
 }
@@ -2129,89 +1765,6 @@ function toggleTheme() {
 function updateThemeLabels() {
   const label = document.getElementById('theme-label-sidebar');
   if (label) label.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-}
-
-// ─── SIDEBAR ──────────────────────────────────────────────
-function toggleSidebar() {
-  sidebarOpen = !sidebarOpen;
-  const sb = document.getElementById('sidebar');
-  const ex = document.getElementById('sidebar-expand');
-  if (sidebarOpen) {
-    sb.classList.remove('collapsed');
-    ex.classList.remove('visible');
-  } else {
-    sb.classList.add('collapsed');
-    ex.classList.add('visible');
-  }
-}
-
-// ─── TREE ────────────────────────────────────────────────
-function toggleTree(el) {
-  const parent = el.parentElement;
-  const children = parent.querySelector('.tree-children');
-  const arrow = el.querySelector('.tree-arrow');
-  if (children) {
-    children.classList.toggle('open');
-    if (arrow) arrow.classList.toggle('open');
-  }
-}
-
-// ─── PAGE SELECT ──────────────────────────────────────────
-function selectPage(el, name, icon) {
-  document.querySelectorAll('#sidebar .sidebar-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-  const titleEl = document.getElementById('doc-title');
-  if (titleEl) titleEl.textContent = name;
-  const iconEl = document.getElementById('doc-page-icon');
-  if (iconEl && icon) iconEl.textContent = icon;
-}
-
-// ─── CHECKBOXES ───────────────────────────────────────────
-function toggleCheck(el) {
-  const box = el.querySelector('.check-box');
-  if (!box) return;
-  box.classList.toggle('checked');
-  el.classList.toggle('done');
-}
-
-// ─── SETTINGS ─────────────────────────────────────────────
-function toggleSettings() {
-  settingsOpen = !settingsOpen;
-  document.getElementById('settings-panel').classList.toggle('open', settingsOpen);
-  document.getElementById('settings-overlay').classList.toggle('open', settingsOpen);
-}
-
-// ─── DOC FONT ─────────────────────────────────────────────
-function setDocFont(font, silent) {
-  const doc = document.getElementById('doc-content');
-  if (!doc) return;
-  doc.classList.remove('doc-font-sans', 'doc-font-serif', 'doc-font-mono');
-  doc.classList.add('doc-font-' + font);
-  if (!silent) localStorage.setItem('dotion-font', font);
-  document.querySelectorAll('input[name="doc-font"]').forEach(r => {
-    r.checked = (r.value === font);
-  });
-}
-
-// ─── ACCENT COLOR ─────────────────────────────────────────
-function applyAccent(color) {
-  document.documentElement.style.setProperty('--accent', color);
-  // Rebuild dependent vars
-  document.documentElement.style.setProperty('--accent-dim', color.replace(')', ' / 0.15)').replace('oklch(', 'oklch('));
-  document.documentElement.style.setProperty('--accent-glow', color.replace(')', ' / 0.35)').replace('oklch(', 'oklch('));
-}
-
-function setAccent(color, el) {
-  applyAccent(color);
-  localStorage.setItem('dotion-accent', color);
-  document.querySelectorAll('.accent-dot').forEach(d => d.classList.remove('active'));
-  if (el) el.classList.add('active');
-}
-
-// ─── LAYOUT ───────────────────────────────────────────────
-function setLayout(width) {
-  const doc = document.getElementById('doc-content');
-  if (doc) doc.style.maxWidth = width;
 }
 
 // ─── SCROLL REVEAL ────────────────────────────────────────

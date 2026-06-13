@@ -22,6 +22,7 @@ Live site: **https://ic3krem.github.io/portfolio-jc/**
 ├── SaintAngelo.html            # Healthcare queue system walkthrough
 ├── AFHM.html                   # Flood monitoring dashboard walkthrough
 ├── Dotion.html                 # Productivity workspace walkthrough
+├── DotionWorkspace.html        # Dotion editor workspace
 ├── Radia.html                  # HR management workspace walkthrough
 ├── SipatGov.html               # Civic transparency platform walkthrough
 └── AlphaFitness.html           # Gym management system walkthrough
@@ -74,9 +75,32 @@ Replace any of these files (keep the same filename) and push.
 
 ---
 
+## Changing Project Preview Images
+
+The selected-work cards use screenshots from `portfolio/Pictures/Projects/`.
+Replace an image while keeping its filename to update the portfolio card without
+editing the HTML.
+
+| Project | Image filename |
+|---------|----------------|
+| HeronsHub Social | `heronshub.png` |
+| SaintAngelo | `saintangelo.png` |
+| AFHM | `afhm.png` |
+| Dotion | `dotion.png` |
+| Radia | `radia.png` |
+| SipatGov | `sipatgov.png` |
+| AlphaFitness | `alphafitness.png` |
+
+Use a landscape image near a 16:10 ratio. The cards crop images with
+`object-fit: cover`, so screenshots can be larger than the displayed area.
+
+---
+
 ## Adding or Editing Project Walkthroughs
 
-Each project is a **self-contained single HTML file** in the repo root. They include all CSS, JS, and SVG inline — no external dependencies beyond Google Fonts.
+Each project is self-contained in the repo root with inline CSS, JavaScript, and
+SVG assets. Most projects use one HTML file. Dotion uses `Dotion.html` for its
+landing/template experience and `DotionWorkspace.html` for its editor.
 
 ### To edit a project
 1. Open the `.html` file (e.g., `Radia.html`)
@@ -113,11 +137,14 @@ The `data-tags` attribute controls filtering. Available tags: `systems`, `web`, 
 
 ---
 
-## HeronsHub Embed
+## HeronsHub Preview
 
-The portfolio features a live iframe embed of [heronshub.social](https://heronshub.social/). If the site is down, blocked by X-Frame-Options, or takes longer than 6 seconds to load, a placeholder graphic is shown automatically.
+HeronsHub blocks cross-site iframe embedding with `X-Frame-Options: SAMEORIGIN`
+and `frame-ancestors 'self'`. The portfolio therefore uses the static
+`portfolio/Pictures/Projects/heronshub.png` screenshot, linked to the live site.
 
-To update the embed URL, search for `heronshub.social` in `portfolio/portfolio.html` and replace.
+Replace that PNG to refresh the preview. To update the destination URL, search
+for `https://heronshub.social/` in `portfolio/portfolio.html`.
 
 ---
 

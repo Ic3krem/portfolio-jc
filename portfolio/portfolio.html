@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* ===== FLUID BASE ===== */
@@ -146,6 +146,8 @@
 
     /* ===== NAV ===== */
     .site-nav {
+      --site-nav-x: 0;
+
       position: fixed;
       top: 3.2rem;
       right: 3.2rem;
@@ -159,12 +161,12 @@
       background: rgba(6,6,8,0.72);
       backdrop-filter: blur(24px) saturate(140%);
       opacity: 0;
-      transform: translateY(-1rem);
+      transform: translate(var(--site-nav-x), -1rem);
       transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
     }
     body.is-entered .site-nav {
       opacity: 1;
-      transform: translateY(0);
+      transform: translate(var(--site-nav-x), 0);
       transition-delay: 0.3s;
     }
 
@@ -228,9 +230,7 @@
     .hero-person {
       position: absolute;
       inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      overflow: hidden;
+      z-index: 0;
     }
     .hero-person img {
       width: 100%;
@@ -238,11 +238,11 @@
       object-fit: cover;
       object-position: center 42%;
       opacity: 0;
-      transform: translateY(2rem) scale(var(--hero-s, 1));
+      transform: scale(var(--hero-s, 1));
       transition: transform 0.1s linear;
     }
     body.is-entered .hero-person img {
-      animation: fade-up 1.2s var(--ease) 0.3s forwards;
+      animation: fade-up 1.2s var(--ease) 0.1s forwards;
     }
 
     .hero-shade {
@@ -251,6 +251,10 @@
       z-index: 1;
       pointer-events: none;
       background:
+      radial-gradient(circle at left center,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,0)70%
+      ),
         linear-gradient(180deg, transparent 0%, transparent 55%, rgba(6,6,8,0.35) 75%, rgba(6,6,8,0.7) 90%, var(--bg) 100%),
         linear-gradient(90deg, rgba(6,6,8,0.2) 0%, transparent 30%, transparent 70%, rgba(6,6,8,0.15) 100%);
     }
@@ -331,6 +335,49 @@
     .hero-cta svg {
       transition: transform 0.25s ease;
     }
+
+    .hero-intro {
+      --hero-intro-left: 57%;
+      --hero-intro-top: 31%;
+      --hero-intro-title-size: clamp(6.3rem, 4.8vw, 10rem);
+      --hero-intro-body-size: clamp(1.3rem, 1.05vw, 2rem);
+      --hero-intro-body-width: clamp(20rem, 13vw, 24rem);
+
+      position: absolute;
+      top: var(--hero-intro-top);
+      left: var(--hero-intro-left);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: max-content;
+      max-width: 28vw;
+      text-align: left;
+      pointer-events: none;
+      transform: rotate(-2deg);
+      transform-origin: top left;
+    }
+
+    .hero-intro .intro-title {
+      font-family: 'Caveat', cursive;
+      font-size: var(--hero-intro-title-size);
+      font-weight: 500;
+      line-height: 0.9;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .hero-intro .intro-body {
+      width: var(--hero-intro-body-width);
+      margin-top: 0.7rem;
+      font-family: 'Caveat', cursive;
+      font-size: var(--hero-intro-body-size);
+      font-weight: 500;
+      line-height: 1.15;
+      color: rgba(255, 255, 255, 0.9);
+      overflow-wrap: break-word;
+    }
+
     .hero-cta:hover svg { transform: translateY(3px); }
 
     .hero-scroll {
@@ -362,6 +409,16 @@
     }
 
     /* ===== ABOUT ===== */
+
+    .about::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6rem;
+      pointer-events: none;
+    }
     .about {
       padding: 14rem 0 10rem;
     }
@@ -380,7 +437,7 @@
     }
     .about-photo-wrap img {
       width: 100%;
-      aspect-ratio: 3 / 4;
+      aspect-ratio: 4 / 4;
       object-fit: cover;
       filter: saturate(0.85) brightness(0.9);
       transition: transform 0.6s var(--ease);
@@ -388,10 +445,10 @@
     .about-photo-wrap:hover img { transform: scale(1.04); }
 
     .about-photo-wrap::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, transparent 60%, rgba(6,6,8,0.4));
+      z-index: 2; /* sits above the image */
       pointer-events: none;
     }
 
@@ -420,6 +477,11 @@
       margin-top: 4.8rem;
     }
 
+    .skill-group {
+      min-width: 0;
+      overflow: hidden;
+    }
+
     .skill-group h3 {
       font-size: 1.2rem;
       font-weight: 700;
@@ -429,11 +491,33 @@
       margin-bottom: 1.2rem;
     }
 
-    .skill-group ul {
+    .skill-marquee {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+    }
+
+    .skill-marquee-track {
+      display: flex;
+      width: max-content;
+      animation: skill-marquee 18s linear infinite;
+      will-change: transform;
+    }
+
+    .skill-group:nth-child(even) .skill-marquee-track {
+      animation-direction: reverse;
+    }
+
+    .skill-marquee:hover .skill-marquee-track {
+      animation-play-state: paused;
+    }
+
+    .skill-marquee ul {
       list-style: none;
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 0.8rem;
+      padding-right: 3rem;
     }
 
     .skill-group li {
@@ -550,24 +634,18 @@
       position: relative;
       height: 24rem;
       overflow: hidden;
-      background:
-        radial-gradient(circle at var(--mx,50%) var(--my,30%), var(--accent, rgba(201,162,39,0.2)), transparent 60%),
-        var(--surface);
+      background: var(--surface);
     }
-    .work-card-visual svg {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%,-50%);
-      width: 60%;
-      height: auto;
-      color: var(--accent-color, var(--gold));
-      opacity: 0.6;
-      transition: opacity 0.3s ease, transform 0.4s var(--ease);
+    .work-card-visual img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.5s var(--ease), filter 0.4s ease;
     }
-    .work-card:hover .work-card-visual svg {
-      opacity: 0.85;
-      transform: translate(-50%,-50%) scale(1.06);
+    .work-card:hover .work-card-visual img {
+      transform: scale(1.035);
+      filter: saturate(1.06);
     }
 
     .work-card-body {
@@ -634,7 +712,7 @@
     }
     .work-card:hover .work-card-arrow svg { transform: translate(3px, -3px); }
 
-    /* Featured dev card (larger, with live embed) */
+    /* Featured dev card */
     .work-card.is-featured {
       grid-column: span 3;
       display: grid;
@@ -646,19 +724,10 @@
       position: relative;
       overflow: hidden;
     }
-    .work-card.is-featured .work-card-visual iframe {
+    .project-preview-link {
       position: absolute;
       inset: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      opacity: 0;
-      transition: opacity 0.6s ease;
-    }
-    .work-card.is-featured .work-card-visual iframe.is-loaded { opacity: 1; }
-    /* Fallback SVG behind iframe */
-    .work-card.is-featured .work-card-visual svg {
-      z-index: 0;
+      display: block;
     }
     .work-card.is-featured .work-card-body {
       display: flex;
@@ -667,18 +736,6 @@
       padding: 4.8rem;
     }
     .work-card.is-featured h3 { font-size: 3.6rem; }
-
-    .embed-placeholder {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at 50% 40%, rgba(94,196,171,0.08), transparent 60%), rgba(6,6,8,0.85);
-      backdrop-filter: blur(6px);
-    }
 
     .embed-label {
       position: absolute;
@@ -708,6 +765,7 @@
       text-align: center;
       max-width: 64rem;
       margin: 0 auto 0.4rem;
+      margin-top: 25rem;
     }
 
     .photo-header h2 {
@@ -733,6 +791,7 @@
     /* Stack gallery — pinned scroll container */
     .gallery-pin {
       position: relative;
+      margin-top: -50rem;
       /* height set by JS: (N * scrollPerCard) + 100vh */
     }
 
@@ -1005,10 +1064,23 @@
       0%, 100% { opacity: 0.3; transform: scaleY(1); }
       50% { opacity: 1; transform: scaleY(1.3); transform-origin: top; }
     }
+    @keyframes skill-marquee {
+      to { transform: translateX(-50%); }
+    }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 1024px) {
       .section-wrap { width: calc(100% - 6rem); }
+
+      .hero-intro {
+        --hero-intro-left: 58%;
+        --hero-intro-top: 28%;
+        --hero-intro-title-size: clamp(5.6rem, 7.4vw, 7.6rem);
+        --hero-intro-body-size: clamp(1.4rem, 1.9vw, 1.8rem);
+        --hero-intro-body-width: clamp(17rem, 22vw, 21rem);
+
+        max-width: 30vw;
+      }
 
       .about-grid {
         grid-template-columns: 1fr;
@@ -1025,11 +1097,54 @@
       .gallery-deck { width: clamp(30rem, 50vw, 48rem); }
 
       .site-nav {
+        --site-nav-x: -50%;
+
         top: 2rem;
-        right: 50%;
-        transform: translateX(50%);
+        right: auto;
+        left: 50%;
         gap: 2.4rem;
         padding: 1.4rem 2.8rem;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) and (max-height: 700px) {
+      .hero-content {
+        bottom: 4rem;
+        left: 4rem;
+        right: auto;
+        max-width: 40rem;
+      }
+
+      .hero-content .section-label {
+        font-size: 1rem;
+      }
+
+      .hero-title {
+        margin-top: 1rem;
+        font-size: clamp(5rem, 9vw, 9rem);
+      }
+
+      .hero-sub {
+        max-width: 34rem;
+        margin-top: 1.6rem;
+        font-size: 1.25rem;
+        line-height: 1.45;
+      }
+
+      .hero-cta {
+        margin-top: 1.8rem;
+        padding: 1.1rem 2.4rem;
+        font-size: 1.05rem;
+      }
+
+      .hero-intro {
+        --hero-intro-top: 28%;
+        --hero-intro-left: 58%;
+        --hero-intro-title-size: clamp(4rem, 5vw, 5.4rem);
+        --hero-intro-body-size: 1.15rem;
+        --hero-intro-body-width: 14rem;
+
+        max-width: 24vw;
       }
     }
 
@@ -1049,9 +1164,45 @@
       }
       .hero-title { font-size: clamp(4.4rem, 9rem, 12rem); }
 
+      .hero-intro {
+        --hero-intro-left: 51%;
+        --hero-intro-top: 24%;
+        --hero-intro-title-size: clamp(4.6rem, 14vw, 6rem);
+        --hero-intro-body-size: clamp(1rem, 3vw, 1.3rem);
+        --hero-intro-body-width: 38vw;
+
+        max-width: 42vw;
+      }
+
       .about { padding: 10rem 0 8rem; }
+      .about-grid { gap: 0; }
+      .about-photo-wrap { z-index: 1; }
+      .about-photo-wrap::after {
+        background: linear-gradient(
+          180deg,
+          transparent 38%,
+          rgba(6,6,8,0.18) 62%,
+          rgba(6,6,8,0.82) 86%,
+          var(--bg) 100%
+        );
+      }
+      .about-copy {
+        position: relative;
+        z-index: 3;
+        max-width: none;
+        margin-top: -8rem;
+        padding-top: 4.5rem;
+      }
       .about-copy h2 { font-size: clamp(3rem, 4.4rem, 6rem); }
+      .about-copy .about-intro {
+        margin-top: 2rem;
+        font-size: 1.45rem;
+      }
       .skill-grid { grid-template-columns: 1fr; }
+      .skill-group li {
+        border-color: rgba(255,255,255,0.12);
+        color: rgba(234,232,225,0.68);
+      }
 
       .work { padding: 8rem 0; }
       .work-grid { grid-template-columns: 1fr; }
@@ -1078,12 +1229,16 @@
       }
       html { scroll-behavior: auto; }
       .reveal { opacity: 1; transform: none; }
+      .skill-marquee-track {
+        animation: none;
+        transform: none;
+      }
+      .skill-marquee ul[aria-hidden="true"] { display: none; }
+      .skill-marquee ul { flex-wrap: wrap; }
     }
   </style>
 </head>
 <body>
-
-  <canvas id="ripple-canvas"></canvas>
 
   <!-- PRELOADER -->
   <div class="preloader" id="preloader">
@@ -1111,17 +1266,21 @@
       <img src="Pictures/hero.png" alt="John Christopher Diaz" width="1920" height="1080" loading="eager" fetchpriority="high">
     </div>
     <div class="hero-person">
-      <img src="Pictures/overlay-person.png" alt="" width="800" height="1000" loading="eager">
+      <img src="Pictures/overlayp.png" alt="" width="1920" height="1080" loading="eager" fetchpriority="high">
     </div>
     <div class="hero-shade"></div>
     <div class="hero-content">
       <span class="section-label">Portfolio &mdash; 2026</span>
-      <h1 class="hero-title">I build<br>systems<br>that <em>work.</em></h1>
+      <h1 class="hero-title">I build<br>systems<br>that <em>scale.</em></h1>
       <p class="hero-sub">Full-stack developer and network engineer — creating practical tools that scale cleanly, from civic platforms to enterprise dashboards.</p>
       <a class="hero-cta" href="#work">
         View projects
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
       </a>
+    </div>
+    <div class="hero-intro" aria-label="Introduction">
+      <p class="intro-title">I'm JC</p>
+      <p class="intro-body">I solve problems, and create effective solution.</p>
     </div>
     <div class="hero-scroll" aria-hidden="true">Scroll</div>
   </header>
@@ -1131,7 +1290,7 @@
     <section class="about section-wrap" id="about">
       <div class="about-grid">
         <div class="about-photo-wrap reveal">
-          <img src="Pictures/pobla-61.jpg" alt="Portrait of John Christopher Diaz" width="800" height="1067" loading="lazy">
+          <img src="Pictures/pobla-61.jpg" alt="Portrait of John Christopher Diaz" width="800" height="600" loading="lazy">
         </div>
         <div class="about-copy">
           <span class="section-label reveal">About</span>
@@ -1141,39 +1300,79 @@
           <div class="skill-grid reveal reveal-d3">
             <div class="skill-group">
               <h3>Frontend</h3>
-              <ul>
-                <li>TypeScript</li>
-                <li>React</li>
-                <li>Next.js</li>
-                <li>CSS</li>
-                <li>HTML</li>
-              </ul>
+              <div class="skill-marquee">
+                <div class="skill-marquee-track">
+                  <ul>
+                    <li>TypeScript</li>
+                    <li>React</li>
+                    <li>Next.js</li>
+                    <li>CSS</li>
+                    <li>HTML</li>
+                  </ul>
+                  <ul aria-hidden="true">
+                    <li>TypeScript</li>
+                    <li>React</li>
+                    <li>Next.js</li>
+                    <li>CSS</li>
+                    <li>HTML</li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div class="skill-group">
               <h3>Backend</h3>
-              <ul>
-                <li>Python</li>
-                <li>PHP</li>
-                <li>Java</li>
-                <li>FastAPI</li>
-              </ul>
+              <div class="skill-marquee">
+                <div class="skill-marquee-track">
+                  <ul>
+                    <li>Python</li>
+                    <li>PHP</li>
+                    <li>Java</li>
+                    <li>FastAPI</li>
+                  </ul>
+                  <ul aria-hidden="true">
+                    <li>Python</li>
+                    <li>PHP</li>
+                    <li>Java</li>
+                    <li>FastAPI</li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div class="skill-group">
               <h3>Infrastructure</h3>
-              <ul>
-                <li>Vercel</li>
-                <li>DigitalOcean</li>
-                <li>Firebase</li>
-                <li>Supabase</li>
-              </ul>
+              <div class="skill-marquee">
+                <div class="skill-marquee-track">
+                  <ul>
+                    <li>Vercel</li>
+                    <li>DigitalOcean</li>
+                    <li>Firebase</li>
+                    <li>Supabase</li>
+                  </ul>
+                  <ul aria-hidden="true">
+                    <li>Vercel</li>
+                    <li>DigitalOcean</li>
+                    <li>Firebase</li>
+                    <li>Supabase</li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div class="skill-group">
               <h3>Creative</h3>
-              <ul>
-                <li>Photography</li>
-                <li>Graphic Design</li>
-                <li>Branding</li>
-              </ul>
+              <div class="skill-marquee">
+                <div class="skill-marquee-track">
+                  <ul>
+                    <li>Photography</li>
+                    <li>Graphic Design</li>
+                    <li>Branding</li>
+                  </ul>
+                  <ul aria-hidden="true">
+                    <li>Photography</li>
+                    <li>Graphic Design</li>
+                    <li>Branding</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1217,55 +1416,13 @@
           </div>
         </div>
 
-        <!-- Featured: HeronsHub with live embed -->
+        <!-- Featured: HeronsHub static preview -->
         <div class="work-card is-featured reveal" style="--accent: rgba(114,216,193,0.2); --accent-color: #5ec4ab">
           <div class="work-card-visual">
-            <span class="embed-label">Live Preview</span>
-            <svg viewBox="0 0 300 200" fill="none" aria-hidden="true">
-              <rect x="30" y="20" width="240" height="160" rx="12" stroke="currentColor" stroke-width="2" opacity="0.4"/>
-              <rect x="30" y="20" width="240" height="28" rx="12" fill="currentColor" opacity="0.08"/>
-              <circle cx="48" cy="34" r="4" fill="currentColor" opacity="0.3"/>
-              <circle cx="62" cy="34" r="4" fill="currentColor" opacity="0.3"/>
-              <circle cx="76" cy="34" r="4" fill="currentColor" opacity="0.3"/>
-              <rect x="48" y="64" width="100" height="8" rx="3" fill="currentColor" opacity="0.25"/>
-              <rect x="48" y="84" width="160" height="5" rx="2" fill="currentColor" opacity="0.15"/>
-              <rect x="48" y="96" width="140" height="5" rx="2" fill="currentColor" opacity="0.12"/>
-            </svg>
-            <iframe src="https://heronshub.social/" loading="lazy" sandbox="allow-scripts allow-same-origin" title="HeronsHub Social live preview" id="heronsEmbed"></iframe>
-            <!-- Placeholder shown if iframe fails or times out -->
-            <div class="embed-placeholder" id="heronsPlaceholder" style="display:none;">
-              <svg viewBox="0 0 400 260" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:360px;">
-                <!-- Browser chrome -->
-                <rect x="20" y="16" width="360" height="228" rx="14" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-                <rect x="20" y="16" width="360" height="36" rx="14" fill="rgba(255,255,255,0.06)"/>
-                <rect x="20" y="50" width="360" height="2" fill="rgba(255,255,255,0.06)"/>
-                <circle cx="42" cy="34" r="5" fill="rgba(255,255,255,0.18)"/>
-                <circle cx="58" cy="34" r="5" fill="rgba(255,255,255,0.18)"/>
-                <circle cx="74" cy="34" r="5" fill="rgba(255,255,255,0.18)"/>
-                <rect x="120" y="28" width="140" height="12" rx="6" fill="rgba(255,255,255,0.06)"/>
-                <!-- Sidebar -->
-                <rect x="20" y="52" width="80" height="192" fill="rgba(255,255,255,0.03)"/>
-                <rect x="32" y="68" width="56" height="8" rx="3" fill="rgba(94,196,171,0.3)"/>
-                <rect x="32" y="88" width="48" height="6" rx="2" fill="rgba(255,255,255,0.08)"/>
-                <rect x="32" y="104" width="52" height="6" rx="2" fill="rgba(255,255,255,0.06)"/>
-                <rect x="32" y="120" width="44" height="6" rx="2" fill="rgba(255,255,255,0.06)"/>
-                <rect x="32" y="136" width="50" height="6" rx="2" fill="rgba(255,255,255,0.05)"/>
-                <!-- Feed cards -->
-                <rect x="114" y="64" width="252" height="52" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
-                <circle cx="136" cy="90" r="12" fill="rgba(94,196,171,0.2)"/>
-                <rect x="156" y="80" width="80" height="8" rx="3" fill="rgba(255,255,255,0.12)"/>
-                <rect x="156" y="94" width="140" height="5" rx="2" fill="rgba(255,255,255,0.06)"/>
-                <rect x="114" y="126" width="252" height="52" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
-                <circle cx="136" cy="152" r="12" fill="rgba(201,162,39,0.2)"/>
-                <rect x="156" y="142" width="96" height="8" rx="3" fill="rgba(255,255,255,0.12)"/>
-                <rect x="156" y="156" width="120" height="5" rx="2" fill="rgba(255,255,255,0.06)"/>
-                <rect x="114" y="188" width="252" height="44" rx="8" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-                <circle cx="136" cy="210" r="12" fill="rgba(114,216,193,0.15)"/>
-                <rect x="156" y="202" width="72" height="8" rx="3" fill="rgba(255,255,255,0.10)"/>
-                <rect x="156" y="216" width="108" height="5" rx="2" fill="rgba(255,255,255,0.05)"/>
-              </svg>
-              <span style="display:block;margin-top:1.2rem;font-size:1.1rem;font-weight:600;color:rgba(234,232,225,0.45);letter-spacing:0.06em;text-transform:uppercase;">Live preview unavailable</span>
-            </div>
+            <span class="embed-label">Project Preview</span>
+            <a class="project-preview-link" href="https://heronshub.social/" target="_blank" rel="noopener" aria-label="Open HeronsHub Social">
+              <img src="Pictures/Projects/heronshub.png" alt="HeronsHub Social landing page preview" loading="lazy" decoding="async">
+            </a>
           </div>
           <div class="work-card-body">
             <span class="work-card-type">Featured — Live Platform</span>
@@ -1288,13 +1445,7 @@
 
           <a class="work-card reveal" href="../SaintAngelo.html" style="--accent: rgba(86,201,143,0.2); --accent-color: #56c98f">
             <div class="work-card-visual">
-              <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
-                <rect x="18" y="20" width="184" height="22" rx="4" fill="currentColor"/>
-                <rect x="18" y="54" width="138" height="14" rx="3" fill="currentColor" opacity=".6"/>
-                <rect x="18" y="78" width="164" height="14" rx="3" fill="currentColor" opacity=".4"/>
-                <circle cx="168" cy="104" r="24" stroke="currentColor" stroke-width="3"/>
-                <text x="153" y="110" font-size="14" fill="currentColor" font-weight="700">A15</text>
-              </svg>
+              <img src="Pictures/Projects/saintangelo.png" alt="SaintAngelo hospital queue system preview" loading="lazy" decoding="async">
             </div>
             <div class="work-card-body">
               <span class="work-card-type">Healthcare System</span>
@@ -1307,12 +1458,7 @@
 
           <a class="work-card reveal reveal-d1" href="../AFHM.html" style="--accent: rgba(103,191,244,0.2); --accent-color: #67bff4">
             <div class="work-card-visual">
-              <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
-                <path d="M0 96 Q55 70 110 86 T220 78 V140 H0Z" fill="currentColor"/>
-                <path d="M0 116 Q55 90 110 104 T220 94 V140 H0Z" fill="currentColor" opacity=".4"/>
-                <line x1="12" y1="58" x2="208" y2="58" stroke="currentColor" stroke-width="2" stroke-dasharray="6 5"/>
-                <line x1="12" y1="34" x2="208" y2="34" stroke="currentColor" stroke-width="2" stroke-dasharray="6 5" opacity="0.5"/>
-              </svg>
+              <img src="Pictures/Projects/afhm.png" alt="AFHM flood monitoring dashboard preview" loading="lazy" decoding="async">
             </div>
             <div class="work-card-body">
               <span class="work-card-type">IoT Monitoring</span>
@@ -1325,14 +1471,7 @@
 
           <a class="work-card reveal reveal-d2" href="../Dotion.html" style="--accent: rgba(217,176,68,0.2); --accent-color: #d9b044">
             <div class="work-card-visual">
-              <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
-                <rect x="20" y="18" width="84" height="10" rx="2" fill="currentColor"/>
-                <rect x="20" y="42" width="174" height="6" rx="2" fill="currentColor" opacity=".5"/>
-                <rect x="20" y="58" width="148" height="6" rx="2" fill="currentColor" opacity=".35"/>
-                <rect x="20" y="84" width="52" height="42" rx="5" stroke="currentColor" stroke-width="2"/>
-                <rect x="84" y="84" width="52" height="42" rx="5" stroke="currentColor" stroke-width="2"/>
-                <rect x="148" y="84" width="52" height="42" rx="5" stroke="currentColor" stroke-width="2"/>
-              </svg>
+              <img src="Pictures/Projects/dotion.png" alt="Dotion productivity workspace preview" loading="lazy" decoding="async">
             </div>
             <div class="work-card-body">
               <span class="work-card-type">Productivity Workspace</span>
@@ -1345,13 +1484,7 @@
 
           <a class="work-card reveal" href="../Radia.html" style="--accent: rgba(167,134,255,0.2); --accent-color: #a786ff">
             <div class="work-card-visual">
-              <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
-                <rect x="16" y="18" width="42" height="50" rx="5" stroke="currentColor" stroke-width="2"/>
-                <rect x="68" y="18" width="42" height="50" rx="5" stroke="currentColor" stroke-width="2"/>
-                <rect x="120" y="18" width="42" height="50" rx="5" stroke="currentColor" stroke-width="2"/>
-                <circle cx="110" cy="108" r="18" stroke="currentColor" stroke-width="2"/>
-                <circle cx="110" cy="108" r="6" fill="currentColor" opacity=".25"/>
-              </svg>
+              <img src="Pictures/Projects/radia.png" alt="Radia enterprise HR workspace preview" loading="lazy" decoding="async">
             </div>
             <div class="work-card-body">
               <span class="work-card-type">Enterprise HR</span>
@@ -1364,11 +1497,7 @@
 
           <a class="work-card reveal reveal-d1" href="../SipatGov.html" style="--accent: rgba(229,111,84,0.2); --accent-color: #e56f54">
             <div class="work-card-visual">
-              <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
-                <path d="M110 14 L152 44 V84 C152 110 110 122 110 122 C110 122 68 110 68 84 V44 Z" stroke="currentColor" stroke-width="3"/>
-                <circle cx="110" cy="70" r="18" fill="currentColor" opacity=".15"/>
-                <path d="M100 70 L108 78 L122 60" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+              <img src="Pictures/Projects/sipatgov.png" alt="SipatGov civic transparency platform preview" loading="lazy" decoding="async">
             </div>
             <div class="work-card-body">
               <span class="work-card-type">Civic Tech</span>
@@ -1381,15 +1510,7 @@
 
           <a class="work-card reveal reveal-d2" href="../AlphaFitness.html" style="--accent: rgba(120,146,218,0.2); --accent-color: #7892da">
             <div class="work-card-visual">
-              <svg viewBox="0 0 220 140" fill="none" aria-hidden="true">
-                <rect x="30" y="62" width="16" height="50" rx="3" fill="currentColor" opacity=".8"/>
-                <rect x="58" y="40" width="16" height="72" rx="3" fill="currentColor" opacity=".65"/>
-                <rect x="86" y="72" width="16" height="40" rx="3" fill="currentColor" opacity=".5"/>
-                <rect x="114" y="28" width="16" height="84" rx="3" fill="currentColor"/>
-                <rect x="142" y="50" width="16" height="62" rx="3" fill="currentColor" opacity=".6"/>
-                <rect x="170" y="82" width="16" height="30" rx="3" fill="currentColor" opacity=".4"/>
-                <line x1="22" y1="118" x2="198" y2="118" stroke="currentColor" stroke-width="2" opacity=".3"/>
-              </svg>
+              <img src="Pictures/Projects/alphafitness.png" alt="AlphaFitness gym management system preview" loading="lazy" decoding="async">
             </div>
             <div class="work-card-body">
               <span class="work-card-type">University Gym</span>
@@ -1408,9 +1529,9 @@
     <section class="photography" id="photography">
       <div class="section-wrap">
         <div class="photo-header">
-          <span class="section-label reveal">Photography</span>
-          <h2 class="reveal reveal-d1">Through the <em>lens.</em></h2>
-          <p class="reveal reveal-d2">Portraits, street scenes, and quiet moments — shaped around soft light, warm shadows, and the texture of urban spaces.</p>
+          <span class="section-label reveal">Graphics</span>
+          <h2 class="reveal reveal-d1">Idea to <em>Reality.</em></h2>
+          <p class="reveal reveal-d2">I create graphical contents for social media, may it be custom work or layouts.</p>
         </div>
 
         <div class="gallery-pin" id="galleryPin">
@@ -1444,10 +1565,10 @@
           <h2 class="reveal reveal-d1">Roles and directions.</h2>
         </div>
         <ul class="role-list">
-          <li class="role-item reveal"><strong>Software Engineer</strong><span>2023 — Present</span></li>
-          <li class="role-item reveal reveal-d1"><strong>Automation Engineer</strong><span>2024 — Present</span></li>
-          <li class="role-item reveal reveal-d2"><strong>Graphic Designer</strong><span>2020 — Present</span></li>
-          <li class="role-item reveal reveal-d3"><strong>Photographer</strong><span>2024 — Present</span></li>
+          <li class="role-item reveal"><strong>Software Engineer</strong><span>2023</span></li>
+          <li class="role-item reveal reveal-d1"><strong>Automation Engineer</strong><span>2024</span></li>
+          <li class="role-item reveal reveal-d2"><strong>Graphic Designer</strong><span>2020</span></li>
+          <li class="role-item reveal reveal-d3"><strong>Photographer</strong><span>2024</span></li>
         </ul>
       </div>
     </section>
@@ -1467,19 +1588,14 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
             GitHub
           </a>
-          <a href="https://www.linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <a href="https://www.linkedin.com/in/jcdiaz03/" target="_blank" rel="noopener" aria-label="LinkedIn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
             LinkedIn
           </a>
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram">
+          <a href="https://www.instagram.com/christopherdiaz6/" target="_blank" rel="noopener" aria-label="Instagram">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
             Instagram
           </a>
-        </div>
-
-        <div class="footer-line">
-          <span>&copy; 2026 John Christopher Diaz</span>
-          <a href="https://github.com/Ic3krem" target="_blank" rel="noopener">GitHub</a>
         </div>
       </div>
     </section>
@@ -1487,7 +1603,7 @@
 
   <script>
     /* ===== GALLERY MANIFEST (auto-generated by update-gallery.sh) ===== */
-    const GALLERY_IMAGES = ["pobla-10.jpg","pobla-15.jpg","pobla-20.jpg","pobla-25.jpg","pobla-30.jpg","pobla-35.jpg","pobla-40.jpg","pobla-44.jpg","pobla-5.jpg","pobla-50.jpg","pobla-55.jpg","pobla-63.jpg","pobla-74.jpg","pobla-80.jpg","cyline.JPG","cyline_1.JPG"];
+    const GALLERY_IMAGES = ["pub1.png","pub2.png","pub3.png","pub4.png","aqua.png"];
 
     /* ===== PRELOADER + ENTER GATE ===== */
     const preloader = document.getElementById('preloader');
@@ -1674,39 +1790,6 @@
       });
     })();
 
-    /* ===== HERONSHUB IFRAME LOAD ===== */
-    const heronsEmbed = document.getElementById('heronsEmbed');
-    const heronsPlaceholder = document.getElementById('heronsPlaceholder');
-    if (heronsEmbed) {
-      let embedLoaded = false;
-      const embedTimeout = setTimeout(() => {
-        if (!embedLoaded && heronsPlaceholder) {
-          heronsEmbed.style.display = 'none';
-          heronsPlaceholder.style.display = 'flex';
-        }
-      }, 6000);
-      heronsEmbed.addEventListener('load', () => {
-        embedLoaded = true;
-        clearTimeout(embedTimeout);
-        try {
-          // If X-Frame-Options blocks it, accessing contentDocument throws
-          const doc = heronsEmbed.contentDocument || heronsEmbed.contentWindow.document;
-          if (doc && doc.body && doc.body.innerHTML.length > 100) {
-            heronsEmbed.classList.add('is-loaded');
-          } else { throw new Error('empty'); }
-        } catch(e) {
-          heronsEmbed.style.display = 'none';
-          if (heronsPlaceholder) heronsPlaceholder.style.display = 'flex';
-        }
-      });
-      heronsEmbed.addEventListener('error', () => {
-        embedLoaded = true;
-        clearTimeout(embedTimeout);
-        heronsEmbed.style.display = 'none';
-        if (heronsPlaceholder) heronsPlaceholder.style.display = 'flex';
-      });
-    }
-
     /* ===== SMOOTH NAV SCROLL ===== */
     document.querySelectorAll('a[href^="#"]').forEach(link => {
       link.addEventListener('click', e => {
@@ -1718,83 +1801,6 @@
       });
     });
   </script>
-
-  <!-- ===== WATER RIPPLE BACKGROUND ===== -->
-  <script>
-  (function() {
-    const canvas = document.getElementById('ripple-canvas');
-    if (!canvas) return;
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (!gl) return; // no WebGL support — graceful fallback
-
-    // --- Shader sources ---
-    const vertSrc = `
-      attribute vec2 a_pos;
-      void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
-    `;
-
-    const dropSrc = `
-      precision highp float;
-      uniform sampler2D u_tex;
-      uniform vec2 u_center;
-      uniform float u_radius;
-      uniform float u_strength;
-      uniform vec2 u_res;
-      void main() {
-        vec2 uv = gl_FragCoord.xy / u_res;
-        vec4 info = texture2D(u_tex, uv);
-        float dist = length(uv - u_center);
-        float drop = max(0.0, 1.0 - dist / u_radius);
-        drop = 0.5 - cos(drop * 3.14159) * 0.5;
-        info.r += drop * u_strength;
-        gl_FragColor = info;
-      }
-    `;
-
-    const updateSrc = `
-      precision highp float;
-      uniform sampler2D u_tex;
-      uniform vec2 u_delta;
-      void main() {
-        vec2 uv = gl_FragCoord.xy * u_delta;
-        vec4 info = texture2D(u_tex, uv);
-        vec2 dx = vec2(u_delta.x, 0.0);
-        vec2 dy = vec2(0.0, u_delta.y);
-        float avg = (
-          texture2D(u_tex, uv - dx).r +
-          texture2D(u_tex, uv + dx).r +
-          texture2D(u_tex, uv - dy).r +
-          texture2D(u_tex, uv + dy).r
-        ) * 0.25;
-        info.g += (avg - info.r) * 2.0;
-        info.g *= 0.985;
-        info.r += info.g;
-        gl_FragColor = info;
-      }
-    `;
-
-    const renderSrc = `
-      precision highp float;
-      uniform sampler2D u_tex;
-      uniform vec2 u_delta;
-      void main() {
-        vec2 uv = gl_FragCoord.xy * u_delta;
-        float dx = texture2D(u_tex, uv + vec2(u_delta.x, 0.0)).r - texture2D(u_tex, uv - vec2(u_delta.x, 0.0)).r;
-        float dy = texture2D(u_tex, uv + vec2(0.0, u_delta.y)).r - texture2D(u_tex, uv - vec2(0.0, u_delta.y)).r;
-        float light = 1.0 + dx * 12.0;
-        vec3 base = vec3(0.024, 0.023, 0.031);
-        vec3 gold = vec3(0.78, 0.63, 0.15);
-        vec3 teal = vec3(0.37, 0.77, 0.67);
-        float wave = (dx + dy) * 6.0;
-        vec3 col = base + gold * max(wave, 0.0) * 0.12 + teal * max(-wave, 0.0) * 0.10;
-        col *= light;
-        float alpha = (abs(dx) + abs(dy)) * 8.0;
-        alpha = clamp(alpha, 0.0, 0.6);
-        gl_FragColor = vec4(col, alpha);
-      }
-    `;
-
-    // --- GL helpers ---
     function createShader(type, src) {
       const s = gl.createShader(type);
       gl.shaderSource(s, src);
@@ -1958,8 +1964,7 @@
     // Reduced motion
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       canvas.style.display = 'none';
-    }
-  })();
+    };
   </script>
 </body>
 </html>
