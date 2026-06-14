@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALPHA FITNESS — Gym Management & Fitness Tracking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   DESIGN TOKENS
+   ================================================================ */
+:root {
+  /* OKLCH color palette */
+  --navy-900: oklch(18% 0.10 265);
+  --navy-800: oklch(22% 0.12 265);
+  --navy-700: oklch(28% 0.12 265);
+  --navy-600: oklch(34% 0.11 265);
+  --navy-500: oklch(42% 0.10 265);
+  --navy-400: oklch(52% 0.09 265);
+  --navy-200: oklch(72% 0.06 265);
+  --navy-100: oklch(88% 0.03 265);
+  --navy-50:  oklch(95% 0.015 265);
+
+  --gold-500: oklch(83% 0.19 88);
+  --gold-400: oklch(88% 0.17 90);
+  --gold-300: oklch(93% 0.12 92);
+  --gold-600: oklch(74% 0.20 84);
+
+  /* Surface tokens (light theme) */
+  --surface-base:   oklch(97% 0.008 265);
+  --surface-card:   oklch(99% 0.004 265);
+  --surface-raised: oklch(100% 0 0);
+  --surface-sunken: oklch(93% 0.012 265);
+
+  /* Text tokens (light theme) */
+  --text-primary:   oklch(20% 0.10 265);
+  --text-secondary: oklch(42% 0.07 265);
+  --text-muted:     oklch(60% 0.05 265);
+  --text-faint:     oklch(76% 0.03 265);
+
+  /* Semantic colors */
+  --success:     oklch(52% 0.17 145);
+  --success-bg:  oklch(95% 0.06 145);
+  --warning:     oklch(68% 0.18 68);
+  --warning-bg:  oklch(96% 0.06 68);
+  --danger:      oklch(52% 0.22 25);
+  --danger-bg:   oklch(95% 0.07 25);
+  --info:        oklch(58% 0.17 240);
+  --info-bg:     oklch(95% 0.05 240);
+
+  /* Borders */
+  --border-hairline: oklch(88% 0.025 265);
+  --border-subtle:   oklch(82% 0.04 265);
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px oklch(20% 0.12 265 / 0.06), 0 4px 12px oklch(20% 0.12 265 / 0.05);
+  --shadow-raised: 0 2px 8px oklch(20% 0.12 265 / 0.08), 0 12px 32px oklch(20% 0.12 265 / 0.07);
+  --shadow-float: 0 4px 16px oklch(20% 0.12 265 / 0.10), 0 24px 48px oklch(20% 0.12 265 / 0.10);
+
+  /* Easing */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Sidebar width */
+  --sidebar-w: 280px;
+}
+
+/* ================================================================
+   RESET & BASE
+   ================================================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { color-scheme: light; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
+
+.hidden { display: none !important; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--navy-400); }
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(1deg); }
+}
+@keyframes heroRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.anim-fade-up  { animation: fadeUp 0.55s var(--ease-out) both; }
+.anim-fade-in  { animation: fadeIn 0.4s var(--ease-out) both; }
+.anim-scale-in { animation: scaleIn 0.45s var(--ease-out) both; }
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ================================================================
+   TYPOGRAPHY SCALE
+   ================================================================ */
+.t-display {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+.t-heading-xl { font-size: clamp(28px, 3vw, 36px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.t-heading-lg { font-size: clamp(22px, 2.5vw, 28px); font-weight: 700; letter-spacing: -0.015em; }
+.t-heading-md { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+.t-heading-sm { font-size: 15px; font-weight: 700; letter-spacing: -0.005em; }
+.t-body-lg    { font-size: 16px; font-weight: 400; line-height: 1.6; }
+.t-body-md    { font-size: 14px; font-weight: 400; line-height: 1.55; }
+.t-body-sm    { font-size: 13px; font-weight: 400; line-height: 1.5; }
+.t-label      { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.t-mono       { font-family: 'JetBrains Mono', 'Courier New', monospace; font-weight: 600; }
+
+/* ================================================================
+   FORM CONTROLS
+   ================================================================ */
+.field-group { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.field-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-hairline);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.field-input::placeholder { color: var(--text-faint); }
+.field-input:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px oklch(83% 0.19 88 / 0.18);
+}
+.field-input:read-only {
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* Dark field variant (for sidebars / admin) */
+.field-input--dark {
+  background: oklch(28% 0.10 265 / 0.6);
+  border-color: oklch(60% 0.08 265 / 0.3);
+  color: oklch(95% 0.02 265);
+}
+.field-input--dark::placeholder { color: oklch(65% 0.06 265); }
+.field-input--dark:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px oklch(83% 0.19 88 / 0.2);
+}
+
+/* ================================================================
+   BUTTONS
+   ================================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), background 0.2s var(--ease-out);
+  white-space: nowrap;
+}
+.btn:active { transform: scale(0.97) !important; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+.btn-primary {
+  background: var(--navy-800);
+  color: var(--gold-400);
+}
+.btn-primary:hover {
+  background: var(--navy-700);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px oklch(22% 0.12 265 / 0.3);
+}
+
+.btn-gold {
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+.btn-gold:hover {
+  background: var(--gold-400);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px oklch(83% 0.19 88 / 0.35);
+}
+
+.btn-success {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid oklch(52% 0.17 145 / 0.2);
+}
+.btn-success:hover {
+  background: oklch(90% 0.09 145);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(52% 0.17 145 / 0.2);
+}
+
+.btn-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid oklch(52% 0.22 25 / 0.2);
+}
+.btn-danger:hover {
+  background: oklch(90% 0.10 25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(52% 0.22 25 / 0.2);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-hairline);
+}
+.btn-ghost:hover {
+  background: var(--surface-sunken);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* Login CTA */
+.btn-login-cta {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--gold-500);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--navy-900);
+  transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  box-shadow: 0 4px 20px oklch(83% 0.19 88 / 0.4);
+  flex-shrink: 0;
+}
+.btn-login-cta:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 28px oklch(83% 0.19 88 / 0.55);
+}
+
+/* ================================================================
+   NAVIGATION ITEMS
+   ================================================================ */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+  background: transparent;
+}
+
+/* User sidebar nav */
+.nav-item--user {
+  color: oklch(80% 0.05 265);
+}
+.nav-item--user .nav-icon { color: oklch(60% 0.06 265); transition: color 0.2s var(--ease-out); }
+.nav-item--user:hover {
+  background: oklch(35% 0.10 265 / 0.7);
+  color: oklch(96% 0.02 265);
+}
+.nav-item--user:hover .nav-icon { color: var(--gold-500); }
+.nav-item--user.active {
+  background: oklch(35% 0.10 265 / 0.9);
+  color: var(--gold-400);
+}
+.nav-item--user.active .nav-icon { color: var(--gold-500); }
+
+/* Admin sidebar nav */
+.nav-item--admin {
+  color: var(--navy-700);
+}
+.nav-item--admin .nav-icon { color: var(--navy-500); transition: color 0.2s var(--ease-out); }
+.nav-item--admin:hover {
+  background: oklch(22% 0.12 265 / 0.12);
+  color: var(--navy-800);
+}
+.nav-item--admin:hover .nav-icon { color: var(--navy-800); }
+.nav-item--admin.active {
+  background: var(--navy-800);
+  color: var(--gold-400);
+}
+.nav-item--admin.active .nav-icon { color: var(--gold-500); }
+
+/* ================================================================
+   CARDS
+   ================================================================ */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+}
+.card-padded { padding: 24px; }
+
+/* Stat card */
+.stat-card {
+  border-radius: 16px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, oklch(100% 0 0 / 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* ================================================================
+   BADGES / STATUS
+   ================================================================ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.badge--success { background: var(--success-bg); color: var(--success); }
+.badge--warning { background: var(--warning-bg); color: var(--warning); }
+.badge--danger  { background: var(--danger-bg);  color: var(--danger); }
+.badge--info    { background: var(--info-bg);     color: var(--info); }
+.badge--neutral { background: var(--surface-sunken); color: var(--text-secondary); }
+.badge--purple  { background: oklch(95% 0.05 300); color: oklch(48% 0.20 300); }
+
+/* ================================================================
+   TABLES
+   ================================================================ */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-hairline);
+  white-space: nowrap;
+}
+.data-table thead th:first-child { border-radius: 8px 0 0 8px; }
+.data-table thead th:last-child  { border-radius: 0 8px 8px 0; }
+.data-table tbody tr { border-bottom: 1px solid var(--border-hairline); }
+.data-table tbody tr:last-child { border-bottom: none; }
+.data-table tbody td {
+  padding: 12px 16px;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+.data-table tbody tr:nth-child(even) td {
+  background: oklch(96% 0.010 265 / 0.5);
+}
+.data-table tbody tr:hover td {
+  background: oklch(93% 0.018 265 / 0.7);
+}
+
+/* Admin table (dark variant) */
+.data-table--dark thead th {
+  background: oklch(24% 0.11 265);
+  color: oklch(65% 0.06 265);
+  border-bottom-color: oklch(35% 0.09 265 / 0.4);
+}
+.data-table--dark tbody tr { border-bottom-color: oklch(30% 0.09 265 / 0.4); }
+.data-table--dark tbody td { color: oklch(88% 0.04 265); }
+.data-table--dark tbody tr:nth-child(even) td { background: oklch(24% 0.10 265 / 0.5); }
+.data-table--dark tbody tr:hover td { background: oklch(30% 0.10 265 / 0.6); }
+
+/* ================================================================
+   LOGIN SCREEN
+   ================================================================ */
+#loginScreen {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+/* Form side */
+.login-form-side {
+  width: min(420px, 100%);
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--navy-900);
+  display: flex;
+  flex-direction: column;
+  padding: 36px 40px;
+  overflow-y: auto;
+}
+
+/* Hero side */
+.login-hero-side {
+  flex: 1;
+  height: 100%;
+  background: var(--navy-800);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Geometric hero layers */
+.hero-layer {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid oklch(100% 0 0 / 0.06);
+}
+.hero-layer-1 {
+  width: 700px; height: 700px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: heroRotate 40s linear infinite;
+}
+.hero-layer-2 {
+  width: 520px; height: 520px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-color: oklch(100% 0 0 / 0.04);
+  animation: heroRotate 28s linear infinite reverse;
+}
+.hero-layer-3 {
+  width: 360px; height: 360px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-color: oklch(83% 0.19 88 / 0.08);
+  animation: heroRotate 18s linear infinite;
+}
+
+/* Diagonal stripe overlay */
+.hero-stripes {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -55deg,
+    transparent 0px,
+    transparent 48px,
+    oklch(100% 0 0 / 0.015) 48px,
+    oklch(100% 0 0 / 0.015) 50px
+  );
+  pointer-events: none;
+}
+
+/* Gradient accent spot */
+.hero-glow {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  top: -100px;
+  right: -80px;
+  background: radial-gradient(circle, oklch(83% 0.19 88 / 0.10) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow-2 {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  bottom: -60px;
+  left: -60px;
+  background: radial-gradient(circle, oklch(58% 0.17 240 / 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Hero barbell SVG art */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  animation: heroFloat 6s ease-in-out infinite;
+}
+.hero-brand-display {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  font-size: clamp(72px, 9vw, 96px);
+  line-height: 0.9;
+  color: oklch(96% 0.02 265);
+  letter-spacing: -0.03em;
+  text-shadow: 0 8px 40px oklch(10% 0.12 265 / 0.4);
+}
+.hero-brand-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+  margin-top: 10px;
+}
+.hero-divider {
+  width: 56px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
+  margin: 20px auto;
+  border-radius: 2px;
+}
+.hero-tagline {
+  font-size: 14px;
+  color: oklch(70% 0.05 265);
+  letter-spacing: 0.05em;
+}
+
+/* Login form elements */
+.login-umak-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px;
+}
+.login-umak-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: oklch(30% 0.10 265);
+  border: 1px solid oklch(40% 0.09 265);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.login-umak-text-top {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(55% 0.06 265);
+}
+.login-umak-text-bot {
+  font-size: 12px;
+  font-weight: 700;
+  color: oklch(78% 0.05 265);
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+.login-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  font-size: 42px;
+  letter-spacing: -0.03em;
+  color: oklch(97% 0.02 265);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.login-subtitle {
+  font-size: 14px;
+  color: oklch(55% 0.06 265);
+  margin-bottom: 36px;
+}
+
+.login-fields { display: flex; flex-direction: column; gap: 18px; }
+
+.login-field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(55% 0.06 265);
+  margin-bottom: 7px;
+}
+.login-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: oklch(26% 0.10 265);
+  border: 1px solid oklch(36% 0.09 265 / 0.6);
+  border-radius: 11px;
+  font-size: 15px;
+  color: oklch(96% 0.02 265);
+  outline: none;
+  transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.login-input::placeholder { color: oklch(42% 0.07 265); }
+.login-input:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px oklch(83% 0.19 88 / 0.15);
+}
+
+.login-forgot {
+  font-size: 13px;
+  color: oklch(52% 0.07 265);
+  transition: color 0.15s;
+  margin-top: 4px;
+  display: inline-block;
+}
+.login-forgot:hover { color: oklch(72% 0.05 265); }
+
+.login-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+.login-cta-text {
+  font-size: 13px;
+  color: oklch(50% 0.06 265);
+}
+
+.login-footer {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid oklch(28% 0.09 265);
+}
+.login-footer-text {
+  font-size: 13px;
+  color: oklch(48% 0.06 265);
+  text-align: center;
+}
+.login-footer-link {
+  color: var(--gold-500);
+  font-weight: 700;
+  transition: color 0.15s;
+}
+.login-footer-link:hover { color: var(--gold-400); text-decoration: underline; }
+.login-admin-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: oklch(40% 0.06 265);
+  transition: color 0.15s;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  padding: 4px;
+}
+.login-admin-link:hover { color: oklch(60% 0.05 265); text-decoration: underline; }
+
+/* ================================================================
+   USER DASHBOARD
+   ================================================================ */
+#userDashboard {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+#userDashboard.active { display: flex; }
+
+/* User sidebar */
+.user-sidebar {
+  width: var(--sidebar-w);
+  height: 100%;
+  flex-shrink: 0;
+  background: var(--navy-800);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 4px 20px;
+  border-bottom: 1px solid oklch(35% 0.09 265 / 0.5);
+  margin-bottom: 20px;
+}
+.sidebar-logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--gold-500);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sidebar-logo-wordmark-a {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  font-size: 18px;
+  color: oklch(97% 0.02 265);
+  letter-spacing: -0.02em;
+}
+.sidebar-logo-wordmark-b {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-500);
+  display: block;
+  line-height: 1;
+}
+
+/* Clock widget */
+.clock-widget {
+  background: oklch(24% 0.11 265);
+  border: 1px solid oklch(34% 0.09 265 / 0.5);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.clock-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(50% 0.06 265);
+  margin-bottom: 6px;
+}
+.clock-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--gold-400);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+.clock-date {
+  font-size: 12px;
+  color: oklch(55% 0.06 265);
+  margin-top: 5px;
+}
+
+/* Status row */
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: oklch(24% 0.11 265);
+  border: 1px solid oklch(34% 0.09 265 / 0.4);
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+.status-row-label {
+  font-size: 12px;
+  color: oklch(55% 0.06 265);
+  font-weight: 500;
+}
+
+/* Check in/out buttons */
+.checkin-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.btn-checkin {
+  padding: 10px 8px;
+  border: none;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), background 0.2s var(--ease-out);
+}
+.btn-checkin--in {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.btn-checkin--in:not(:disabled):hover {
+  background: oklch(90% 0.10 145);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(52% 0.17 145 / 0.25);
+}
+.btn-checkin--out {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.btn-checkin--out:not(:disabled):hover {
+  background: oklch(90% 0.11 25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px oklch(52% 0.22 25 / 0.25);
+}
+.btn-checkin:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* Nav section */
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(42% 0.07 265);
+  padding: 0 6px;
+  margin-bottom: 6px;
+}
+.nav-list { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+
+/* User profile at bottom */
+.sidebar-user-footer {
+  border-top: 1px solid oklch(35% 0.09 265 / 0.4);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+.user-profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: oklch(24% 0.10 265);
+  border: 1px solid oklch(34% 0.09 265 / 0.4);
+  margin-bottom: 10px;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--navy-600);
+  border: 1.5px solid oklch(50% 0.09 265);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.avatar--user { color: var(--gold-400); }
+.avatar--admin { background: var(--navy-800); color: var(--gold-500); }
+.user-profile-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: oklch(90% 0.03 265);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-profile-role {
+  font-size: 11px;
+  color: oklch(52% 0.07 265);
+  margin-top: 1px;
+}
+.btn-logout {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid oklch(36% 0.09 265 / 0.5);
+  background: transparent;
+  color: oklch(60% 0.07 265);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+.btn-logout:hover {
+  background: oklch(52% 0.22 25 / 0.12);
+  color: var(--danger);
+  border-color: oklch(52% 0.22 25 / 0.3);
+}
+
+/* ================================================================
+   MAIN CONTENT AREA
+   ================================================================ */
+.main-content {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface-base);
+  min-width: 0;
+}
+
+.view-pane { display: none; padding: 36px; }
+.view-pane.active { display: block; }
+
+/* Page header */
+.page-header { margin-bottom: 32px; }
+.page-header-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.page-header-title { color: var(--text-primary); }
+.page-header-desc { font-size: 14px; color: var(--text-secondary); margin-top: 6px; }
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+/* Home welcome hero */
+.home-hero-card {
+  background: var(--navy-800);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 180px;
+}
+.home-hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -48deg,
+    transparent 0px,
+    transparent 36px,
+    oklch(100% 0 0 / 0.02) 36px,
+    oklch(100% 0 0 / 0.02) 38px
+  );
+}
+.home-hero-card::after {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -60px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(83% 0.19 88 / 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.home-hero-text { position: relative; z-index: 1; }
+.home-hero-greeting {
+  font-size: 13px;
+  color: oklch(60% 0.06 265);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.home-hero-name {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  font-size: 32px;
+  color: oklch(97% 0.02 265);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.home-hero-tagline {
+  font-size: 14px;
+  color: oklch(60% 0.06 265);
+  margin-top: 8px;
+}
+.home-hero-dumbbell {
+  position: relative;
+  z-index: 1;
+  opacity: 0.25;
+  flex-shrink: 0;
+}
+
+/* Section heading with divider */
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.section-heading-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.section-heading-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-hairline);
+}
+
+/* Workout controls */
+.workout-controls {
+  background: var(--surface-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+.workout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.workout-actions { display: flex; gap: 10px; }
+
+/* ================================================================
+   ADMIN PANEL
+   ================================================================ */
+#adminPanel {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+#adminPanel.active { display: flex; }
+
+/* Admin sidebar (gold) */
+.admin-sidebar {
+  width: var(--sidebar-w);
+  height: 100%;
+  flex-shrink: 0;
+  background: var(--gold-500);
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  overflow-y: auto;
+}
+
+.admin-sidebar-logo { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid oklch(74% 0.20 84 / 0.5); }
+.admin-logo-icon {
+  width: 40px; height: 40px;
+  background: var(--navy-800);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.admin-wordmark-a {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: var(--navy-900);
+  letter-spacing: -0.02em;
+}
+.admin-wordmark-b {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy-700);
+}
+
+.admin-clock-widget {
+  background: var(--navy-800);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+.admin-clock-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: oklch(50% 0.08 265);
+  margin-bottom: 4px;
+}
+.admin-clock-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--gold-400);
+  line-height: 1;
+}
+
+.admin-nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--navy-600);
+  padding: 0 6px;
+  margin-bottom: 6px;
+}
+.admin-nav-list { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+
+.admin-user-footer {
+  border-top: 1px solid oklch(74% 0.20 84 / 0.5);
+  padding-top: 16px;
+  margin-top: 16px;
+}
+.admin-profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: oklch(88% 0.17 90);
+  border: 1px solid oklch(74% 0.20 84 / 0.4);
+  margin-bottom: 10px;
+}
+.admin-profile-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-800);
+}
+.admin-profile-role { font-size: 11px; color: var(--navy-600); }
+.btn-admin-logout {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid oklch(74% 0.20 84 / 0.6);
+  background: transparent;
+  color: var(--navy-700);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s var(--ease-out), color 0.2s var(--ease-out);
+}
+.btn-admin-logout:hover {
+  background: var(--navy-800);
+  color: var(--gold-400);
+  border-color: var(--navy-800);
+}
+
+/* Admin main content (dark) */
+.admin-main {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--navy-900);
+  min-width: 0;
+}
+
+.admin-view-pane { display: none; padding: 36px; }
+.admin-view-pane.active { display: block; }
+
+.admin-page-header { margin-bottom: 28px; }
+.admin-page-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(46% 0.08 265);
+  margin-bottom: 6px;
+}
+.admin-page-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: oklch(94% 0.02 265);
+  letter-spacing: -0.02em;
+}
+
+/* Admin toolbar */
+.admin-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  align-items: center;
+}
+.admin-search-wrap { flex: 1; position: relative; }
+.admin-search-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: oklch(50% 0.07 265);
+}
+.admin-search-input {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  background: oklch(24% 0.11 265);
+  border: 1px solid oklch(34% 0.09 265 / 0.5);
+  border-radius: 10px;
+  font-size: 14px;
+  color: oklch(90% 0.03 265);
+  outline: none;
+  transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
+}
+.admin-search-input::placeholder { color: oklch(44% 0.07 265); }
+.admin-search-input:focus {
+  border-color: var(--gold-500);
+  box-shadow: 0 0 0 3px oklch(83% 0.19 88 / 0.15);
+}
+
+/* Admin table wrapper */
+.admin-table-wrapper {
+  background: oklch(21% 0.10 265);
+  border: 1px solid oklch(30% 0.09 265 / 0.5);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.admin-table-wrapper .data-table--dark thead th:first-child { border-radius: 0; }
+.admin-table-wrapper .data-table--dark thead th:last-child  { border-radius: 0; }
+.overflow-x-auto { overflow-x: auto; }
+
+/* Admin stat cards */
+.admin-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.admin-stat-card {
+  background: oklch(22% 0.11 265);
+  border: 1px solid oklch(30% 0.09 265 / 0.5);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.admin-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: oklch(48% 0.07 265);
+  margin-bottom: 8px;
+}
+.admin-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gold-400);
+  line-height: 1;
+}
+
+/* ================================================================
+   MODAL
+   ================================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: oklch(10% 0.10 265 / 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.modal-box {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-hairline);
+  border-radius: 20px;
+  padding: 32px;
+  width: min(440px, 90vw);
+  box-shadow: var(--shadow-float);
+  animation: scaleIn 0.35s var(--ease-out) both;
+}
+.modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.modal-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+.modal-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 22px; }
+.modal-actions { display: flex; gap: 10px; }
+
+/* ================================================================
+   BMI RESULT CARD
+   ================================================================ */
+.bmi-result-card {
+  background: var(--navy-800);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+.bmi-result-card::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, oklch(83% 0.19 88 / 0.08) 0%, transparent 70%);
+}
+.bmi-value-main {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 48px;
+  color: var(--gold-400);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.bmi-value-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(55% 0.06 265);
+  margin-bottom: 4px;
+}
+
+/* ================================================================
+   SVG ICONS (inline SVGs used in nav)
+   ================================================================ */
+.nav-icon { width: 16px; height: 16px; flex-shrink: 0; }
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 800px) {
+  body { overflow: auto; height: auto; min-height: 100vh; }
+
+  #loginScreen { flex-direction: column; height: auto; min-height: 100vh; }
+  .login-hero-side { display: none; }
+  .login-form-side {
+    width: 100%;
+    min-height: 100dvh;
+    height: auto;
+  }
+
+  #userDashboard, #adminPanel { flex-direction: column; height: auto; min-height: 100vh; }
+  .user-sidebar, .admin-sidebar { width: 100%; height: auto; }
+  .main-content, .admin-main { height: auto; min-height: 50vh; }
+  .view-pane, .admin-view-pane { padding: 24px 20px; }
+
+  .stats-grid { grid-template-columns: 1fr; }
+  .workout-grid { grid-template-columns: 1fr; }
+  .admin-stats-row { grid-template-columns: 1fr 1fr; }
+  .view-pane { padding: 20px !important; }
+}
+@media (max-width: 600px) {
+  .view-pane { padding: 16px !important; }
+  [style*="grid-template-columns:1fr 1fr"], [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns:repeat(3"], [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns:repeat(4"], [style*="grid-template-columns: repeat(4"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  thead, tbody, tr { display: revert; }
+  .login-form-side { padding: 24px !important; }
+}
+@media (max-width: 480px) {
+  [style*="grid-template-columns:repeat(4"], [style*="grid-template-columns: repeat(4"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns:repeat(3"], [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+  .modal-box { width: 95vw !important; max-width: 95vw !important; }
+  .login-form-side { padding: 20px 16px !important; }
+  .admin-stats-row { grid-template-columns: 1fr !important; }
+  .view-pane, .admin-view-pane { padding: 16px 12px !important; }
+  .user-sidebar, .admin-sidebar { padding: 12px !important; }
+  .hero-layer-1, .hero-layer-2, .hero-layer-3 { display: none !important; }
+  h2, h3 { font-size: 1.25rem !important; }
+  .nav-item { font-size: 0.8rem; padding: 8px 12px; }
+}
+@media (max-width: 360px) {
+  .login-form-side { padding: 16px 12px !important; }
+  .modal-box { width: 98vw !important; max-width: 98vw !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     APP ROOT
+     ================================================================ -->
+<div id="app" style="width:100%;height:100vh;display:flex;">
+
+<!-- ================================================================
+     LOGIN SCREEN
+     ================================================================ -->
+<div id="loginScreen" style="width:100%;height:100%;display:flex;">
+
+  <!-- Form Side -->
+  <div class="login-form-side anim-fade-in">
+    <!-- UMak header -->
+    <div class="login-umak-header">
+      <div class="login-umak-logo">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="oklch(83% 0.19 88)" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3L1 9l11 6 11-6-11-6zM1 9v6l11 6 11-6V9"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-umak-text-top">University of Makati</div>
+        <div class="login-umak-text-bot">College of Computing &amp;<br>Information Sciences</div>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div>
+      <h1 class="login-title">Sign in.</h1>
+      <p class="login-subtitle">Access your Alpha Fitness dashboard</p>
+    </div>
+
+    <!-- Fields -->
+    <div class="login-fields">
+      <div>
+        <label class="login-field-label" for="loginUser">Username</label>
+        <input id="loginUser" type="text" class="login-input" value="juandelacruz" placeholder="Enter your username" autocomplete="username">
+      </div>
+      <div>
+        <label class="login-field-label" for="loginPass">Password</label>
+        <input id="loginPass" type="password" class="login-input" value="password123" placeholder="Enter your password" autocomplete="current-password">
+        <a href="#" class="login-forgot" style="margin-top:8px;display:inline-block;">Forgot password?</a>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="login-cta-row">
+      <button class="btn-login-cta" onclick="loginAsUser()" aria-label="Sign in">
+        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
+        </svg>
+      </button>
+      <span class="login-cta-text">Sign in to your account</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p class="login-footer-text">
+        Don't have an account? <a href="#" class="login-footer-link">Sign up</a>
+      </p>
+      <button class="login-admin-link" onclick="loginAsAdmin()">Administrator access</button>
+    </div>
+  </div>
+
+  <!-- Hero Side -->
+  <div class="login-hero-side">
+    <div class="hero-stripes"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow-2"></div>
+    <div class="hero-layer hero-layer-1"></div>
+    <div class="hero-layer hero-layer-2"></div>
+    <div class="hero-layer hero-layer-3"></div>
+
+    <!-- Barbell SVG -->
+    <svg style="position:absolute;bottom:10%;right:8%;opacity:0.04;width:320px;height:320px;" viewBox="0 0 200 80" fill="currentColor" color="white">
+      <rect x="0" y="28" width="16" height="24" rx="3"/>
+      <rect x="16" y="22" width="10" height="36" rx="2"/>
+      <rect x="26" y="30" width="148" height="20" rx="4"/>
+      <rect x="174" y="22" width="10" height="36" rx="2"/>
+      <rect x="184" y="28" width="16" height="24" rx="3"/>
+    </svg>
+
+    <div class="hero-content">
+      <div style="margin-bottom:20px;display:flex;justify-content:center;">
+        <!-- Dumbbell icon -->
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" color="oklch(83% 0.19 88)" style="color:oklch(83% 0.19 88);opacity:0.7;">
+          <rect x="1" y="9" width="3" height="6" rx="1" fill="currentColor"/>
+          <rect x="4" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+          <rect x="6" y="10.5" width="12" height="3" rx="1.5" fill="currentColor"/>
+          <rect x="18" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+          <rect x="20" y="9" width="3" height="6" rx="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <p class="t-label" style="color:oklch(83% 0.19 88);letter-spacing:0.18em;margin-bottom:12px;">University of Makati</p>
+      <div class="hero-brand-display">ALPHA</div>
+      <div class="hero-brand-display" style="color:var(--gold-500);font-style:italic;">FITNESS</div>
+      <div class="hero-divider"></div>
+      <p class="hero-tagline">Gym Management &amp; Fitness Tracking</p>
+    </div>
+  </div>
+
+</div><!-- /loginScreen -->
+
+<!-- ================================================================
+     USER DASHBOARD
+     ================================================================ -->
+<div id="userDashboard" style="width:100%;height:100%;display:none;flex-direction:row;">
+
+  <!-- Sidebar -->
+  <aside class="user-sidebar">
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" color="oklch(22% 0.12 265)">
+          <rect x="1" y="9" width="3" height="6" rx="1" fill="currentColor"/>
+          <rect x="4" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+          <rect x="6" y="10.5" width="12" height="3" rx="1.5" fill="currentColor"/>
+          <rect x="18" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+          <rect x="20" y="9" width="3" height="6" rx="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div>
+        <span class="sidebar-logo-wordmark-a">ALPHA</span>
+        <span class="sidebar-logo-wordmark-b">Fitness</span>
+      </div>
+    </div>
+
+    <!-- Clock -->
+    <div class="clock-widget">
+      <div class="clock-label">Current Time</div>
+      <div id="liveClock" class="clock-time">00:00:00</div>
+      <div id="liveDate" class="clock-date">—</div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-row">
+      <span class="status-row-label">Session status</span>
+      <span id="userStatus" class="badge badge--neutral">Inactive</span>
+    </div>
+
+    <!-- Check In / Out -->
+    <div class="checkin-row">
+      <button id="checkInBtn" class="btn-checkin btn-checkin--in" onclick="checkIn()">
+        CHECK IN
+      </button>
+      <button id="checkOutBtn" class="btn-checkin btn-checkin--out" onclick="checkOut()" disabled>
+        CHECK OUT
+      </button>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-section-label">Navigation</div>
+    <div class="nav-list">
+      <button class="nav-item nav-item--user active" onclick="showUserView('home', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        Home
+      </button>
+      <button class="nav-item nav-item--user" onclick="showUserView('bodyStats', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Body Stats / BMI
+      </button>
+      <button class="nav-item nav-item--user" onclick="showUserView('attendance', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Attendance
+      </button>
+      <button class="nav-item nav-item--user" onclick="showUserView('workout', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5M6.5 17.5 17.5 6.5"/><path d="M3 12h2m14 0h2M12 3v2m0 14v2"/></svg>
+        Workout Tracker
+      </button>
+    </div>
+
+    <!-- User footer -->
+    <div class="sidebar-user-footer">
+      <div class="user-profile-mini">
+        <div class="avatar avatar--user">J</div>
+        <div>
+          <div class="user-profile-name">Juan Dela Cruz</div>
+          <div class="user-profile-role">Student Member</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- HOME VIEW -->
+    <div id="view-home" class="view-pane active anim-fade-up">
+      <!-- Welcome hero -->
+      <div class="home-hero-card" style="margin-bottom:28px;">
+        <div class="home-hero-text">
+          <div class="home-hero-greeting">Welcome back,</div>
+          <div class="home-hero-name">Juan Dela Cruz</div>
+          <div class="home-hero-tagline">Track your fitness journey with Alpha Fitness</div>
+        </div>
+        <div class="home-hero-dumbbell">
+          <svg width="96" height="96" viewBox="0 0 24 24" fill="none" color="white">
+            <rect x="1" y="9" width="3" height="6" rx="1.5" fill="currentColor"/>
+            <rect x="4" y="7" width="2.5" height="10" rx="1" fill="currentColor"/>
+            <rect x="6.5" y="10.5" width="11" height="3" rx="1.5" fill="currentColor"/>
+            <rect x="17.5" y="7" width="2.5" height="10" rx="1" fill="currentColor"/>
+            <rect x="20" y="9" width="3" height="6" rx="1.5" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="section-heading">
+        <span class="section-heading-text">Your Stats</span>
+        <div class="section-heading-line"></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card anim-fade-up stagger-1" style="background:var(--navy-800);color:white;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:oklch(55% 0.06 265);margin-bottom:4px;">Total Check-ins</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;color:var(--gold-400);line-height:1;">47</div>
+          <div style="font-size:12px;color:oklch(50% 0.07 265);margin-top:4px;">This semester</div>
+        </div>
+        <div class="stat-card anim-fade-up stagger-2" style="background:var(--success-bg);border:1px solid oklch(52% 0.17 145 / 0.15);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--success);opacity:0.7;margin-bottom:4px;">Current BMI</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;color:var(--success);line-height:1;">22.5</div>
+          <div style="font-size:12px;color:var(--success);opacity:0.6;margin-top:4px;">Normal Weight</div>
+        </div>
+        <div class="stat-card anim-fade-up stagger-3" style="background:var(--info-bg);border:1px solid oklch(58% 0.17 240 / 0.15);">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--info);opacity:0.7;margin-bottom:4px;">Workouts Logged</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:40px;font-weight:700;color:var(--info);line-height:1;">32</div>
+          <div style="font-size:12px;color:var(--info);opacity:0.6;margin-top:4px;">Keep pushing!</div>
+        </div>
+      </div>
+
+      <!-- Info card -->
+      <div class="card card-padded anim-fade-up stagger-4" style="text-align:center;margin-top:8px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;">About This System</div>
+        <div style="font-family:'Fraunces',Georgia,serif;font-weight:900;font-size:24px;color:var(--navy-800);letter-spacing:-0.02em;">ALPHA FITNESS</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">Gym Management &amp; Fitness Tracking System</div>
+        <div style="font-size:12px;color:var(--text-faint);margin-top:4px;">University of Makati — CCIS</div>
+      </div>
+    </div>
+
+    <!-- BODY STATS VIEW -->
+    <div id="view-bodyStats" class="view-pane">
+      <div class="page-header">
+        <div class="page-header-eyebrow">Health Tracking</div>
+        <h2 class="t-heading-xl page-header-title">Body Stats &amp; BMI</h2>
+        <p class="page-header-desc">Track your body measurements and BMI over time.</p>
+      </div>
+
+      <div class="card card-padded" style="margin-bottom:24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;">
+          <div class="field-group">
+            <label class="field-label">Full Name</label>
+            <input type="text" value="Juan Dela Cruz" readonly class="field-input">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Age</label>
+            <input id="bmiAge" type="number" value="21" class="field-input" placeholder="Age">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Height (cm)</label>
+            <input id="bmiHeight" type="number" value="170" class="field-input" placeholder="Height in cm">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Weight (kg)</label>
+            <input id="bmiWeight" type="number" value="65" class="field-input" placeholder="Weight in kg">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-primary" onclick="computeBMI()">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M16 3h5v5M10 14L21 3"/></svg>
+            Compute BMI
+          </button>
+          <button class="btn btn-gold" onclick="updateBMI()">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            Update Record
+          </button>
+        </div>
+      </div>
+
+      <!-- BMI Result -->
+      <div id="bmiResult" class="bmi-result-card hidden">
+        <div>
+          <div class="bmi-value-label">Your BMI Score</div>
+          <div id="bmiValue" class="bmi-value-main">—</div>
+        </div>
+        <span id="bmiClass" class="badge" style="font-size:14px;padding:8px 18px;"></span>
+      </div>
+
+      <!-- Records table -->
+      <div class="section-heading">
+        <span class="section-heading-text">BMI History</span>
+        <div class="section-heading-line"></div>
+      </div>
+      <div class="card" style="overflow:hidden;">
+        <div class="overflow-x-auto">
+          <table class="data-table" id="bmiTable">
+            <thead>
+              <tr>
+                <th>Record ID</th>
+                <th>Date</th>
+                <th>BMI Score</th>
+                <th>Classification</th>
+              </tr>
+            </thead>
+            <tbody id="bmiTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE VIEW -->
+    <div id="view-attendance" class="view-pane">
+      <div class="page-header">
+        <div class="page-header-eyebrow">Gym Visits</div>
+        <h2 class="t-heading-xl page-header-title">Attendance Tracker</h2>
+        <p class="page-header-desc">Your gym check-in and check-out history.</p>
+      </div>
+      <div class="card" style="overflow:hidden;">
+        <div class="overflow-x-auto">
+          <table class="data-table" id="attendanceTable">
+            <thead>
+              <tr>
+                <th>Log ID</th>
+                <th>Date</th>
+                <th>Check-in Time</th>
+                <th>Check-out Time</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKOUT TRACKER VIEW -->
+    <div id="view-workout" class="view-pane">
+      <div class="page-header">
+        <div class="page-header-eyebrow">Training Log</div>
+        <h2 class="t-heading-xl page-header-title">Workout Tracker</h2>
+        <p class="page-header-desc">Log your gym sessions and track your progress.</p>
+      </div>
+
+      <div class="workout-controls">
+        <div class="workout-grid">
+          <div class="field-group">
+            <label class="field-label">Equipment</label>
+            <select id="equipmentSelect" class="field-input">
+              <option value="">— Select Equipment —</option>
+              <option>Treadmill</option>
+              <option>Bench Press</option>
+              <option>Lat Pulldown</option>
+              <option>Leg Press</option>
+              <option>Cable Crossover</option>
+              <option>Dumbbell Rack</option>
+              <option>Smith Machine</option>
+              <option>Rowing Machine</option>
+              <option>Elliptical Trainer</option>
+              <option>Stationary Bike</option>
+              <option>Pull-up Bar</option>
+              <option>Kettlebells</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Tracking Type</label>
+            <select id="trackingType" class="field-input">
+              <option value="">— Select Type —</option>
+              <option>Sets &amp; Reps</option>
+              <option>Duration (minutes)</option>
+              <option>Distance (km)</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Sets</label>
+            <input id="workoutSets" type="number" value="3" class="field-input" placeholder="Number of sets">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Reps / Value</label>
+            <input id="workoutReps" type="number" value="10" class="field-input" placeholder="Reps or duration">
+          </div>
+        </div>
+        <div class="workout-actions">
+          <button class="btn btn-success" onclick="addWorkout()">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+            Add Workout
+          </button>
+          <button class="btn btn-danger" onclick="deleteWorkout()">
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete Selected
+          </button>
+        </div>
+      </div>
+
+      <div class="card" style="overflow:hidden;">
+        <div class="overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Equipment</th>
+                <th>Type</th>
+                <th>Sets</th>
+                <th>Reps</th>
+                <th>Select</th>
+              </tr>
+            </thead>
+            <tbody id="workoutTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /userDashboard -->
+
+<!-- ================================================================
+     ADMIN PANEL
+     ================================================================ -->
+<div id="adminPanel" style="width:100%;height:100%;display:none;flex-direction:row;">
+
+  <!-- Admin Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar-logo">
+      <div class="admin-logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" color="oklch(83% 0.19 88)">
+          <rect x="1" y="9" width="3" height="6" rx="1" fill="currentColor"/>
+          <rect x="4" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+          <rect x="6" y="10.5" width="12" height="3" rx="1.5" fill="currentColor"/>
+          <rect x="18" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+          <rect x="20" y="9" width="3" height="6" rx="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="admin-wordmark-a">ALPHA</div>
+      <span class="admin-wordmark-b">Admin Console</span>
+    </div>
+
+    <!-- Admin Clock -->
+    <div class="admin-clock-widget">
+      <div class="admin-clock-label">System Time</div>
+      <div id="adminClock" class="admin-clock-time">00:00:00</div>
+    </div>
+
+    <!-- Admin Nav -->
+    <div class="admin-nav-label">Management</div>
+    <div class="admin-nav-list">
+      <button class="nav-item nav-item--admin active" onclick="showAdminView('users', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        User Accounts
+      </button>
+      <button class="nav-item nav-item--admin" onclick="showAdminView('adminAttendance', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Attendance Records
+      </button>
+      <button class="nav-item nav-item--admin" onclick="showAdminView('adminBodyStats', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Body Stats Records
+      </button>
+      <button class="nav-item nav-item--admin" onclick="showAdminView('adminWorkout', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5 17.5 17.5M6.5 17.5 17.5 6.5"/><path d="M3 12h2m14 0h2M12 3v2m0 14v2"/></svg>
+        Workout Logs
+      </button>
+    </div>
+
+    <!-- Admin user footer -->
+    <div class="admin-user-footer">
+      <div class="admin-profile-mini">
+        <div class="avatar avatar--admin" style="background:var(--navy-800);color:var(--gold-500);">A</div>
+        <div>
+          <div class="admin-profile-name">Administrator</div>
+          <div class="admin-profile-role">System Admin</div>
+        </div>
+      </div>
+      <button class="btn-admin-logout" onclick="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Log Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Admin Main Content -->
+  <main class="admin-main">
+
+    <!-- USERS MANAGEMENT -->
+    <div id="admin-users" class="admin-view-pane active anim-fade-up">
+      <div class="admin-page-header">
+        <div class="admin-page-eyebrow">Administration</div>
+        <h2 class="admin-page-title">User Account Management</h2>
+      </div>
+
+      <!-- Mini stat cards -->
+      <div class="admin-stats-row">
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">Total Users</div>
+          <div class="admin-stat-value" id="statTotalUsers">6</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">Active</div>
+          <div class="admin-stat-value" style="color:var(--success);" id="statActiveUsers">5</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">Students</div>
+          <div class="admin-stat-value" style="color:var(--info);" id="statStudents">3</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-label">Others</div>
+          <div class="admin-stat-value" style="color:oklch(65% 0.08 265);" id="statOthers">3</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="admin-toolbar">
+        <div class="admin-search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="adminSearch" type="text" class="admin-search-input" placeholder="Search by name or user ID…" onkeyup="searchUsers()">
+        </div>
+        <button class="btn btn-gold" onclick="showAddUserModal()">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+          Add User
+        </button>
+        <button class="btn btn-danger" onclick="deleteSelectedUser()">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M4 7h16"/></svg>
+          Delete
+        </button>
+      </div>
+
+      <div class="admin-table-wrapper">
+        <div class="overflow-x-auto">
+          <table class="data-table data-table--dark">
+            <thead>
+              <tr>
+                <th style="width:44px;text-align:center;">Sel</th>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Category</th>
+                <th>Gender</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE RECORDS -->
+    <div id="admin-adminAttendance" class="admin-view-pane">
+      <div class="admin-page-header">
+        <div class="admin-page-eyebrow">Records</div>
+        <h2 class="admin-page-title">Attendance Records</h2>
+      </div>
+      <div class="admin-table-wrapper">
+        <div class="overflow-x-auto">
+          <table class="data-table data-table--dark">
+            <thead>
+              <tr><th>Log ID</th><th>User</th><th>Date</th><th>Check-in</th><th>Check-out</th><th>Duration</th></tr>
+            </thead>
+            <tbody id="adminAttendanceBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BODY STATS RECORDS -->
+    <div id="admin-adminBodyStats" class="admin-view-pane">
+      <div class="admin-page-header">
+        <div class="admin-page-eyebrow">Records</div>
+        <h2 class="admin-page-title">Body Stats Records</h2>
+      </div>
+      <div class="admin-table-wrapper">
+        <div class="overflow-x-auto">
+          <table class="data-table data-table--dark">
+            <thead>
+              <tr><th>Rec ID</th><th>User</th><th>Date</th><th>Height</th><th>Weight</th><th>BMI</th><th>Classification</th></tr>
+            </thead>
+            <tbody id="adminBodyStatsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKOUT LOGS -->
+    <div id="admin-adminWorkout" class="admin-view-pane">
+      <div class="admin-page-header">
+        <div class="admin-page-eyebrow">Records</div>
+        <h2 class="admin-page-title">Workout Logs</h2>
+      </div>
+      <div class="admin-table-wrapper">
+        <div class="overflow-x-auto">
+          <table class="data-table data-table--dark">
+            <thead>
+              <tr><th>ID</th><th>User</th><th>Date</th><th>Equipment</th><th>Type</th><th>Sets</th><th>Reps</th></tr>
+            </thead>
+            <tbody id="adminWorkoutBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div><!-- /adminPanel -->
+
+<!-- ================================================================
+     ADD USER MODAL
+     ================================================================ -->
+<div id="addUserModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3 class="modal-title">Add New User</h3>
+    <p class="modal-subtitle">Create a new member account in the system.</p>
+    <div class="modal-fields">
+      <div class="field-group">
+        <label class="field-label">Full Name</label>
+        <input id="newUserName" type="text" class="field-input" placeholder="e.g. Maria Santos">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Category</label>
+        <select id="newUserCategory" class="field-input">
+          <option value="">— Select Category —</option>
+          <option>Student</option>
+          <option>Employee</option>
+          <option>Alumni</option>
+          <option>Outsider</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Gender</label>
+        <select id="newUserGender" class="field-input">
+          <option value="">— Select Gender —</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" style="flex:1;" onclick="addUser()">Create Account</button>
+      <button class="btn btn-ghost" style="flex:1;" onclick="hideAddUserModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- ================================================================
+     JAVASCRIPT
+     ================================================================ -->
+<script>
+'use strict';
+
+// ================================================================
+// STATE
+// ================================================================
+let isCheckedIn = false;
+let currentCheckInTime = null;
+let workoutIdCounter = 7;
+let userIdCounter = 7;
+
+// ================================================================
+// SAMPLE DATA
+// ================================================================
+const bmiRecords = [
+  { id: 1, date: '2026-01-15', bmi: 24.2, classification: 'Normal Weight' },
+  { id: 2, date: '2026-02-12', bmi: 23.8, classification: 'Normal Weight' },
+  { id: 3, date: '2026-03-10', bmi: 23.1, classification: 'Normal Weight' },
+  { id: 4, date: '2026-04-14', bmi: 22.9, classification: 'Normal Weight' },
+  { id: 5, date: '2026-05-18', bmi: 22.5, classification: 'Normal Weight' },
+];
+
+const attendanceRecords = [
+  { id: 1, date: '2026-05-28', checkIn: '06:30:15', checkOut: '08:15:42' },
+  { id: 2, date: '2026-05-29', checkIn: '07:00:03', checkOut: '09:30:18' },
+  { id: 3, date: '2026-05-30', checkIn: '06:45:22', checkOut: '08:50:11' },
+  { id: 4, date: '2026-06-01', checkIn: '05:55:40', checkOut: '07:40:05' },
+  { id: 5, date: '2026-06-02', checkIn: '06:20:18', checkOut: '08:10:33' },
+  { id: 6, date: '2026-06-03', checkIn: '07:10:55', checkOut: '09:25:47' },
+  { id: 7, date: '2026-06-04', checkIn: '06:00:08', checkOut: '08:30:22' },
+  { id: 8, date: '2026-06-05', checkIn: '06:35:41', checkOut: '08:45:19' },
+];
+
+let workoutRecords = [
+  { id: 1, date: '2026-06-01', equipment: 'Bench Press',     type: 'Sets & Reps',         sets: 4, reps: 10 },
+  { id: 2, date: '2026-06-01', equipment: 'Lat Pulldown',    type: 'Sets & Reps',         sets: 3, reps: 12 },
+  { id: 3, date: '2026-06-02', equipment: 'Treadmill',        type: 'Duration (minutes)', sets: 1, reps: 30 },
+  { id: 4, date: '2026-06-03', equipment: 'Leg Press',        type: 'Sets & Reps',         sets: 4, reps: 8  },
+  { id: 5, date: '2026-06-04', equipment: 'Cable Crossover', type: 'Sets & Reps',         sets: 3, reps: 15 },
+  { id: 6, date: '2026-06-05', equipment: 'Rowing Machine',  type: 'Duration (minutes)', sets: 1, reps: 20 },
+];
+
+let adminUsers = [
+  { id: 'USR-001', name: 'Juan Dela Cruz',   category: 'Student',  gender: 'Male',   status: 'Active'   },
+  { id: 'USR-002', name: 'Maria Santos',     category: 'Student',  gender: 'Female', status: 'Active'   },
+  { id: 'USR-003', name: 'Pedro Reyes',      category: 'Employee', gender: 'Male',   status: 'Active'   },
+  { id: 'USR-004', name: 'Ana Garcia',       category: 'Alumni',   gender: 'Female', status: 'Inactive' },
+  { id: 'USR-005', name: 'Carlos Mendoza',   category: 'Student',  gender: 'Male',   status: 'Active'   },
+  { id: 'USR-006', name: 'Rosa Villanueva',  category: 'Outsider', gender: 'Female', status: 'Active'   },
+];
+
+const adminAttendance = [
+  { id: 1, user: 'Juan Dela Cruz',  date: '2026-06-05', checkIn: '06:35', checkOut: '08:45', duration: '2h 10m' },
+  { id: 2, user: 'Maria Santos',    date: '2026-06-05', checkIn: '07:00', checkOut: '09:15', duration: '2h 15m' },
+  { id: 3, user: 'Pedro Reyes',     date: '2026-06-05', checkIn: '05:30', checkOut: '07:00', duration: '1h 30m' },
+  { id: 4, user: 'Carlos Mendoza',  date: '2026-06-04', checkIn: '06:00', checkOut: '08:30', duration: '2h 30m' },
+  { id: 5, user: 'Rosa Villanueva', date: '2026-06-04', checkIn: '07:15', checkOut: '08:45', duration: '1h 30m' },
+];
+
+const adminBodyStats = [
+  { id: 1, user: 'Juan Dela Cruz',  date: '2026-05-18', height: '170 cm', weight: '65 kg', bmi: 22.5, classification: 'Normal'     },
+  { id: 2, user: 'Maria Santos',    date: '2026-05-20', height: '160 cm', weight: '55 kg', bmi: 21.5, classification: 'Normal'     },
+  { id: 3, user: 'Pedro Reyes',     date: '2026-05-15', height: '175 cm', weight: '90 kg', bmi: 29.4, classification: 'Overweight' },
+  { id: 4, user: 'Carlos Mendoza',  date: '2026-05-22', height: '168 cm', weight: '72 kg', bmi: 25.5, classification: 'Overweight' },
+  { id: 5, user: 'Rosa Villanueva', date: '2026-05-25', height: '155 cm', weight: '48 kg', bmi: 20.0, classification: 'Normal'     },
+];
+
+const adminWorkoutLogs = [
+  { id: 1, user: 'Juan Dela Cruz',  date: '2026-06-05', equipment: 'Bench Press',     type: 'Sets & Reps',  sets: 4, reps: 10 },
+  { id: 2, user: 'Maria Santos',    date: '2026-06-05', equipment: 'Treadmill',        type: 'Duration',     sets: 1, reps: 30 },
+  { id: 3, user: 'Pedro Reyes',     date: '2026-06-04', equipment: 'Smith Machine',    type: 'Sets & Reps',  sets: 5, reps: 8  },
+  { id: 4, user: 'Carlos Mendoza',  date: '2026-06-04', equipment: 'Leg Press',        type: 'Sets & Reps',  sets: 4, reps: 12 },
+  { id: 5, user: 'Rosa Villanueva', date: '2026-06-03', equipment: 'Elliptical Trainer', type: 'Duration',   sets: 1, reps: 45 },
+];
+
+// ================================================================
+// CLOCK
+// ================================================================
+function updateClock() {
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-US', { hour12: false });
+  const date = now.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  const lc = document.getElementById('liveClock');
+  if (lc) lc.textContent = time;
+  const ld = document.getElementById('liveDate');
+  if (ld) ld.textContent = date;
+  const ac = document.getElementById('adminClock');
+  if (ac) ac.textContent = time;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ================================================================
+// SCREEN NAVIGATION
+// ================================================================
+function showScreen(id) {
+  ['loginScreen', 'userDashboard', 'adminPanel'].forEach(sid => {
+    const el = document.getElementById(sid);
+    if (el) {
+      if (sid === id) {
+        el.style.display = 'flex';
+        el.classList.add('active');
+      } else {
+        el.style.display = 'none';
+        el.classList.remove('active');
+      }
+    }
+  });
+}
+
+function loginAsUser() {
+  showScreen('userDashboard');
+  renderBMITable();
+  renderAttendanceTable();
+  renderWorkoutTable();
+}
+
+function loginAsAdmin() {
+  showScreen('adminPanel');
+  renderAdminUsers();
+  renderAdminAttendance();
+  renderAdminBodyStats();
+  renderAdminWorkoutLogs();
+  updateAdminStats();
+}
+
+function logout() {
+  showScreen('loginScreen');
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ================================================================
+// USER VIEW NAVIGATION
+// ================================================================
+function showUserView(viewId, btnEl) {
+  ['home', 'bodyStats', 'attendance', 'workout'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) { el.classList.remove('active'); el.style.display = 'none'; }
+  });
+  const target = document.getElementById('view-' + viewId);
+  if (target) {
+    target.style.display = 'block';
+    target.classList.add('active');
+    // Re-trigger animation
+    target.classList.remove('anim-fade-up');
+    void target.offsetWidth;
+    target.classList.add('anim-fade-up');
+  }
+  if (btnEl) {
+    document.querySelectorAll('#userDashboard .nav-item--user').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+}
+
+function showAdminView(viewId, btnEl) {
+  ['users', 'adminAttendance', 'adminBodyStats', 'adminWorkout'].forEach(v => {
+    const el = document.getElementById('admin-' + v);
+    if (el) { el.classList.remove('active'); el.style.display = 'none'; }
+  });
+  const target = document.getElementById('admin-' + viewId);
+  if (target) {
+    target.style.display = 'block';
+    target.classList.add('active');
+    target.classList.remove('anim-fade-up');
+    void target.offsetWidth;
+    target.classList.add('anim-fade-up');
+  }
+  if (btnEl) {
+    document.querySelectorAll('#adminPanel .nav-item--admin').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+}
+
+// ================================================================
+// CHECK IN / OUT
+// ================================================================
+function checkIn() {
+  if (isCheckedIn) return;
+  isCheckedIn = true;
+  currentCheckInTime = new Date();
+  const statusEl = document.getElementById('userStatus');
+  statusEl.textContent = 'Checked In';
+  statusEl.className = 'badge badge--success';
+  document.getElementById('checkInBtn').disabled = true;
+  document.getElementById('checkOutBtn').disabled = false;
+}
+
+function checkOut() {
+  if (!isCheckedIn) return;
+  isCheckedIn = false;
+  const now = new Date();
+  const statusEl = document.getElementById('userStatus');
+  statusEl.textContent = 'Checked Out';
+  statusEl.className = 'badge badge--danger';
+  document.getElementById('checkOutBtn').disabled = true;
+  document.getElementById('checkInBtn').disabled = false;
+
+  attendanceRecords.push({
+    id: attendanceRecords.length + 1,
+    date: now.toISOString().split('T')[0],
+    checkIn: currentCheckInTime.toLocaleTimeString('en-US', { hour12: false }),
+    checkOut: now.toLocaleTimeString('en-US', { hour12: false }),
+  });
+  renderAttendanceTable();
+  currentCheckInTime = null;
+}
+
+// ================================================================
+// BMI
+// ================================================================
+function getBMIClass(bmi) {
+  if (bmi < 18.5) return { label: 'Underweight', cssClass: 'badge--info' };
+  if (bmi < 25)   return { label: 'Normal Weight', cssClass: 'badge--success' };
+  if (bmi < 30)   return { label: 'Overweight', cssClass: 'badge--warning' };
+  return { label: 'Obese', cssClass: 'badge--danger' };
+}
+
+function computeBMI() {
+  const h = parseFloat(document.getElementById('bmiHeight').value);
+  const w = parseFloat(document.getElementById('bmiWeight').value);
+  if (!h || !w || h <= 0 || w <= 0) { alert('Please enter valid height and weight.'); return; }
+  const bmi = w / ((h / 100) ** 2);
+  const rounded = Math.round(bmi * 10) / 10;
+  const cls = getBMIClass(rounded);
+
+  const resultEl = document.getElementById('bmiResult');
+  resultEl.classList.remove('hidden');
+  document.getElementById('bmiValue').textContent = rounded.toFixed(1);
+  const classEl = document.getElementById('bmiClass');
+  classEl.textContent = cls.label;
+  classEl.className = 'badge ' + cls.cssClass;
+  classEl.style.fontSize = '15px';
+  classEl.style.padding = '8px 20px';
+}
+
+function updateBMI() {
+  const h = parseFloat(document.getElementById('bmiHeight').value);
+  const w = parseFloat(document.getElementById('bmiWeight').value);
+  if (!h || !w || h <= 0 || w <= 0) { alert('Please enter valid height and weight.'); return; }
+  const bmi = w / ((h / 100) ** 2);
+  const rounded = Math.round(bmi * 10) / 10;
+  const cls = getBMIClass(rounded);
+  bmiRecords.push({
+    id: bmiRecords.length + 1,
+    date: new Date().toISOString().split('T')[0],
+    bmi: rounded,
+    classification: cls.label,
+  });
+  computeBMI();
+  renderBMITable();
+}
+
+function renderBMITable() {
+  const tbody = document.getElementById('bmiTableBody');
+  tbody.innerHTML = bmiRecords.map(r => {
+    const cls = getBMIClass(r.bmi);
+    return `<tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);">#${String(r.id).padStart(3,'0')}</span></td>
+      <td style="color:var(--text-secondary);font-size:13px;">${r.date}</td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--navy-700);">${r.bmi.toFixed(1)}</span></td>
+      <td><span class="badge ${cls.cssClass}">${r.classification}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ================================================================
+// ATTENDANCE
+// ================================================================
+function renderAttendanceTable() {
+  const tbody = document.getElementById('attendanceTableBody');
+  tbody.innerHTML = attendanceRecords.map(r => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);">#${String(r.id).padStart(3,'0')}</span></td>
+      <td style="color:var(--text-secondary);font-size:13px;">${r.date}</td>
+      <td><span class="badge badge--success" style="font-family:'JetBrains Mono',monospace;">${r.checkIn}</span></td>
+      <td><span class="badge badge--danger"  style="font-family:'JetBrains Mono',monospace;">${r.checkOut}</span></td>
+    </tr>
+  `).join('');
+}
+
+// ================================================================
+// WORKOUT
+// ================================================================
+function renderWorkoutTable() {
+  const tbody = document.getElementById('workoutTableBody');
+  tbody.innerHTML = workoutRecords.map(r => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted);">#${String(r.id).padStart(3,'0')}</span></td>
+      <td style="color:var(--text-secondary);font-size:13px;">${r.date}</td>
+      <td style="font-weight:600;">${r.equipment}</td>
+      <td><span class="badge badge--info" style="font-size:11px;">${r.type}</span></td>
+      <td style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:600;">${r.sets}</td>
+      <td style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:600;">${r.reps}</td>
+      <td style="text-align:center;"><input type="checkbox" data-workout-id="${r.id}" style="width:16px;height:16px;cursor:pointer;accent-color:var(--navy-700);"></td>
+    </tr>
+  `).join('');
+}
+
+function addWorkout() {
+  const eq   = document.getElementById('equipmentSelect').value;
+  const type = document.getElementById('trackingType').value;
+  const sets = parseInt(document.getElementById('workoutSets').value) || 0;
+  const reps = parseInt(document.getElementById('workoutReps').value) || 0;
+  if (!eq || !type) { alert('Please select equipment and tracking type.'); return; }
+  workoutRecords.push({
+    id: workoutIdCounter++,
+    date: new Date().toISOString().split('T')[0],
+    equipment: eq, type, sets, reps,
+  });
+  renderWorkoutTable();
+}
+
+function deleteWorkout() {
+  const checked = document.querySelectorAll('#workoutTableBody input[type="checkbox"]:checked');
+  if (checked.length === 0) { alert('Please select at least one workout to delete.'); return; }
+  const ids = Array.from(checked).map(cb => parseInt(cb.dataset.workoutId));
+  workoutRecords = workoutRecords.filter(r => !ids.includes(r.id));
+  renderWorkoutTable();
+}
+
+// ================================================================
+// ADMIN
+// ================================================================
+function getCategoryBadge(cat) {
+  const map = {
+    Student:  'badge--info',
+    Employee: 'badge--success',
+    Alumni:   'badge--warning',
+    Outsider: 'badge--purple',
+  };
+  return map[cat] || 'badge--neutral';
+}
+
+function updateAdminStats() {
+  const total    = adminUsers.length;
+  const active   = adminUsers.filter(u => u.status === 'Active').length;
+  const students = adminUsers.filter(u => u.category === 'Student').length;
+  const others   = total - students;
+  const t = document.getElementById('statTotalUsers'); if (t) t.textContent = total;
+  const a = document.getElementById('statActiveUsers'); if (a) a.textContent = active;
+  const s = document.getElementById('statStudents');   if (s) s.textContent = students;
+  const o = document.getElementById('statOthers');     if (o) o.textContent = others;
+}
+
+function renderAdminUsers(filter = '') {
+  const tbody = document.getElementById('adminUsersBody');
+  const filtered = filter
+    ? adminUsers.filter(u => u.name.toLowerCase().includes(filter) || u.id.toLowerCase().includes(filter))
+    : adminUsers;
+
+  tbody.innerHTML = filtered.map(u => `
+    <tr>
+      <td style="text-align:center;"><input type="checkbox" data-user-id="${u.id}" style="width:15px;height:15px;cursor:pointer;accent-color:var(--gold-500);"></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold-500);font-weight:600;">${u.id}</span></td>
+      <td style="font-weight:600;">${u.name}</td>
+      <td><span class="badge ${getCategoryBadge(u.category)}">${u.category}</span></td>
+      <td style="color:oklch(70% 0.04 265);">${u.gender}</td>
+      <td><span class="badge ${u.status === 'Active' ? 'badge--success' : 'badge--neutral'}">${u.status}</span></td>
+    </tr>
+  `).join('');
+  updateAdminStats();
+}
+
+function searchUsers() {
+  renderAdminUsers(document.getElementById('adminSearch').value.toLowerCase());
+}
+
+function showAddUserModal() {
+  document.getElementById('addUserModal').classList.remove('hidden');
+}
+function hideAddUserModal() {
+  document.getElementById('addUserModal').classList.add('hidden');
+}
+
+function addUser() {
+  const name     = document.getElementById('newUserName').value.trim();
+  const category = document.getElementById('newUserCategory').value;
+  const gender   = document.getElementById('newUserGender').value;
+  if (!name || !category || !gender) { alert('Please fill in all fields.'); return; }
+  adminUsers.push({
+    id: 'USR-' + String(userIdCounter++).padStart(3, '0'),
+    name, category, gender, status: 'Active',
+  });
+  renderAdminUsers();
+  hideAddUserModal();
+  document.getElementById('newUserName').value = '';
+  document.getElementById('newUserCategory').value = '';
+  document.getElementById('newUserGender').value = '';
+}
+
+function deleteSelectedUser() {
+  const checked = document.querySelectorAll('#adminUsersBody input[type="checkbox"]:checked');
+  if (checked.length === 0) { alert('Please select at least one user to delete.'); return; }
+  const ids = Array.from(checked).map(cb => cb.dataset.userId);
+  adminUsers = adminUsers.filter(u => !ids.includes(u.id));
+  renderAdminUsers();
+}
+
+function renderAdminAttendance() {
+  document.getElementById('adminAttendanceBody').innerHTML = adminAttendance.map(r => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold-500);">${r.id}</span></td>
+      <td style="font-weight:600;">${r.user}</td>
+      <td style="color:oklch(65% 0.05 265);font-size:13px;">${r.date}</td>
+      <td><span class="badge badge--success" style="font-family:'JetBrains Mono',monospace;">${r.checkIn}</span></td>
+      <td><span class="badge badge--danger"  style="font-family:'JetBrains Mono',monospace;">${r.checkOut}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:13px;color:oklch(70% 0.05 265);">${r.duration}</td>
+    </tr>
+  `).join('');
+}
+
+function renderAdminBodyStats() {
+  document.getElementById('adminBodyStatsBody').innerHTML = adminBodyStats.map(r => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold-500);">${r.id}</span></td>
+      <td style="font-weight:600;">${r.user}</td>
+      <td style="color:oklch(65% 0.05 265);font-size:13px;">${r.date}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:13px;">${r.height}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:13px;">${r.weight}</td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;color:var(--gold-400);">${r.bmi.toFixed(1)}</span></td>
+      <td><span class="badge ${r.classification === 'Normal' ? 'badge--success' : 'badge--warning'}">${r.classification}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderAdminWorkoutLogs() {
+  document.getElementById('adminWorkoutBody').innerHTML = adminWorkoutLogs.map(r => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--gold-500);">${r.id}</span></td>
+      <td style="font-weight:600;">${r.user}</td>
+      <td style="color:oklch(65% 0.05 265);font-size:13px;">${r.date}</td>
+      <td>${r.equipment}</td>
+      <td><span class="badge badge--info" style="font-size:11px;">${r.type}</span></td>
+      <td style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:600;">${r.sets}</td>
+      <td style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:600;">${r.reps}</td>
+    </tr>
+  `).join('');
+}
+
+// ================================================================
+// INIT — ensure login shows on load, dashboard/admin hidden
+// ================================================================
+(function init() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('userDashboard').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+
+  // Init view-pane display states for user dashboard
+  ['home','bodyStats','attendance','workout'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) el.style.display = v === 'home' ? 'block' : 'none';
+  });
+
+  // Init admin view-pane display states
+  ['users','adminAttendance','adminBodyStats','adminWorkout'].forEach(v => {
+    const el = document.getElementById('admin-' + v);
+    if (el) el.style.display = v === 'users' ? 'block' : 'none';
+  });
+})();
+</script>
+
+</body>
+</html>

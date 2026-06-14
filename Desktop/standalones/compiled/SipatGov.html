@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SipatGov — Civic Transparency Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===================== RESET + BASE ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  /* OKLCH palette */
+  --c-navy:        oklch(12% 0.04 265);
+  --c-navy-mid:    oklch(16% 0.05 265);
+  --c-navy-light:  oklch(20% 0.05 265);
+  --c-blue:        oklch(45% 0.2 260);
+  --c-blue-dim:    oklch(45% 0.2 260 / 0.12);
+  --c-red:         oklch(52% 0.22 25);
+  --c-red-dim:     oklch(52% 0.22 25 / 0.12);
+  --c-gold:        oklch(72% 0.16 80);
+  --c-gold-light:  oklch(80% 0.14 82);
+  --c-gold-dim:    oklch(72% 0.16 80 / 0.14);
+  /* Status */
+  --c-kept:        oklch(60% 0.18 145);
+  --c-kept-dim:    oklch(60% 0.18 145 / 0.13);
+  --c-broken:      oklch(56% 0.21 25);
+  --c-broken-dim:  oklch(56% 0.21 25 / 0.12);
+  --c-inprog:      oklch(56% 0.19 245);
+  --c-inprog-dim:  oklch(56% 0.19 245 / 0.12);
+  --c-pending:     oklch(68% 0.17 68);
+  --c-pending-dim: oklch(68% 0.17 68 / 0.13);
+  --c-planned:     oklch(54% 0.18 305);
+  --c-ongoing:     oklch(61% 0.17 175);
+  --c-completed:   oklch(55% 0.18 145);
+  --c-cancelled:   oklch(50% 0.21 25);
+  /* Surface */
+  --c-surface:     oklch(98% 0.005 260);
+  --c-card:        oklch(100% 0 0);
+  --c-border:      oklch(91% 0.008 260);
+  --c-text-main:   oklch(18% 0.04 265);
+  --c-text-mid:    oklch(44% 0.02 265);
+  --c-text-dim:    oklch(60% 0.015 265);
+  --c-text-faint:  oklch(74% 0.01 265);
+  /* Type */
+  --ff-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --ff-head:    'Space Grotesk', system-ui, sans-serif;
+  --ff-mono:    'JetBrains Mono', monospace;
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 200ms;
+  --dur-mid:  380ms;
+  --dur-slow: 600ms;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--ff-body);
+  background: var(--c-navy);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+  overflow: hidden;
+}
+button, input, select { font: inherit; border: 0; cursor: pointer; background: none; }
+input:focus, select:focus { outline: none; }
+::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; }
+
+/* ===================== PHONE FRAME ===================== */
+#app {
+  max-width: 430px;
+  width: 100%;
+  height: 100dvh;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: var(--c-surface);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== ANIMATIONS ===================== */
+@keyframes badgeDrift {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-7px) rotate(0.5deg); }
+  66%       { transform: translateY(-3px) rotate(-0.4deg); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(72% 0.16 80 / 0.5), 0 4px 20px oklch(72% 0.16 80 / 0.2); }
+  50%       { box-shadow: 0 0 0 6px oklch(72% 0.16 80 / 0.0), 0 4px 28px oklch(72% 0.16 80 / 0.35); }
+}
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.8); opacity: 0.45; }
+}
+@keyframes splashDismiss {
+  to { opacity: 0; transform: scale(1.04); }
+}
+@keyframes gridShift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 42px 42px, 42px 42px; }
+}
+@keyframes gradientBreath {
+  0%, 100% { opacity: 0.55; }
+  50%       { opacity: 1; }
+}
+@keyframes ringFill {
+  from { stroke-dashoffset: var(--ring-start, 175.93); }
+  to   { stroke-dashoffset: var(--ring-end, 0); }
+}
+@keyframes contentEnter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ===================== SPLASH ===================== */
+#splash {
+  position: fixed;
+  inset: 0;
+  max-width: 430px;
+  margin: 0 auto;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 20%, oklch(45% 0.2 260 / 0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 45% at 78% 75%, oklch(72% 0.16 80 / 0.12) 0%, transparent 55%),
+    var(--c-navy);
+}
+#splash::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(oklch(100% 0 0 / 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(100% 0 0 / 0.032) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, transparent 4%, oklch(0% 0 0) 20%, oklch(0% 0 0) 78%, transparent 97%);
+  pointer-events: none;
+  animation: gridShift 18s linear infinite;
+}
+#splash::after {
+  content: '';
+  position: absolute;
+  width: min(78vw, 340px);
+  height: min(78vw, 340px);
+  border: 1px solid oklch(72% 0.16 80 / 0.14);
+  border-radius: 16px;
+  transform: rotate(45deg);
+  pointer-events: none;
+  animation: gradientBreath 5s ease-in-out infinite;
+}
+#splash .splash-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#splash .shield-wrap {
+  animation: badgeDrift 6s ease-in-out infinite;
+  margin-bottom: 28px;
+  filter: drop-shadow(0 24px 48px oklch(0% 0 0 / 0.55));
+}
+#splash .splash-inner { animation: scaleIn var(--dur-slow) var(--ease-out) both; }
+#splash h1 {
+  font-family: var(--ff-head);
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: oklch(98% 0.005 260);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+#splash .tagline {
+  font-size: 0.8125rem;
+  color: oklch(68% 0.03 260);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+#splash .sub {
+  font-size: 0.75rem;
+  color: oklch(50% 0.025 265);
+  margin-bottom: 40px;
+}
+#splash .cta-btn {
+  background: var(--c-gold);
+  color: var(--c-navy);
+  font-family: var(--ff-head);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px 44px;
+  border-radius: 100px;
+  animation: pulseGlow 2.8s ease-in-out infinite;
+  transition: background var(--dur-fast) ease, transform var(--dur-fast) var(--ease-out);
+}
+#splash .cta-btn:active { transform: scale(0.97); }
+#splash .version {
+  position: absolute;
+  bottom: 32px;
+  font-size: 0.6875rem;
+  color: oklch(40% 0.02 265);
+  z-index: 1;
+}
+
+/* ===================== MAIN CONTENT ===================== */
+#mainContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 72px;
+  display: none;
+}
+
+/* ===================== TAB CONTENT ===================== */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tab-content.active > * { animation: contentEnter var(--dur-mid) var(--ease-out) both; }
+
+/* ===================== HEADERS ===================== */
+.tab-header {
+  background: var(--c-navy);
+  padding: 20px 20px 24px;
+  border-radius: 0 0 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.tab-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 100% at 90% -10%, oklch(45% 0.2 260 / 0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 5% 110%, oklch(72% 0.16 80 / 0.09) 0%, transparent 55%);
+  pointer-events: none;
+}
+.tab-header > * { position: relative; z-index: 1; }
+
+/* ===================== CARDS ===================== */
+.card {
+  background: var(--c-card);
+  border-radius: 14px;
+  border: 1px solid var(--c-border);
+  box-shadow: 0 2px 8px oklch(12% 0.04 265 / 0.06), 0 1px 2px oklch(12% 0.04 265 / 0.04);
+}
+.card-inset {
+  background: var(--c-surface);
+  border-radius: 10px;
+  border: 1px solid var(--c-border);
+}
+
+/* ===================== STAGGER ANIMATIONS ===================== */
+.s1 { animation-delay: 40ms; }
+.s2 { animation-delay: 90ms; }
+.s3 { animation-delay: 140ms; }
+.s4 { animation-delay: 190ms; }
+.s5 { animation-delay: 240ms; }
+.s6 { animation-delay: 290ms; }
+
+/* ===================== BADGES ===================== */
+.badge {
+  display: inline-block;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 3px 9px;
+  border-radius: 100px;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.badge-kept     { background: var(--c-kept-dim);    color: var(--c-kept); }
+.badge-broken   { background: var(--c-broken-dim);  color: var(--c-broken); }
+.badge-inprog   { background: var(--c-inprog-dim);  color: var(--c-inprog); }
+.badge-pending  { background: var(--c-pending-dim); color: var(--c-pending); }
+.badge-planned  { background: oklch(54% 0.18 305 / 0.13); color: var(--c-planned); }
+.badge-ongoing  { background: oklch(61% 0.17 175 / 0.13); color: var(--c-ongoing); }
+.badge-completed{ background: oklch(55% 0.18 145 / 0.13); color: var(--c-completed); }
+.badge-cancelled{ background: var(--c-broken-dim);  color: var(--c-broken); }
+.badge-live     { background: oklch(60% 0.18 145 / 0.15); color: var(--c-kept); }
+.badge-verified { background: var(--c-kept-dim);    color: var(--c-kept); }
+
+/* ===================== PROGRESS RING ===================== */
+.ring-track  { fill: none; stroke: var(--c-border); }
+.ring-fill   {
+  fill: none;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s var(--ease-out);
+}
+
+/* ===================== CONFIDENCE BAR ===================== */
+.conf-bar {
+  height: 5px;
+  background: var(--c-border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.conf-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.8s var(--ease-out);
+}
+
+/* ===================== MAP ===================== */
+.map-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.map-dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation: dotPulse 2.4s ease-in-out infinite;
+}
+.map-dot.kept  { background: var(--c-kept);   } .map-dot.kept::after  { background: var(--c-kept);   }
+.map-dot.bad   { background: var(--c-broken); } .map-dot.bad::after   { background: var(--c-broken); }
+.map-dot.prog  { background: var(--c-inprog); } .map-dot.prog::after  { background: var(--c-inprog); }
+.map-dot.wait  { background: var(--c-pending);} .map-dot.wait::after  { background: var(--c-pending);}
+
+/* ===================== FILTER CHIPS ===================== */
+.chip {
+  border-radius: 100px;
+  padding: 7px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+  border: 1px solid transparent;
+}
+.chip.active {
+  background: var(--c-blue);
+  color: oklch(98% 0.005 260);
+  border-color: var(--c-blue);
+}
+.chip:not(.active) {
+  background: var(--c-surface);
+  color: var(--c-text-mid);
+  border-color: var(--c-border);
+}
+
+/* ===================== REPORT FILTER TABS ===================== */
+.rep-tab {
+  flex: 1;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 8px 4px;
+  border-radius: 8px;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-text-dim);
+}
+.rep-tab.active {
+  background: var(--c-blue);
+  color: oklch(98% 0 0);
+}
+
+/* ===================== TOGGLE SWITCH ===================== */
+.toggle {
+  width: 42px;
+  height: 24px;
+  background: var(--c-kept);
+  border-radius: 100px;
+  position: relative;
+  cursor: pointer;
+  transition: background var(--dur-fast) ease;
+}
+.toggle.off { background: var(--c-border); }
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px oklch(0% 0 0 / 0.2);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.toggle.on .toggle-knob { transform: translateX(18px); }
+
+/* ===================== UPVOTE BUTTON ===================== */
+.upvote-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--ff-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--c-text-faint);
+  transition: color var(--dur-fast) ease;
+  padding: 4px 8px;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background: transparent;
+}
+.upvote-btn.upvoted {
+  color: var(--c-blue);
+  background: var(--c-blue-dim);
+  border-color: oklch(45% 0.2 260 / 0.2);
+}
+.upvote-btn svg { transition: fill var(--dur-fast) ease; }
+
+/* ===================== LANG BUTTON ===================== */
+.lang-btn {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 5px 13px;
+  border-radius: 100px;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+  letter-spacing: 0.04em;
+}
+.lang-btn.active { background: var(--c-blue); color: oklch(98% 0 0); }
+.lang-btn:not(.active) { background: var(--c-border); color: var(--c-text-mid); }
+
+/* ===================== BOTTOM TAB BAR ===================== */
+#tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 430px;
+  margin: 0 auto;
+  background: var(--c-card);
+  border-top: 1px solid var(--c-border);
+  box-shadow: 0 -8px 24px oklch(12% 0.04 265 / 0.08);
+  z-index: 40;
+  display: none;
+}
+#tabBar nav {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 8px;
+}
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding-top: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  color: var(--c-text-faint);
+  transition: color var(--dur-fast) ease;
+}
+.tab-btn.active { color: var(--c-gold); }
+.tab-btn span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.tab-btn svg { width: 22px; height: 22px; }
+
+/* ===================== FAB ===================== */
+.fab {
+  position: fixed;
+  bottom: 88px;
+  right: max(18px, calc(50% - 197px));
+  width: 52px;
+  height: 52px;
+  background: var(--c-gold);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--c-navy);
+  box-shadow: 0 6px 20px oklch(72% 0.16 80 / 0.4);
+  z-index: 30;
+  transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) ease;
+}
+.fab:active { transform: scale(0.94); }
+
+/* ===================== MISC UTILITIES ===================== */
+.mono { font-family: var(--ff-mono); }
+.head { font-family: var(--ff-head); }
+.divider { height: 1px; background: var(--c-border); }
+.text-main  { color: var(--c-text-main); }
+.text-mid   { color: var(--c-text-mid);  }
+.text-dim   { color: var(--c-text-dim);  }
+.text-faint { color: var(--c-text-faint);}
+.text-gold  { color: var(--c-gold); }
+.text-blue  { color: var(--c-blue); }
+.text-red   { color: var(--c-red);  }
+.text-kept  { color: var(--c-kept); }
+.text-broken{ color: var(--c-broken); }
+.text-inprog{ color: var(--c-inprog); }
+.text-pending{ color: var(--c-pending); }
+.bold { font-weight: 700; }
+.semibold { font-weight: 600; }
+
+@media (max-width: 430px) {
+  #app, #splash, #tabBar { max-width: 100%; }
+}
+@media (max-width: 480px) {
+  [style*="grid-template-columns:repeat(3"], [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  #splash h1 { font-size: 1.75rem !important; }
+  #splash p { font-size: 0.85rem !important; }
+}
+@media (max-width: 380px) {
+  [style*="grid-template-columns:repeat(3"], [style*="grid-template-columns: repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="grid-template-columns:repeat(2"], [style*="grid-template-columns: repeat(2"] {
+    grid-template-columns: 1fr !important;
+  }
+  #splash h1 { font-size: 1.5rem !important; }
+  .tab-icon { width: 20px !important; height: 20px !important; }
+  .tab-label { font-size: 9px !important; }
+}
+@media (max-width: 340px) {
+  .tab-icon { width: 18px !important; height: 18px !important; }
+  .tab-label { font-size: 8px !important; }
+}
+@media (min-width: 431px) {
+  #app { border-radius: 24px; margin: 20px auto; height: calc(100dvh - 40px); box-shadow: 0 25px 60px oklch(0% 0 0 / 0.4); }
+  #splash { border-radius: 24px; height: calc(100dvh - 40px); }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ===================== SPLASH ===================== -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="shield-wrap">
+      <svg width="116" height="136" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gShield" x1="10" y1="0" x2="110" y2="140" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="oklch(80% 0.14 82)"/>
+            <stop offset="55%" stop-color="oklch(72% 0.16 80)"/>
+            <stop offset="100%" stop-color="oklch(62% 0.14 76)"/>
+          </linearGradient>
+          <linearGradient id="gBody" x1="20" y1="10" x2="100" y2="130" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="oklch(18% 0.05 265)"/>
+            <stop offset="100%" stop-color="oklch(12% 0.04 265)"/>
+          </linearGradient>
+          <linearGradient id="gStar" x1="52" y1="94" x2="68" y2="118" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="oklch(82% 0.16 86)"/>
+            <stop offset="100%" stop-color="oklch(70% 0.15 78)"/>
+          </linearGradient>
+          <filter id="shieldGlow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
+        </defs>
+        <!-- Gold outer border -->
+        <path d="M60 4L110 28V72C110 102 88 126 60 136C32 126 10 102 10 72V28L60 4Z" fill="url(#gShield)"/>
+        <!-- Navy inner body -->
+        <path d="M60 11L104 33V72C104 99 84 120 60 129C36 120 16 99 16 72V33L60 11Z" fill="url(#gBody)"/>
+        <!-- Red circle (head) -->
+        <circle cx="60" cy="51" r="9.5" fill="oklch(56% 0.22 25)"/>
+        <!-- Red body -->
+        <path d="M43 83C43 71 50.5 63 60 63C69.5 63 77 71 77 83V89H43V83Z" fill="oklch(52% 0.22 25)" opacity="0.92"/>
+        <!-- Blue arc (eye of oversight) -->
+        <path d="M33 48C36 39 47 31 60 31C73 31 84 39 87 48" stroke="oklch(56% 0.2 250)" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <path d="M38 50.5C40.5 44 49.5 38 60 38C70.5 38 79.5 44 82 50.5" stroke="oklch(65% 0.18 248)" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.45"/>
+        <!-- Gold star -->
+        <polygon points="60,95 62.9,103.5 72,103.5 64.8,108.8 67.6,117.3 60,112 52.4,117.3 55.2,108.8 48,103.5 57.1,103.5" fill="url(#gStar)"/>
+      </svg>
+    </div>
+    <h1>SipatGov</h1>
+    <p class="tagline">Observe · Verify · Hold Accountable</p>
+    <p class="sub">Philippine Civic Transparency Platform</p>
+    <button class="cta-btn" onclick="dismissSplash()">Get Started</button>
+  </div>
+  <p class="version">v2.1.0 — Powered by Filipino Citizens</p>
+</div>
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<div id="mainContent">
+
+  <!-- ========= HOME TAB ========= -->
+  <div id="tab-home" class="tab-content active">
+
+    <!-- Header -->
+    <div class="tab-header">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div>
+          <p style="font-size:0.6875rem;color:oklch(60% 0.03 260);letter-spacing:0.03em;font-weight:500;text-transform:uppercase;" id="dateDisplay"></p>
+          <h1 style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:oklch(97% 0.005 260);margin-top:3px;letter-spacing:-0.01em;">Magandang Araw!</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <!-- Notif bell -->
+          <div style="position:relative;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--c-navy-light);border:1px solid oklch(30% 0.04 265);display:flex;align-items:center;justify-content:center;">
+              <svg width="18" height="18" fill="none" stroke="oklch(65% 0.03 260)" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </div>
+            <span style="position:absolute;top:-2px;right:-2px;width:10px;height:10px;background:var(--c-red);border-radius:50%;border:2px solid var(--c-navy);"></span>
+          </div>
+          <!-- Avatar -->
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg, var(--c-blue), var(--c-gold));display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-size:0.75rem;font-weight:700;color:white;">JC</div>
+        </div>
+      </div>
+      <!-- CTA button -->
+      <button style="width:100%;background:linear-gradient(135deg,var(--c-gold) 0%,var(--c-gold-light) 100%);color:var(--c-navy);font-family:var(--ff-head);font-weight:700;font-size:0.8125rem;letter-spacing:0.06em;text-transform:uppercase;padding:14px 20px;border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px oklch(72% 0.16 80 / 0.28);transition:transform var(--dur-fast) var(--ease-out);" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''" onmouseleave="this.style.transform=''">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        Observe the Government
+      </button>
+    </div>
+
+    <div style="padding:0 16px;">
+
+      <!-- Map -->
+      <div class="card s1" style="margin-top:20px;padding:16px;position:relative;overflow:hidden;height:200px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:40ms;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <h3 style="font-family:var(--ff-head);font-size:0.875rem;font-weight:600;color:var(--c-text-main);">Live Monitoring Map</h3>
+          <span class="badge badge-live">LIVE</span>
+        </div>
+        <!-- PH map silhouette -->
+        <svg viewBox="0 0 300 180" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.055;" fill="var(--c-navy)">
+          <path d="M150 10 C155 15,165 12,168 20 C172 30,160 35,158 45 C155 55,165 60,170 55 C175 50,180 45,185 50 C190 55,182 65,178 70 C175 75,180 80,185 78 C190 75,195 80,192 85 C188 90,180 88,178 95 C175 102,180 108,175 115 C170 122,160 118,155 125 C150 132,155 140,150 145 C145 150,138 145,135 140 C132 135,128 140,125 135 C122 130,128 125,125 120 C122 115,115 118,118 110 C120 102,128 105,130 98 C132 90,125 85,128 80 C130 75,138 78,140 72 C142 65,135 60,138 55 C140 48,148 50,148 42 C148 35,140 30,142 22 C144 15,148 12,150 10Z"/>
+          <path d="M100 60 C105 55,112 58,115 65 C118 72,112 78,108 75 C104 72,98 68,100 60Z"/>
+          <path d="M190 90 C195 85,205 88,208 95 C210 102,205 108,198 105 C192 102,188 95,190 90Z"/>
+        </svg>
+        <!-- Map dots -->
+        <div class="map-dot kept"  style="top:44px;left:55%;animation-delay:0s;"></div>
+        <div class="map-dot bad"   style="top:74px;left:42%;animation-delay:0.4s;"></div>
+        <div class="map-dot prog"  style="top:59px;left:61%;animation-delay:0.8s;"></div>
+        <div class="map-dot wait"  style="top:90px;left:48%;animation-delay:1.2s;"></div>
+        <div class="map-dot kept"  style="top:111px;left:52%;animation-delay:0.6s;"></div>
+        <div class="map-dot prog"  style="top:54px;left:38%;animation-delay:1s;"></div>
+        <div class="map-dot bad"   style="top:130px;left:50%;animation-delay:0.3s;"></div>
+        <div class="map-dot kept"  style="top:39px;left:65%;animation-delay:1.5s;"></div>
+        <!-- Legend -->
+        <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:10px;">
+          <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--c-text-dim);font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-kept);display:inline-block;"></span>Kept</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--c-text-dim);font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-broken);display:inline-block;"></span>Broken</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--c-text-dim);font-weight:500;"><span style="width:7px;height:7px;border-radius:50%;background:var(--c-inprog);display:inline-block;"></span>In Prog.</span>
+        </div>
+      </div>
+
+      <!-- Promise Tracker rings -->
+      <div style="margin-top:20px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:90ms;">
+        <h3 style="font-family:var(--ff-head);font-size:0.875rem;font-weight:600;color:var(--c-text-main);margin-bottom:12px;">Promise Tracker</h3>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+          <!-- Kept -->
+          <div class="card" style="padding:12px;display:flex;flex-direction:column;align-items:center;">
+            <svg width="72" height="72" viewBox="0 0 72 72">
+              <circle class="ring-track" cx="36" cy="36" r="28" stroke-width="6"/>
+              <circle class="ring-fill" cx="36" cy="36" r="28" stroke-width="6" stroke="var(--c-kept)"
+                stroke-dasharray="175.93" stroke-dashoffset="78" style="--ring-start:175.93;--ring-end:78;"/>
+              <text x="36" y="33" text-anchor="middle" fill="var(--c-text-main)" font-family="'Space Grotesk',sans-serif" font-size="17" font-weight="700">45</text>
+              <text x="36" y="45" text-anchor="middle" fill="var(--c-text-dim)" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="600" letter-spacing="0.04em" style="text-transform:uppercase;">KEPT</text>
+            </svg>
+          </div>
+          <!-- Broken -->
+          <div class="card" style="padding:12px;display:flex;flex-direction:column;align-items:center;">
+            <svg width="72" height="72" viewBox="0 0 72 72">
+              <circle class="ring-track" cx="36" cy="36" r="28" stroke-width="6"/>
+              <circle class="ring-fill" cx="36" cy="36" r="28" stroke-width="6" stroke="var(--c-broken)"
+                stroke-dasharray="175.93" stroke-dashoffset="151" style="--ring-start:175.93;--ring-end:151;"/>
+              <text x="36" y="33" text-anchor="middle" fill="var(--c-text-main)" font-family="'Space Grotesk',sans-serif" font-size="17" font-weight="700">12</text>
+              <text x="36" y="45" text-anchor="middle" fill="var(--c-text-dim)" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="600" letter-spacing="0.04em">BROKEN</text>
+            </svg>
+          </div>
+          <!-- Pending -->
+          <div class="card" style="padding:12px;display:flex;flex-direction:column;align-items:center;">
+            <svg width="72" height="72" viewBox="0 0 72 72">
+              <circle class="ring-track" cx="36" cy="36" r="28" stroke-width="6"/>
+              <circle class="ring-fill" cx="36" cy="36" r="28" stroke-width="6" stroke="var(--c-pending)"
+                stroke-dasharray="175.93" stroke-dashoffset="126" style="--ring-start:175.93;--ring-end:126;"/>
+              <text x="36" y="33" text-anchor="middle" fill="var(--c-text-main)" font-family="'Space Grotesk',sans-serif" font-size="17" font-weight="700">28</text>
+              <text x="36" y="45" text-anchor="middle" fill="var(--c-text-dim)" font-family="'JetBrains Mono',monospace" font-size="7" font-weight="600" letter-spacing="0.04em">PENDING</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transparency Score -->
+      <div class="card" style="margin-top:16px;padding:20px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:140ms;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div>
+            <h3 style="font-family:var(--ff-head);font-size:0.875rem;font-weight:600;color:var(--c-text-main);">Transparency Score</h3>
+            <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:2px;">National average · all agencies</p>
+          </div>
+          <span class="badge" style="background:var(--c-gold-dim);color:var(--c-gold);">Updated Today</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="flex-shrink:0;">
+            <svg width="94" height="94" viewBox="0 0 94 94">
+              <circle class="ring-track" cx="47" cy="47" r="40" stroke-width="8"/>
+              <circle class="ring-fill" cx="47" cy="47" r="40" stroke-width="8" stroke="var(--c-gold)"
+                stroke-dasharray="251.33" stroke-dashoffset="83" style="--ring-start:251.33;--ring-end:83;"/>
+              <text x="47" y="43" text-anchor="middle" fill="var(--c-text-main)" font-family="'Space Grotesk',sans-serif" font-size="23" font-weight="700">67</text>
+              <text x="47" y="58" text-anchor="middle" fill="var(--c-text-faint)" font-family="'JetBrains Mono',monospace" font-size="9" font-weight="500">/100</text>
+            </svg>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                <span style="font-size:0.6875rem;color:var(--c-text-dim);">Budget Transparency</span>
+                <span class="mono" style="font-size:0.6875rem;font-weight:600;color:var(--c-inprog);">74%</span>
+              </div>
+              <div class="conf-bar"><div class="conf-bar-fill" style="width:74%;background:var(--c-inprog);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                <span style="font-size:0.6875rem;color:var(--c-text-dim);">Promise Fulfillment</span>
+                <span class="mono" style="font-size:0.6875rem;font-weight:600;color:var(--c-kept);">53%</span>
+              </div>
+              <div class="conf-bar"><div class="conf-bar-fill" style="width:53%;background:var(--c-kept);"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+                <span style="font-size:0.6875rem;color:var(--c-text-dim);">Public Response</span>
+                <span class="mono" style="font-size:0.6875rem;font-weight:600;color:var(--c-gold);">61%</span>
+              </div>
+              <div class="conf-bar"><div class="conf-bar-fill" style="width:61%;background:var(--c-gold);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div style="margin-top:20px;margin-bottom:24px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:190ms;">
+        <h3 style="font-family:var(--ff-head);font-size:0.875rem;font-weight:600;color:var(--c-text-main);margin-bottom:12px;">Recent Activity</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+
+          <div class="card" style="padding:14px 16px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--c-kept-dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-kept)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);line-height:1.35;">Free WiFi in Public Parks</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:3px;">Promise marked as KEPT · 2 hours ago</p>
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px 16px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--c-broken-dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-broken)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);line-height:1.35;">New report: Road sinkhole in Quezon City</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:3px;">Infrastructure concern · 5 hours ago</p>
+            </div>
+          </div>
+
+          <div class="card" style="padding:14px 16px;display:flex;align-items:flex-start;gap:12px;">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--c-inprog-dim);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-inprog)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);line-height:1.35;">MRT-7 Project progress updated to 68%</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:3px;">Infrastructure project · 1 day ago</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= SIPAT TAB ========= -->
+  <div id="tab-sipat" class="tab-content">
+    <div class="tab-header">
+      <h1 style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:oklch(97% 0.005 260);letter-spacing:-0.01em;">Sipat Monitor</h1>
+      <p style="font-size:0.75rem;color:oklch(58% 0.03 260);margin-top:4px;">Track government promises &amp; commitments</p>
+    </div>
+
+    <div style="padding:16px;">
+      <!-- Summary grid -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:40ms;">
+        <div class="card" style="padding:16px;">
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--ff-mono);">Total Promises</p>
+          <p style="font-family:var(--ff-head);font-size:1.75rem;font-weight:700;color:var(--c-text-main);margin-top:6px;">85</p>
+          <p style="font-size:0.6875rem;color:var(--c-kept);font-weight:600;margin-top:4px;">+3 this week</p>
+        </div>
+        <div class="card" style="padding:16px;">
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--ff-mono);">Avg Confidence</p>
+          <p style="font-family:var(--ff-head);font-size:1.75rem;font-weight:700;color:var(--c-text-main);margin-top:6px;">72%</p>
+          <div class="conf-bar" style="margin-top:8px;"><div class="conf-bar-fill" style="width:72%;background:var(--c-gold);"></div></div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--ff-mono);">Fulfillment Rate</p>
+          <p style="font-family:var(--ff-head);font-size:1.75rem;font-weight:700;color:var(--c-kept);margin-top:6px;">53%</p>
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:4px;">45 of 85 kept</p>
+        </div>
+        <div class="card" style="padding:16px;">
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--ff-mono);">Agencies Tracked</p>
+          <p style="font-family:var(--ff-head);font-size:1.75rem;font-weight:700;color:var(--c-blue);margin-top:6px;">24</p>
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:4px;">Nationwide</p>
+        </div>
+      </div>
+
+      <!-- Promise list -->
+      <div style="margin-top:20px;margin-bottom:24px;">
+        <h3 style="font-family:var(--ff-head);font-size:0.875rem;font-weight:600;color:var(--c-text-main);margin-bottom:12px;">Promise Tracker</h3>
+        <div id="promiseList" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========= PROJECTS TAB ========= -->
+  <div id="tab-projects" class="tab-content">
+    <div class="tab-header">
+      <h1 style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:oklch(97% 0.005 260);letter-spacing:-0.01em;">Infrastructure Projects</h1>
+      <p style="font-size:0.75rem;color:oklch(58% 0.03 260);margin-top:4px;">Monitor public works &amp; spending</p>
+      <!-- Search -->
+      <div style="margin-top:14px;position:relative;">
+        <svg width="16" height="16" fill="none" stroke="oklch(55% 0.03 260)" stroke-width="2" viewBox="0 0 24 24" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="projectSearch" type="text" placeholder="Search projects…"
+          style="width:100%;background:var(--c-navy-light);color:oklch(90% 0.02 260);font-size:0.8125rem;padding:11px 14px 11px 38px;border-radius:10px;border:1px solid oklch(28% 0.04 265);caret-color:var(--c-gold);transition:border-color var(--dur-fast) ease;"
+          onfocus="this.style.borderColor='var(--c-gold)'" onblur="this.style.borderColor='oklch(28% 0.04 265)'"
+        >
+      </div>
+    </div>
+    <!-- Filter chips -->
+    <div style="display:flex;gap:8px;padding:14px 16px 0;overflow-x:auto;">
+      <button class="chip active" onclick="filterProjects('all',this)">All</button>
+      <button class="chip" onclick="filterProjects('ongoing',this)">Ongoing</button>
+      <button class="chip" onclick="filterProjects('completed',this)">Completed</button>
+      <button class="chip" onclick="filterProjects('planned',this)">Planned</button>
+      <button class="chip" onclick="filterProjects('cancelled',this)">Cancelled</button>
+    </div>
+    <!-- Project list -->
+    <div id="projectList" style="padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px;"></div>
+  </div>
+
+  <!-- ========= REPORTS TAB ========= -->
+  <div id="tab-reports" class="tab-content">
+    <div class="tab-header">
+      <h1 style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:oklch(97% 0.005 260);letter-spacing:-0.01em;">Citizen Reports</h1>
+      <p style="font-size:0.75rem;color:oklch(58% 0.03 260);margin-top:4px;">Community-submitted observations</p>
+    </div>
+    <!-- Filter bar -->
+    <div style="margin:14px 16px 0;background:var(--c-card);border:1px solid var(--c-border);border-radius:12px;padding:4px;display:flex;gap:3px;">
+      <button class="rep-tab active" onclick="filterReports('all',this)">All</button>
+      <button class="rep-tab" onclick="filterReports('verified',this)">Verified</button>
+      <button class="rep-tab" onclick="filterReports('pending',this)">Pending</button>
+      <button class="rep-tab" onclick="filterReports('urgent',this)">Urgent</button>
+    </div>
+    <div id="reportList" style="padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px;"></div>
+    <!-- FAB -->
+    <button class="fab" onclick="alert('Report submission form would open here.')">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+    </button>
+  </div>
+
+  <!-- ========= PROFILE TAB ========= -->
+  <div id="tab-profile" class="tab-content">
+    <!-- Header / avatar -->
+    <div class="tab-header" style="align-items:center;text-align:center;padding:28px 20px 28px;">
+      <div style="width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--c-gold),var(--c-gold-light));display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-size:1.5rem;font-weight:700;color:var(--c-navy);margin:0 auto 12px;box-shadow:0 8px 24px oklch(72% 0.16 80 / 0.35);">JC</div>
+      <h2 style="font-family:var(--ff-head);font-size:1.2rem;font-weight:700;color:oklch(97% 0.005 260);letter-spacing:-0.01em;">Juan Carlos Reyes</h2>
+      <p style="font-size:0.75rem;color:oklch(58% 0.03 260);margin-top:3px;">Citizen Watchdog</p>
+      <span class="badge" style="margin-top:10px;display:inline-block;background:oklch(72% 0.16 80 / 0.16);color:var(--c-gold);">Level 5 Observer</span>
+    </div>
+
+    <div style="padding:16px;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:40ms;">
+        <div class="card" style="padding:14px;text-align:center;">
+          <p style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:var(--c-text-main);">23</p>
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:2px;font-weight:500;">Reports</p>
+        </div>
+        <div class="card" style="padding:14px;text-align:center;">
+          <p style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:var(--c-text-main);">156</p>
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:2px;font-weight:500;">Upvotes</p>
+        </div>
+        <div class="card" style="padding:14px;text-align:center;">
+          <p style="font-family:var(--ff-head);font-size:1.35rem;font-weight:700;color:var(--c-text-main);">12</p>
+          <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:2px;font-weight:500;">Verified</p>
+        </div>
+      </div>
+
+      <!-- Settings card -->
+      <div class="card" style="overflow:hidden;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:90ms;">
+        <!-- Region -->
+        <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--c-blue-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);">Region</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:1px;">NCR — Metro Manila</p>
+            </div>
+          </div>
+          <select style="font-size:0.75rem;color:var(--c-blue);font-weight:600;cursor:pointer;">
+            <option>NCR</option><option>Region I</option><option>Region II</option><option>Region III</option>
+            <option>Region IV-A</option><option>Region V</option><option>Region VI</option><option>Region VII</option>
+            <option>Region VIII</option><option>Region IX</option><option>Region X</option><option>Region XI</option>
+            <option>Region XII</option><option>BARMM</option><option>CAR</option><option>CARAGA</option>
+          </select>
+        </div>
+        <div class="divider"></div>
+        <!-- Language -->
+        <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--c-gold-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-gold)" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);">Language</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:1px;">Filipino / English</p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:4px;">
+            <button id="langFil" class="lang-btn active" onclick="toggleLang('fil')">FIL</button>
+            <button id="langEn"  class="lang-btn"        onclick="toggleLang('en')">EN</button>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <!-- Notifications -->
+        <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--c-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-text-mid)" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);">Notifications</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:1px;">Push &amp; Email enabled</p>
+            </div>
+          </div>
+          <div id="notifToggle" class="toggle on" onclick="toggleNotif(this)"><span class="toggle-knob"></span></div>
+        </div>
+        <div class="divider"></div>
+        <!-- Privacy -->
+        <div style="padding:16px;display:flex;align-items:center;justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--c-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="16" height="16" fill="none" stroke="var(--c-text-mid)" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div>
+              <p style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);">Privacy &amp; Security</p>
+              <p style="font-size:0.6875rem;color:var(--c-text-faint);margin-top:1px;">Manage your data</p>
+            </div>
+          </div>
+          <svg width="16" height="16" fill="none" stroke="var(--c-text-faint)" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <button style="width:100%;background:var(--c-card);border:1px solid var(--c-border);border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--c-red);font-weight:700;font-size:0.875rem;font-family:var(--ff-head);transition:background var(--dur-fast) ease;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:140ms;" onmouseenter="this.style.background='var(--c-red-dim)'" onmouseleave="this.style.background='var(--c-card)'">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Log Out
+      </button>
+
+      <p style="text-align:center;font-size:0.6875rem;color:var(--c-text-faint);margin-top:4px;padding-bottom:8px;">SipatGov v2.1.0 — Made with malasakit</p>
+    </div>
+  </div>
+
+</div><!-- /mainContent -->
+
+<!-- ========= BOTTOM TAB BAR ========= -->
+<div id="tabBar">
+  <nav>
+    <button class="tab-btn active" onclick="switchTab('home',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('sipat',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+      <span>Sipat</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('projects',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      <span>Projects</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('reports',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+      <span>Reports</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('profile',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      <span>Profile</span>
+    </button>
+  </nav>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ============================= DATA =============================
+const promises = [
+  { id:1, title:"Free public WiFi in all government offices",   official:"Sen. Ramon Cruz",      status:"kept",        confidence:92, date:"2025-06-15", agency:"DICT"  },
+  { id:2, title:"Build 10,000 classrooms nationwide by 2026",   official:"Sec. Maria Santos",    status:"in_progress", confidence:68, date:"2025-08-20", agency:"DepEd" },
+  { id:3, title:"Reduce rice prices to PHP 20/kg",              official:"Sec. Lorenzo Diaz",    status:"broken",      confidence:15, date:"2024-12-01", agency:"DA"    },
+  { id:4, title:"Complete Mindanao Railway Phase 1",            official:"Sec. Alberto Reyes",   status:"in_progress", confidence:55, date:"2025-09-10", agency:"DOTr"  },
+  { id:5, title:"Universal healthcare coverage for indigents",  official:"Sec. Ana Bautista",    status:"kept",        confidence:88, date:"2025-03-22", agency:"DOH"   },
+  { id:6, title:"Zero open dumpsites by 2026",                  official:"Sec. Carlos Mendoza",  status:"pending",     confidence:40, date:"2025-11-05", agency:"DENR"  },
+  { id:7, title:"Free legal aid in every municipality",         official:"Sec. Patricia Lim",    status:"pending",     confidence:35, date:"2025-07-18", agency:"DOJ"   },
+  { id:8, title:"Digitize all LGU permit processes",            official:"Sec. David Tan",       status:"in_progress", confidence:74, date:"2025-05-30", agency:"DILG"  },
+];
+
+const projects = [
+  { id:1, name:"MRT-7 Bulacan-QC Line",                  budget:62800000000,  spent:42704000000, progress:68,  status:"ongoing",    region:"NCR / Region III",  contractor:"SMEC Philippines",  start:"2022-01", end:"2027-06" },
+  { id:2, name:"New Clark City Phase 1",                 budget:157000000000, spent:110000000000,progress:85,  status:"ongoing",    region:"Region III",         contractor:"BCDA Consortium",   start:"2019-06", end:"2026-12" },
+  { id:3, name:"Cebu Bus Rapid Transit",                 budget:16300000000,  spent:3900000000,  progress:24,  status:"ongoing",    region:"Region VII",         contractor:"Cebu BRT Corp",     start:"2023-03", end:"2028-01" },
+  { id:4, name:"Bataan Nuclear Power Plant Revival",     budget:4000000000,   spent:0,           progress:0,   status:"planned",    region:"Region III",         contractor:"TBD",               start:"2027-01", end:"2032-12" },
+  { id:5, name:"Pasig River Expressway (PAREX)",         budget:95000000000,  spent:0,           progress:0,   status:"cancelled",  region:"NCR",                contractor:"San Miguel Corp",   start:"N/A",     end:"N/A"     },
+  { id:6, name:"Tarlac-Pangasinan-La Union Expressway Ext.", budget:21000000000, spent:21000000000, progress:100, status:"completed", region:"Region I / III",   contractor:"NLEX Corp",         start:"2018-01", end:"2024-07" },
+];
+
+const reports = [
+  { id:1, title:"Sinkhole on Visayas Ave, Quezon City",          category:"Infrastructure", status:"verified", upvotes:234, user:"Maria G.",  time:"2 hours ago",  urgent:true  },
+  { id:2, title:"Illegal logging activity spotted in Palawan",   category:"Environment",   status:"pending",  upvotes:189, user:"Pedro S.",  time:"5 hours ago",  urgent:true  },
+  { id:3, title:"Missing street lights along EDSA Northbound",   category:"Public Safety", status:"verified", upvotes:156, user:"Ana R.",    time:"1 day ago",    urgent:false },
+  { id:4, title:"Overpriced school supplies in DepEd bidding",   category:"Corruption",    status:"pending",  upvotes:412, user:"Jose L.",   time:"2 days ago",   urgent:true  },
+  { id:5, title:"Flood drainage project unused in Malabon",      category:"Infrastructure",status:"verified", upvotes:98,  user:"Rica M.",   time:"3 days ago",   urgent:false },
+  { id:6, title:"Barangay health center lacks medicine supply",   category:"Healthcare",    status:"pending",  upvotes:67,  user:"Carlos T.", time:"4 days ago",   urgent:false },
+];
+
+// ============================= SPLASH =============================
+function dismissSplash() {
+  const s = document.getElementById('splash');
+  s.style.transition = 'opacity 0.38s ease, transform 0.38s var(--ease-out)';
+  s.style.opacity    = '0';
+  s.style.transform  = 'scale(1.04)';
+  setTimeout(() => {
+    s.style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    document.getElementById('tabBar').style.display      = 'block';
+  }, 390);
+}
+
+// ============================= DATE =============================
+function updateDate() {
+  const d = new Date();
+  document.getElementById('dateDisplay').textContent =
+    d.toLocaleDateString('en-PH', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+// ============================= TABS =============================
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mainContent').scrollTop = 0;
+}
+
+// ============================= PROMISES =============================
+const statusCfg = {
+  kept:        { label:'Kept',        cls:'badge-kept'     },
+  broken:      { label:'Broken',      cls:'badge-broken'   },
+  in_progress: { label:'In Progress', cls:'badge-inprog'   },
+  pending:     { label:'Pending',     cls:'badge-pending'  },
+};
+
+function confColor(n) {
+  if (n >= 70) return 'var(--c-kept)';
+  if (n >= 40) return 'var(--c-pending)';
+  return 'var(--c-broken)';
+}
+
+function renderPromises() {
+  document.getElementById('promiseList').innerHTML = promises.map((p, i) => {
+    const s = statusCfg[p.status];
+    const cc = confColor(p.confidence);
+    const delay = [40,80,120,160,200,240,280,320][i] || 40;
+    return `
+    <div class="card" style="padding:16px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:${delay}ms;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px;">
+        <h4 style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);line-height:1.4;flex:1;">${p.title}</h4>
+        <span class="badge ${s.cls}" style="flex-shrink:0;">${s.label}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+        <span style="font-size:0.6875rem;color:var(--c-text-dim);">${p.official}</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--c-border);display:inline-block;"></span>
+        <span class="mono" style="font-size:0.6875rem;color:var(--c-blue);font-weight:600;">${p.agency}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;">
+          <div class="conf-bar" style="flex:1;max-width:80px;">
+            <div class="conf-bar-fill" style="width:${p.confidence}%;background:${cc};"></div>
+          </div>
+          <span class="mono" style="font-size:0.6875rem;font-weight:600;color:${cc};">${p.confidence}%</span>
+        </div>
+        <span class="mono" style="font-size:0.6875rem;color:var(--c-text-faint);">${p.date}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============================= PROJECTS =============================
+const projStatusCfg = {
+  ongoing:   { label:'Ongoing',   cls:'badge-ongoing'   },
+  completed: { label:'Completed', cls:'badge-completed' },
+  planned:   { label:'Planned',   cls:'badge-planned'   },
+  cancelled: { label:'Cancelled', cls:'badge-cancelled' },
+};
+
+function formatPeso(n) {
+  if (n === 0) return '—';
+  if (n >= 1e9) return '₱' + (n/1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return '₱' + (n/1e6).toFixed(1) + 'M';
+  return '₱' + n.toLocaleString();
+}
+
+function progressBarColor(p) {
+  if (p.status === 'cancelled')  return 'var(--c-cancelled)';
+  if (p.status === 'completed')  return 'var(--c-completed)';
+  if (p.progress > 50)           return 'var(--c-ongoing)';
+  return 'var(--c-inprog)';
+}
+
+let currentProjectFilter = 'all';
+
+function renderProjects(filter = 'all', search = '') {
+  const filtered = projects.filter(p => {
+    const mf = filter === 'all' || p.status === filter;
+    const ms = !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.region.toLowerCase().includes(search.toLowerCase());
+    return mf && ms;
+  });
+  const container = document.getElementById('projectList');
+  if (!filtered.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--c-text-faint);font-size:0.875rem;">No projects found.</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map((p, i) => {
+    const s = projStatusCfg[p.status];
+    const pc = progressBarColor(p);
+    const delay = [40,80,120,160,200,240][i] || 40;
+    return `
+    <div class="card" style="padding:16px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:${delay}ms;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px;">
+        <h4 style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);line-height:1.4;flex:1;">${p.name}</h4>
+        <span class="badge ${s.cls}" style="flex-shrink:0;">${s.label}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:14px;">
+        <span style="font-size:0.6875rem;color:var(--c-text-dim);">${p.region}</span>
+        <span style="width:3px;height:3px;border-radius:50%;background:var(--c-border);display:inline-block;"></span>
+        <span style="font-size:0.6875rem;color:var(--c-text-faint);">${p.contractor}</span>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:0.6875rem;color:var(--c-text-dim);">Progress</span>
+          <span class="mono" style="font-size:0.6875rem;font-weight:600;color:var(--c-text-main);">${p.progress}%</span>
+        </div>
+        <div style="height:6px;background:var(--c-border);border-radius:100px;overflow:hidden;">
+          <div style="height:100%;border-radius:100px;background:${pc};width:${p.progress}%;transition:width 0.8s var(--ease-out);"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
+        <div style="font-size:0.6875rem;"><span style="color:var(--c-text-faint);">Budget</span> <span class="mono" style="font-weight:600;color:var(--c-text-main);">${formatPeso(p.budget)}</span></div>
+        <div style="font-size:0.6875rem;"><span style="color:var(--c-text-faint);">Spent</span> <span class="mono" style="font-weight:600;color:var(--c-text-main);">${formatPeso(p.spent)}</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span class="mono" style="font-size:0.625rem;color:var(--c-text-faint);">Start: ${p.start}</span>
+        <span class="mono" style="font-size:0.625rem;color:var(--c-text-faint);">Target: ${p.end}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterProjects(status, btn) {
+  currentProjectFilter = status;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderProjects(status, document.getElementById('projectSearch').value);
+}
+
+document.getElementById('projectSearch').addEventListener('input', function() {
+  renderProjects(currentProjectFilter, this.value);
+});
+
+// ============================= REPORTS =============================
+const catIconPaths = {
+  'Infrastructure': '<path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>',
+  'Environment':    '<path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>',
+  'Public Safety':  '<path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>',
+  'Corruption':     '<path d="M12 9v2m0 4h.01M12 3a9 9 0 100 18 9 9 0 000-18z"/>',
+  'Healthcare':     '<path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>',
+};
+const catColors = {
+  'Infrastructure': { bg:'var(--c-blue-dim)',    fg:'var(--c-blue)'    },
+  'Environment':    { bg:'var(--c-kept-dim)',    fg:'var(--c-kept)'    },
+  'Public Safety':  { bg:'oklch(54% 0.18 305 / 0.12)', fg:'var(--c-planned)' },
+  'Corruption':     { bg:'var(--c-broken-dim)',  fg:'var(--c-broken)'  },
+  'Healthcare':     { bg:'oklch(65% 0.18 0 / 0.12)',   fg:'oklch(62% 0.2 0)' },
+};
+
+function renderReports(filter = 'all') {
+  const filtered = reports.filter(r => {
+    if (filter === 'all')      return true;
+    if (filter === 'verified') return r.status === 'verified';
+    if (filter === 'pending')  return r.status === 'pending';
+    if (filter === 'urgent')   return r.urgent;
+    return true;
+  });
+  const container = document.getElementById('reportList');
+  if (!filtered.length) {
+    container.innerHTML = `<div style="text-align:center;padding:40px 0;color:var(--c-text-faint);font-size:0.875rem;">No reports found.</div>`;
+    return;
+  }
+  container.innerHTML = filtered.map((r, i) => {
+    const iconPath = catIconPaths[r.category] || catIconPaths['Infrastructure'];
+    const col      = catColors[r.category]    || catColors['Infrastructure'];
+    const statusBadge = r.status === 'verified'
+      ? `<span class="badge badge-verified">Verified</span>`
+      : `<span class="badge badge-pending">Pending</span>`;
+    const delay = [40,80,120,160,200,240][i] || 40;
+    return `
+    <div class="card" style="padding:16px;animation:contentEnter var(--dur-mid) var(--ease-out) both;animation-delay:${delay}ms;">
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="width:38px;height:38px;border-radius:50%;background:${col.bg};flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;">
+          <svg width="18" height="18" fill="none" stroke="${col.fg}" stroke-width="1.8" viewBox="0 0 24 24">${iconPath}</svg>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;">
+            <h4 style="font-size:0.8125rem;font-weight:600;color:var(--c-text-main);line-height:1.35;flex:1;">${r.title}</h4>
+            ${r.urgent ? `<span style="width:7px;height:7px;border-radius:50%;background:var(--c-red);flex-shrink:0;margin-top:4px;"></span>` : ''}
+          </div>
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:10px;flex-wrap:wrap;">
+            <span style="font-size:0.6875rem;color:${col.fg};font-weight:600;">${r.category}</span>
+            <span style="width:3px;height:3px;border-radius:50%;background:var(--c-border);display:inline-block;"></span>
+            <span style="font-size:0.6875rem;color:var(--c-text-dim);">${r.user}</span>
+            <span style="width:3px;height:3px;border-radius:50%;background:var(--c-border);display:inline-block;"></span>
+            <span style="font-size:0.6875rem;color:var(--c-text-faint);">${r.time}</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            ${statusBadge}
+            <button class="upvote-btn" id="upvote-${r.id}" onclick="upvoteReport(${r.id})">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" id="usvg-${r.id}"><path d="M5 15l7-7 7 7"/></svg>
+              <span id="ucount-${r.id}">${r.upvotes}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function upvoteReport(id) {
+  const r   = reports.find(r => r.id === id);
+  const btn = document.getElementById('upvote-' + id);
+  if (!btn) return;
+  if (!btn.classList.contains('upvoted')) {
+    r.upvotes++;
+    btn.classList.add('upvoted');
+    btn.querySelector('svg').setAttribute('fill', 'var(--c-blue)');
+  } else {
+    r.upvotes--;
+    btn.classList.remove('upvoted');
+    btn.querySelector('svg').setAttribute('fill', 'none');
+  }
+  document.getElementById('ucount-' + id).textContent = r.upvotes;
+}
+
+function filterReports(filter, btn) {
+  document.querySelectorAll('.rep-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderReports(filter);
+}
+
+// ============================= LANGUAGE TOGGLE =============================
+function toggleLang(lang) {
+  const fil = document.getElementById('langFil');
+  const en  = document.getElementById('langEn');
+  if (lang === 'fil') {
+    fil.classList.add('active');    en.classList.remove('active');
+  } else {
+    en.classList.add('active');     fil.classList.remove('active');
+  }
+}
+
+// ============================= NOTIFICATIONS TOGGLE =============================
+function toggleNotif(el) {
+  el.classList.toggle('on');
+  el.classList.toggle('off');
+}
+
+// ============================= INIT =============================
+updateDate();
+renderPromises();
+renderProjects();
+renderReports();
+</script>
+</body>
+</html>

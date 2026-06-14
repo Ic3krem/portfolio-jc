@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Radia - HR Management Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+window.tailwind = window.tailwind || {};
+window.lucide = window.lucide || {
+  createIcons() {
+    const paths = {
+      zap: 'M13 2 3 14h7l-1 8 10-12h-7l1-8Z',
+      sparkles: 'M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3Z',
+      'play-circle': 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z M10 8l6 4-6 4V8Z',
+      'layout-dashboard': 'M3 3h8v8H3V3Zm10 0h8v5h-8V3ZM3 13h5v8H3v-8Zm7 0h11v8H10v-8Z',
+      'check-square': 'M4 4h16v16H4V4Zm5 8 2 2 5-6',
+      'git-branch': 'M6 3v12 M18 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM6 21a3 3 0 1 1 0-6 3 3 0 0 1 0 6Zm0-6c6 0 9-3 9-9',
+      'graduation-cap': 'M22 10 12 5 2 10l10 5 10-5ZM6 12v5c3 2 9 2 12 0v-5',
+      'file-text': 'M6 2h9l5 5v15H6V2Zm8 0v6h6 M9 13h6 M9 17h6',
+      puzzle: 'M14 2v4h4v4h4v12H2V10h4V6h4V2h4Z',
+      users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75',
+      sun: 'M12 4V2 M12 22v-2 M4.93 4.93 3.51 3.51 M20.49 20.49 19.07 19.07 M4 12H2 M22 12h-2 M4.93 19.07 3.51 20.49 M20.49 3.51 19.07 4.93 M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+      moon: 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z',
+      'log-out': 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9',
+      menu: 'M4 6h16 M4 12h16 M4 18h16',
+      settings: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z M19.4 15a1.8 1.8 0 0 0 .36 2l.05.05-2 3.46-.07-.02a1.8 1.8 0 0 0-1.95.78l-.03.06h-4l-.03-.06a1.8 1.8 0 0 0-1.95-.78l-.07.02-2-3.46.05-.05a1.8 1.8 0 0 0 .36-2L8.1 15a1.8 1.8 0 0 0-1.6-1H6v-4h.5a1.8 1.8 0 0 0 1.6-1l.03-.06a1.8 1.8 0 0 0-.36-2l-.05-.05 2-3.46.07.02a1.8 1.8 0 0 0 1.95-.78l.03-.06h4l.03.06a1.8 1.8 0 0 0 1.95.78l.07-.02 2 3.46-.05.05a1.8 1.8 0 0 0-.36 2l.03.06a1.8 1.8 0 0 0 1.6 1h.5v4h-.5a1.8 1.8 0 0 0-1.6 1l-.03.06Z',
+      shield: 'M12 2 20 5v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3Z',
+      'trending-up': 'M22 7l-8.5 8.5-5-5L2 17',
+      'list-todo': 'M3 6h4M3 12h4M3 18h4M11 6h10M11 12h10M11 18h10',
+      'clock': 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 6v6l4 2',
+      'user-plus': 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M19 8v6 M22 11h-6',
+      'check-circle': 'M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4 12 14.01l-3-3',
+      'file-edit': 'M12 20h9 M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z',
+      'git-merge': 'M18 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 9v12 M6 9c6 0 9 3 9 9',
+      'award': 'M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z M8.21 13.89 7 23l5-3 5 3-1.21-9.12',
+      'plus': 'M5 12h14 M12 5v14',
+      'file-plus': 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z M14 2v6h6 M12 18v-6 M9 15h6',
+      'download': 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M7 10l5 5 5-5 M12 15V3',
+      'arrow-down': 'M12 5v14 M19 12l-7 7-7-7',
+      'arrow-right': 'M5 12h14 M12 5l7 7-7 7',
+      'arrow-left': 'M19 12H5 M12 19l-7-7 7-7',
+      'search': 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z M21 21l-4.35-4.35',
+      'circle': 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z',
+      'calendar': 'M4 8h16 M16 2v4 M8 2v4 M4 4h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z',
+      'home': 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z M9 22V12h6v10',
+      'code': 'M16 18l6-6-6-6 M8 6l-6 6 6 6',
+      'palette': 'M12 2a10 10 0 0 0 0 20 2 2 0 0 0 2-2v-.5a2 2 0 0 1 2-2h1.5A2 2 0 0 0 20 15.5a10 10 0 0 0-8-13.5Z M8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM15.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM9 15a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z',
+      'alert-triangle': 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z M12 9v4 M12 17h.01',
+      'message-circle': 'M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z',
+      'bar-chart': 'M18 20V10 M12 20V4 M6 20v-6',
+      'briefcase': 'M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Z M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2',
+      'activity': 'M22 12h-4l-3 9L9 3l-3 9H2',
+      'bell': 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0',
+      'x': 'M18 6 6 18M6 6l12 12',
+      'chevron-down': 'M6 9l6 6 6-6',
+      'chevron-right': 'M9 18l6-6-6-6',
+      'more-horizontal': 'M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z',
+      'edit': 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7 M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z',
+      'trash': 'M3 6h18 M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6 M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2',
+      'mail': 'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z M22 6l-10 7L2 6',
+      'phone': 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92Z',
+      'map-pin': 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z',
+      'building': 'M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2 M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2 M10 6h4 M10 10h4 M10 14h4 M10 18h4',
+      'external-link': 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6 M15 3h6v6 M10 14L21 3',
+      'folder': 'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2Z',
+      'target': 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Z M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
+      'book-open': 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z',
+      'link': 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71 M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71',
+      default: 'M4 4h16v16H4V4Z'
+    };
+    document.querySelectorAll('i[data-lucide]').forEach((icon) => {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('fill', 'none');
+      svg.setAttribute('stroke', 'currentColor');
+      svg.setAttribute('stroke-width', '2');
+      svg.setAttribute('stroke-linecap', 'round');
+      svg.setAttribute('stroke-linejoin', 'round');
+      svg.setAttribute('class', icon.getAttribute('class') || 'w-5 h-5');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', paths[icon.dataset.lucide] || paths.default);
+      svg.appendChild(path);
+      icon.replaceWith(svg);
+    });
+  }
+};
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'], display: ['Instrument Serif', 'Georgia', 'serif'], mono: ['JetBrains Mono', 'monospace'] },
+      colors: {
+        primary: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' },
+        canvas: { light:'#f8fafc', dark:'#020617' },
+        surface: { light:'#ffffff', dark:'#0f172a' },
+      },
+      borderRadius: { card: '10px' },
+      animation: {
+        'fade-up': 'fadeUp 0.5s ease-out forwards',
+        'fade-up-delay-1': 'fadeUp 0.5s ease-out 0.1s forwards',
+        'fade-up-delay-2': 'fadeUp 0.5s ease-out 0.2s forwards',
+        'fade-up-delay-3': 'fadeUp 0.5s ease-out 0.3s forwards',
+        'fade-up-delay-4': 'fadeUp 0.5s ease-out 0.4s forwards',
+        'fade-up-delay-5': 'fadeUp 0.5s ease-out 0.5s forwards',
+        'pulse-dot': 'pulseDot 2s ease-in-out infinite',
+        'slide-in': 'slideIn 0.3s ease-out forwards',
+      },
+      keyframes: {
+        fadeUp: { '0%': { opacity: '0', transform: 'translateY(16px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+        pulseDot: { '0%,100%': { opacity: '1', transform: 'scale(1)' }, '50%': { opacity: '0.5', transform: 'scale(1.5)' } },
+        slideIn: { '0%': { opacity: '0', transform: 'translateX(-8px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root {
+    --bg: oklch(97.5% 0.005 270);
+    --surface: oklch(99.5% 0.002 270);
+    --surface-raised: oklch(96% 0.008 270);
+    --text: oklch(18% 0.03 270);
+    --text-secondary: oklch(40% 0.02 270);
+    --text-muted: oklch(55% 0.02 270);
+    --text-faint: oklch(68% 0.015 270);
+    --primary: oklch(50% 0.2 280);
+    --primary-light: oklch(92% 0.04 280);
+    --primary-subtle: oklch(96% 0.02 280);
+    --border: oklch(90% 0.01 270);
+    --border-light: oklch(94% 0.008 270);
+    --accent-emerald: oklch(62% 0.17 160);
+    --accent-amber: oklch(72% 0.16 70);
+    --accent-rose: oklch(58% 0.2 15);
+    --accent-violet: oklch(55% 0.2 300);
+    --accent-sky: oklch(58% 0.15 230);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .dark {
+    --bg: oklch(12% 0.03 280);
+    --surface: oklch(16% 0.025 280);
+    --surface-raised: oklch(20% 0.02 280);
+    --text: oklch(92% 0.01 270);
+    --text-secondary: oklch(75% 0.015 270);
+    --text-muted: oklch(58% 0.02 270);
+    --text-faint: oklch(45% 0.015 270);
+    --border: oklch(25% 0.02 270);
+    --border-light: oklch(22% 0.015 270);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+  .font-display { font-family: 'Instrument Serif', Georgia, serif; }
+  .tracking-tight { letter-spacing: -0.025em; }
+  .tracking-tighter { letter-spacing: -0.05em; }
+
+  /* grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+  }
+  .stagger-child { opacity: 0; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(65% 0.02 270); border-radius: 3px; }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb { background: oklch(35% 0.02 270); }
+  .kanban-col { min-height: 200px; }
+  .drag-over { background: oklch(50% 0.2 280 / 0.05); border: 2px dashed var(--primary) !important; }
+  .dark .drag-over { background: oklch(50% 0.2 280 / 0.1); }
+  .dragging { opacity: 0.5; transform: rotate(2deg); }
+  .org-node { transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out); }
+  .org-node:hover { transform: translateY(-3px); box-shadow: 0 12px 32px oklch(50% 0.2 280 / 0.1); }
+  .nav-item { transition: all 0.2s var(--ease-out); }
+  .nav-item:hover { background: oklch(50% 0.2 280 / 0.06); }
+  .dark .nav-item:hover { background: oklch(50% 0.2 280 / 0.1); }
+  .nav-item.active { background: oklch(50% 0.2 280 / 0.08); border-left: 3px solid var(--primary); }
+  .dark .nav-item.active { background: oklch(50% 0.2 280 / 0.15); }
+  .card-hover { transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out); }
+  .card-hover:hover { box-shadow: 0 8px 24px oklch(50% 0.2 280 / 0.08); transform: translateY(-2px); }
+  .dark .card-hover:hover { box-shadow: 0 8px 24px oklch(0% 0 0 / 0.3); }
+  .dot-grid { background-image: radial-gradient(circle, oklch(78% 0.01 270) 1px, transparent 1px); background-size: 24px 24px; }
+  .dark .dot-grid { background-image: radial-gradient(circle, oklch(28% 0.02 270) 1px, transparent 1px); }
+  .progress-bar { transition: width 0.8s var(--ease-out); }
+  input:focus, textarea:focus, select:focus { outline: none; box-shadow: 0 0 0 2px oklch(50% 0.2 280 / 0.25); border-color: var(--primary) !important; }
+  .page-transition { animation: fadeUp 0.45s var(--ease-out); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 oklch(62% 0.17 160 / 0.4); } 50% { opacity: 0.7; box-shadow: 0 0 0 6px oklch(62% 0.17 160 / 0); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* Local utility fallback for offline standalone rendering. */
+  html { background: var(--bg); }
+  body { min-height: 100vh; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  button, input, select, textarea { font: inherit; }
+  button { border: 0; background: transparent; cursor: pointer; }
+  .hidden { display: none !important; }
+  .block { display: block; }
+  .inline-block { display: inline-block; }
+  .inline-flex { display: inline-flex; }
+  .flex { display: flex; }
+  .grid { display: grid; }
+  .flex-col { flex-direction: column; }
+  .items-start { align-items: flex-start; }
+  .items-center { align-items: center; }
+  .justify-center { justify-content: center; }
+  .justify-between { justify-content: space-between; }
+  .flex-1 { flex: 1 1 0%; }
+  .shrink-0 { flex-shrink: 0; }
+  .min-w-0 { min-width: 0; }
+  .relative { position: relative; }
+  .absolute { position: absolute; }
+  .fixed { position: fixed; }
+  .inset-0 { inset: 0; }
+  .top-0 { top: 0; }
+  .left-0 { left: 0; }
+  .right-0 { right: 0; }
+  .bottom-0 { bottom: 0; }
+  .z-40 { z-index: 40; }
+  .z-50 { z-index: 50; }
+  .overflow-hidden { overflow: hidden; }
+  .overflow-y-auto { overflow-y: auto; }
+  .overflow-x-auto { overflow-x: auto; }
+  .w-full { width: 100%; }
+  .h-full { height: 100%; }
+  .h-screen { height: 100vh; }
+  .min-h-screen { min-height: 100vh; }
+  .w-3 { width: .75rem; } .h-3 { height: .75rem; }
+  .w-4 { width: 1rem; } .h-4 { height: 1rem; }
+  .w-5 { width: 1.25rem; } .h-5 { height: 1.25rem; }
+  .w-6 { width: 1.5rem; } .h-6 { height: 1.5rem; }
+  .w-7 { width: 1.75rem; } .h-7 { height: 1.75rem; }
+  .w-8 { width: 2rem; } .h-8 { height: 2rem; }
+  .w-9 { width: 2.25rem; } .h-9 { height: 2.25rem; }
+  .w-10 { width: 2.5rem; } .h-10 { height: 2.5rem; }
+  .w-12 { width: 3rem; } .h-12 { height: 3rem; }
+  .w-16 { width: 4rem; } .h-16 { height: 4rem; }
+  .w-60, .w-\[260px\] { width: 260px; }
+  .ml-60, .ml-\[260px\] { margin-left: 260px; }
+  .max-w-sm { max-width: 24rem; }
+  .max-w-xl { max-width: 36rem; }
+  .max-w-2xl { max-width: 42rem; }
+  .max-w-4xl { max-width: 56rem; }
+  .max-w-6xl { max-width: 72rem; }
+  .max-w-7xl { max-width: 80rem; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+  .p-1 { padding: .25rem; } .p-2 { padding: .5rem; } .p-3 { padding: .75rem; } .p-4 { padding: 1rem; } .p-5 { padding: 1.25rem; } .p-6 { padding: 1.5rem; } .p-8 { padding: 2rem; }
+  .px-1\.5 { padding-left: .375rem; padding-right: .375rem; }
+  .px-2 { padding-left: .5rem; padding-right: .5rem; } .px-3 { padding-left: .75rem; padding-right: .75rem; } .px-4 { padding-left: 1rem; padding-right: 1rem; } .px-5 { padding-left: 1.25rem; padding-right: 1.25rem; } .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; } .px-8 { padding-left: 2rem; padding-right: 2rem; }
+  .py-0\.5 { padding-top: .125rem; padding-bottom: .125rem; }
+  .py-1 { padding-top: .25rem; padding-bottom: .25rem; } .py-2 { padding-top: .5rem; padding-bottom: .5rem; } .py-2\.5 { padding-top: .625rem; padding-bottom: .625rem; } .py-3 { padding-top: .75rem; padding-bottom: .75rem; } .py-4 { padding-top: 1rem; padding-bottom: 1rem; } .py-12 { padding-top: 3rem; padding-bottom: 3rem; } .py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+  .pt-4 { padding-top: 1rem; } .pt-6 { padding-top: 1.5rem; } .pt-32 { padding-top: 8rem; }
+  .pb-20 { padding-bottom: 5rem; }
+  .mb-1 { margin-bottom: .25rem; } .mb-1\.5 { margin-bottom: .375rem; } .mb-2 { margin-bottom: .5rem; } .mb-3 { margin-bottom: .75rem; } .mb-4 { margin-bottom: 1rem; } .mb-6 { margin-bottom: 1.5rem; } .mb-8 { margin-bottom: 2rem; } .mb-10 { margin-bottom: 2.5rem; } .mb-16 { margin-bottom: 4rem; }
+  .mt-0\.5 { margin-top: .125rem; } .mt-1 { margin-top: .25rem; } .mt-4 { margin-top: 1rem; } .mt-6 { margin-top: 1.5rem; }
+  .my-5 { margin-top: 1.25rem; margin-bottom: 1.25rem; }
+  .gap-1 { gap: .25rem; } .gap-1\.5 { gap: .375rem; } .gap-2 { gap: .5rem; } .gap-3 { gap: .75rem; } .gap-4 { gap: 1rem; } .gap-6 { gap: 1.5rem; } .gap-8 { gap: 2rem; }
+  .space-y-1 > * + * { margin-top: .25rem; } .space-y-3 > * + * { margin-top: .75rem; } .space-y-4 > * + * { margin-top: 1rem; }
+  .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .text-center { text-align: center; }
+  .text-left { text-align: left; }
+  .uppercase { text-transform: uppercase; }
+  .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .text-\[10px\] { font-size: 10px; } .text-\[11px\] { font-size: 11px; } .text-xs { font-size: .75rem; } .text-sm { font-size: .875rem; } .text-lg { font-size: 1.125rem; } .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; } .text-3xl { font-size: 1.875rem; } .text-4xl { font-size: 2.25rem; } .text-5xl { font-size: 3rem; }
+  .font-medium { font-weight: 500; } .font-semibold { font-weight: 600; } .font-bold { font-weight: 700; } .font-extrabold { font-weight: 800; }
+  .tracking-tight, .tracking-tighter { letter-spacing: 0; }
+  .tracking-wider { letter-spacing: .05em; }
+  .leading-snug { line-height: 1.375; }
+  .rounded { border-radius: .25rem; } .rounded-lg { border-radius: .5rem; } .rounded-xl { border-radius: .75rem; } .rounded-full { border-radius: 9999px; } .rounded-card { border-radius: 10px; }
+  .border { border-width: 1px; border-style: solid; } .border-b { border-bottom: 1px solid; } .border-t { border-top: 1px solid; } .border-r { border-right: 1px solid; }
+  .border-slate-100 { border-color: #f1f5f9; } .border-slate-200 { border-color: #e2e8f0; } .border-slate-300 { border-color: #cbd5e1; } .border-slate-700 { border-color: #334155; } .border-slate-800 { border-color: #1e293b; }
+  .bg-white { background: #fff; } .bg-white\/80 { background: rgba(255,255,255,.8); } .bg-slate-50 { background: #f8fafc; } .bg-slate-100 { background: #f1f5f9; } .bg-slate-800 { background: #1e293b; } .bg-slate-900 { background: #0f172a; }
+  .bg-primary-50 { background: #eef2ff; } .bg-primary-100 { background: #e0e7ff; } .bg-primary-600 { background: #4f46e5; } .bg-primary-900\/30 { background: rgba(49,46,129,.3); }
+  .bg-emerald-50 { background: #ecfdf5; } .bg-emerald-100 { background: #d1fae5; } .bg-amber-50 { background: #fffbeb; } .bg-amber-100 { background: #fef3c7; } .bg-violet-100 { background: #ede9fe; } .bg-sky-100 { background: #e0f2fe; } .bg-rose-100 { background: #ffe4e6; }
+  .text-white { color: #fff; } .text-slate-100 { color: #f1f5f9; } .text-slate-200 { color: #e2e8f0; } .text-slate-300 { color: #cbd5e1; } .text-slate-400 { color: #94a3b8; } .text-slate-500 { color: #64748b; } .text-slate-600 { color: #475569; } .text-slate-700 { color: #334155; } .text-slate-800 { color: #1e293b; } .text-slate-900 { color: #0f172a; }
+  .text-primary-300 { color: #a5b4fc; } .text-primary-400 { color: #818cf8; } .text-primary-500 { color: #6366f1; } .text-primary-600 { color: #4f46e5; } .text-primary-700 { color: #4338ca; }
+  .text-emerald-400 { color: #34d399; } .text-emerald-500 { color: #10b981; } .text-emerald-600 { color: #059669; } .text-amber-400 { color: #f59e0b; } .text-amber-600 { color: #d97706; } .text-violet-600 { color: #7c3aed; } .text-sky-600 { color: #0284c7; } .text-rose-600 { color: #e11d48; }
+  .shadow-sm { box-shadow: 0 1px 3px oklch(18% 0.03 270 / 0.06), 0 1px 2px oklch(18% 0.03 270 / 0.04); } .shadow-lg { box-shadow: 0 16px 36px oklch(50% 0.2 280 / 0.15), 0 6px 12px oklch(50% 0.2 280 / 0.08); }
+  .backdrop-blur-lg { backdrop-filter: blur(18px); }
+  .cursor-pointer { cursor: pointer; } .cursor-grab { cursor: grab; }
+  .opacity-0 { opacity: 0; }
+  .animate-fade-up { animation: fadeUp .5s var(--ease-out) forwards; }
+  .animate-fade-up-delay-1 { animation: fadeUp .5s var(--ease-out) .1s forwards; }
+  .animate-fade-up-delay-2 { animation: fadeUp .5s var(--ease-out) .2s forwards; }
+  .animate-fade-up-delay-3 { animation: fadeUp .5s var(--ease-out) .3s forwards; }
+  .animate-fade-up-delay-4 { animation: fadeUp .5s var(--ease-out) .4s forwards; }
+  .animate-fade-up-delay-5 { animation: fadeUp .5s var(--ease-out) .5s forwards; }
+  .animate-pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+  .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-from, #4f46e5), var(--tw-gradient-to, #818cf8)); }
+  .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-from, #6366f1), var(--tw-gradient-to, #8b5cf6)); }
+  .from-primary-600 { --tw-gradient-from: #4f46e5; } .from-primary-500 { --tw-gradient-from: #6366f1; } .from-violet-500 { --tw-gradient-from: #8b5cf6; }
+  .to-primary-400 { --tw-gradient-to: #818cf8; } .to-violet-500 { --tw-gradient-to: #8b5cf6; }
+  .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
+  .text-transparent { color: transparent; }
+  .transition-colors, .transition-all, .transition-shadow { transition: all .25s var(--ease-out); }
+  .hover\:bg-primary-700:hover { background: #4338ca; }
+  .hover\:bg-slate-50:hover { background: #f8fafc; }
+  .hover\:text-primary-600:hover { color: #4f46e5; }
+  .hover\:-translate-y-0\.5:hover { transform: translateY(-2px); }
+
+  #page-landing nav { height: 65px; }
+  #page-landing section:first-of-type {
+    min-height: 680px;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 35% 18%, oklch(50% 0.2 280 / 0.14), transparent 34%),
+      radial-gradient(circle at 72% 50%, oklch(58% 0.15 230 / 0.09), transparent 28%),
+      radial-gradient(circle at 50% 80%, oklch(55% 0.2 300 / 0.06), transparent 30%);
+  }
+  #features .grid > div { background: #fff; }
+  #app-shell aside { width: 260px; }
+  #app-shell main { margin-left: 260px; }
+
+  @media (min-width: 640px) {
+    .sm\:flex-row { flex-direction: row; }
+    .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 768px) {
+    .md\:flex { display: flex !important; }
+    .md\:hidden { display: none !important; }
+    .md\:flex-row { flex-direction: row; }
+    .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .md\:text-6xl { font-size: 3.75rem; }
+  }
+  @media (min-width: 1024px) {
+    .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    body { overflow-x: hidden; }
+    #page-landing nav .max-w-7xl { padding-left: 1.25rem; padding-right: 1.25rem; }
+    #page-landing section:first-of-type { min-height: 760px; text-align: left; place-items: start; padding-top: 6.5rem; }
+    #page-landing h1 { font-size: clamp(2.35rem, 12vw, 3.1rem); line-height: 1.04; }
+    #features .grid { grid-template-columns: 1fr; }
+    #app-shell, #app-shell main { min-width: 100%; }
+    #app-shell aside { position: relative; width: 100%; height: auto; border-right: 0; border-bottom: 1px solid #e2e8f0; }
+    #app-shell main { margin-left: 0; padding: 1.25rem; }
+    #sidebar nav { display: flex; gap: .5rem; overflow-x: auto; }
+    #sidebar nav .nav-item { min-width: max-content; }
+  }
+  /* Fix grids on tablet */
+  @media (max-width: 1023px) and (min-width: 768px) {
+    .grid-cols-4, [class*="lg:grid-cols-4"] { grid-template-columns: repeat(2, 1fr) !important; }
+  }
+  /* Enhanced mobile fixes */
+  @media (max-width: 767px) {
+    [class*="grid-cols-4"], [class*="grid-cols-3"] { grid-template-columns: repeat(2, 1fr) !important; }
+    [class*="grid-cols-2"]:not(.kanban-col) { grid-template-columns: 1fr !important; }
+    .kanban-col { min-height: 120px; }
+    table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    thead, tbody, tr { display: revert; }
+  }
+  @media (max-width: 480px) {
+    [class*="grid-cols-4"], [class*="grid-cols-3"], [class*="grid-cols-2"] { grid-template-columns: 1fr !important; }
+    #app-shell main { padding: 0.75rem; }
+    #sidebar nav { gap: 0.25rem; }
+    #sidebar nav .nav-item { font-size: 0.75rem; padding: 0.5rem 0.75rem; }
+    h1, .text-3xl { font-size: 1.5rem !important; }
+    h2, .text-2xl { font-size: 1.25rem !important; }
+    .kanban-col { min-height: 80px; }
+  }
+</style>
+</head>
+<body class="bg-canvas-light dark:bg-canvas-dark text-slate-900 dark:text-slate-100 min-h-screen">
+
+<!-- ===== LANDING PAGE ===== -->
+<div id="page-landing" class="page">
+  <!-- Navbar -->
+  <nav class="fixed top-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200 dark:border-slate-700 z-50">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('landing')">
+        <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
+          <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Radia</span>
+      </div>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#features" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Features</a>
+        <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Pricing</a>
+        <a href="#" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Docs</a>
+        <button onclick="navigateTo('login')" class="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Sign in</button>
+        <button onclick="navigateTo('login')" class="px-4 py-2 bg-primary-600 text-white text-sm font-medium rounded-lg hover:bg-primary-700 transition-colors shadow-sm">Get Started</button>
+      </div>
+      <button id="landing-theme-toggle" onclick="toggleTheme()" class="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+        <i data-lucide="sun" class="w-5 h-5 dark:hidden"></i>
+        <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="pt-32 pb-20 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-medium mb-6 opacity-0 animate-fade-up">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+        Now with AI-powered insights
+      </div>
+      <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter text-slate-900 dark:text-white mb-6 opacity-0 animate-fade-up-delay-1">
+        Your team's workspace,<br><span class="font-display bg-gradient-to-r from-primary-600 to-primary-400 bg-clip-text text-transparent" style="font-style:italic;font-weight:400">unified.</span>
+      </h1>
+      <p class="text-lg md:text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mb-10 opacity-0 animate-fade-up-delay-2">
+        Radia brings HR management, task tracking, onboarding, and team collaboration into one elegant workspace. Built for modern teams.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 opacity-0 animate-fade-up-delay-3">
+        <button onclick="navigateTo('login')" class="px-8 py-3 bg-primary-600 text-white font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-lg shadow-primary-600/25 hover:shadow-xl hover:shadow-primary-600/30 hover:-translate-y-0.5">
+          Start for free
+        </button>
+        <button class="px-8 py-3 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold rounded-xl border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+          <i data-lucide="play-circle" class="w-5 h-5"></i>
+          Watch demo
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-20 px-6 bg-white dark:bg-slate-900/50">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white mb-4">Everything your HR team needs</h2>
+        <p class="text-slate-500 dark:text-slate-400 max-w-xl mx-auto">Powerful features designed to streamline your workforce management from day one.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 rounded-card bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 card-hover opacity-0 animate-fade-up">
+          <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mb-4"><i data-lucide="layout-dashboard" class="w-5 h-5 text-primary-600"></i></div>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Dashboard Analytics</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Real-time overview of your entire workforce with actionable metrics and insights.</p>
+        </div>
+        <div class="p-6 rounded-card bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 card-hover opacity-0 animate-fade-up-delay-1">
+          <div class="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center mb-4"><i data-lucide="check-square" class="w-5 h-5 text-emerald-600"></i></div>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Task Management</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Kanban boards, lists, and tables to track every task across your organization.</p>
+        </div>
+        <div class="p-6 rounded-card bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 card-hover opacity-0 animate-fade-up-delay-2">
+          <div class="w-10 h-10 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center mb-4"><i data-lucide="git-branch" class="w-5 h-5 text-violet-600"></i></div>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Org Chart</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Visual organizational hierarchy with interactive SVG tree and role management.</p>
+        </div>
+        <div class="p-6 rounded-card bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 card-hover opacity-0 animate-fade-up-delay-3">
+          <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mb-4"><i data-lucide="graduation-cap" class="w-5 h-5 text-amber-600"></i></div>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Onboarding</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Structured onboarding courses with progress tracking for every new hire.</p>
+        </div>
+        <div class="p-6 rounded-card bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 card-hover opacity-0 animate-fade-up-delay-4">
+          <div class="w-10 h-10 rounded-lg bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center mb-4"><i data-lucide="file-text" class="w-5 h-5 text-sky-600"></i></div>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-2">SOPs Library</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Centralized standard operating procedures with search and category filtering.</p>
+        </div>
+        <div class="p-6 rounded-card bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 card-hover opacity-0 animate-fade-up-delay-5">
+          <div class="w-10 h-10 rounded-lg bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center mb-4"><i data-lucide="puzzle" class="w-5 h-5 text-rose-600"></i></div>
+          <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Integrations</h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">Connect with Slack, GitHub, Gmail and more to unify your team's workflow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 px-6 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 bg-primary-600 rounded-lg flex items-center justify-center"><i data-lucide="zap" class="w-4 h-4 text-white"></i></div>
+        <span class="font-bold text-slate-900 dark:text-white">Radia</span>
+      </div>
+      <div class="flex items-center gap-6 text-sm text-slate-500 dark:text-slate-400">
+        <a href="#" class="hover:text-primary-600 transition-colors">Privacy</a>
+        <a href="#" class="hover:text-primary-600 transition-colors">Terms</a>
+        <a href="#" class="hover:text-primary-600 transition-colors">Contact</a>
+      </div>
+      <p class="text-xs text-slate-400 dark:text-slate-500">&copy; 2026 Radia. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div id="page-login" class="page hidden min-h-screen flex items-center justify-center px-6 py-12">
+  <div class="w-full max-w-sm">
+    <div class="text-center mb-8">
+      <div class="flex items-center justify-center gap-2 mb-6 cursor-pointer" onclick="navigateTo('landing')">
+        <div class="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center"><i data-lucide="zap" class="w-5 h-5 text-white"></i></div>
+        <span class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Radia</span>
+      </div>
+      <h2 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white">Welcome back</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Sign in to your workspace</p>
+    </div>
+    <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+      <form onsubmit="event.preventDefault(); navigateTo('dashboard');" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
+          <input type="email" value="admin@radia.app" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-shadow" placeholder="you@company.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
+          <input type="password" value="password123" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 transition-shadow" placeholder="••••••••">
+        </div>
+        <div class="flex items-center justify-between">
+          <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
+            <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+            Remember me
+          </label>
+          <a href="#" class="text-sm font-medium text-primary-600 hover:text-primary-500">Forgot?</a>
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors text-sm shadow-sm">
+          Sign in
+        </button>
+      </form>
+      <div class="relative my-5">
+        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200 dark:border-slate-700"></div></div>
+        <div class="relative flex justify-center"><span class="px-3 bg-white dark:bg-slate-900 text-xs text-slate-400">or continue with</span></div>
+      </div>
+      <button onclick="navigateTo('dashboard')" class="w-full py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Sign in with Google
+      </button>
+    </div>
+    <p class="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+      Don't have an account? <a href="#" onclick="navigateTo('dashboard')" class="font-medium text-primary-600 hover:text-primary-500">Sign up</a>
+    </p>
+  </div>
+</div>
+
+<!-- ===== APP SHELL (Sidebar + Main) ===== -->
+<div id="app-shell" class="hidden flex min-h-screen">
+  <!-- Sidebar -->
+  <aside id="sidebar" class="w-60 fixed top-0 left-0 h-screen bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 flex flex-col z-40">
+    <!-- Logo -->
+    <div class="h-16 px-5 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 shrink-0">
+      <div class="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center"><i data-lucide="zap" class="w-5 h-5 text-white"></i></div>
+      <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Radia</span>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 overflow-y-auto scrollbar-thin py-4 px-3 space-y-1">
+      <p class="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Workspace</p>
+      <button onclick="navigateTo('dashboard')" data-nav="dashboard" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+        <i data-lucide="layout-dashboard" class="w-[18px] h-[18px]"></i> Dashboard
+      </button>
+      <button onclick="navigateTo('tasks')" data-nav="tasks" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+        <i data-lucide="check-square" class="w-[18px] h-[18px]"></i> Tasks
+        <span class="ml-auto text-xs bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 px-1.5 py-0.5 rounded-full font-medium">23</span>
+      </button>
+      <button onclick="navigateTo('orgchart')" data-nav="orgchart" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+        <i data-lucide="git-branch" class="w-[18px] h-[18px]"></i> Org Chart
+      </button>
+      <button onclick="navigateTo('onboarding')" data-nav="onboarding" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+        <i data-lucide="graduation-cap" class="w-[18px] h-[18px]"></i> Onboarding
+      </button>
+      <button onclick="navigateTo('sops')" data-nav="sops" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+        <i data-lucide="file-text" class="w-[18px] h-[18px]"></i> SOPs
+      </button>
+      <button onclick="navigateTo('integrations')" data-nav="integrations" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+        <i data-lucide="puzzle" class="w-[18px] h-[18px]"></i> Integrations
+      </button>
+
+      <div class="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+        <p class="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Account</p>
+        <button onclick="navigateTo('settings')" data-nav="settings" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+          <i data-lucide="settings" class="w-[18px] h-[18px]"></i> Settings
+        </button>
+        <button data-nav="admin" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300">
+          <i data-lucide="shield" class="w-[18px] h-[18px]"></i> Admin
+        </button>
+      </div>
+    </nav>
+
+    <!-- Bottom: Theme + User -->
+    <div class="p-3 border-t border-slate-100 dark:border-slate-800 space-y-3 shrink-0">
+      <button onclick="toggleTheme()" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+        <i data-lucide="sun" class="w-[18px] h-[18px] dark:hidden"></i>
+        <i data-lucide="moon" class="w-[18px] h-[18px] hidden dark:block"></i>
+        <span class="dark:hidden">Light mode</span>
+        <span class="hidden dark:inline">Dark mode</span>
+      </button>
+      <div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-50 dark:bg-slate-800">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-violet-500 flex items-center justify-center text-white text-xs font-bold">JD</div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-slate-900 dark:text-white truncate">Jane Doe</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 truncate">Admin</p>
+        </div>
+        <button onclick="navigateTo('landing')" class="p-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Sign out">
+          <i data-lucide="log-out" class="w-4 h-4 text-slate-400"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main id="main-content" class="ml-60 flex-1 min-h-screen">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="page-dashboard" class="app-page hidden p-8 page-transition">
+      <div class="max-w-6xl">
+        <!-- Greeting -->
+        <div class="mb-8">
+          <h1 class="text-4xl font-bold tracking-tighter text-slate-900 dark:text-white" style="font-family:'Instrument Serif',Georgia,serif;font-weight:400">Good morning, Jane</h1>
+          <p class="text-slate-500 dark:text-slate-400 mt-1">Here's what's happening with your team today.</p>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Employees</span>
+              <div class="w-9 h-9 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center"><i data-lucide="users" class="w-4 h-4 text-primary-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">48</p>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> +3 this month</p>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Active Tasks</span>
+              <div class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center"><i data-lucide="list-todo" class="w-4 h-4 text-amber-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">23</p>
+            <p class="text-xs text-amber-600 dark:text-amber-400 mt-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> 5 due today</p>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Onboarding</span>
+              <div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center"><i data-lucide="graduation-cap" class="w-4 h-4 text-emerald-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">78%</p>
+            <p class="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> +12% from last week</p>
+          </div>
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm font-medium text-slate-500 dark:text-slate-400">SOPs</span>
+              <div class="w-9 h-9 rounded-lg bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center"><i data-lucide="file-text" class="w-4 h-4 text-sky-600"></i></div>
+            </div>
+            <p class="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">15</p>
+            <p class="text-xs text-sky-600 dark:text-sky-400 mt-1 flex items-center gap-1"><i data-lucide="file-plus" class="w-3 h-3"></i> 2 added this week</p>
+          </div>
+        </div>
+
+        <!-- 2-col: Activity + Onboarding -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <!-- Recent Activity -->
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6">
+            <h3 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-4">Recent Activity</h3>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="user-plus" class="w-4 h-4 text-emerald-600"></i></div>
+                <div><p class="text-sm text-slate-700 dark:text-slate-300"><span class="font-medium">Sarah Chen</span> joined the Engineering team</p><p class="text-xs text-slate-400 mt-0.5">2 hours ago</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="check-circle" class="w-4 h-4 text-primary-600"></i></div>
+                <div><p class="text-sm text-slate-700 dark:text-slate-300"><span class="font-medium">Alex Rivera</span> completed "Q4 Performance Reviews"</p><p class="text-xs text-slate-400 mt-0.5">4 hours ago</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="file-edit" class="w-4 h-4 text-amber-600"></i></div>
+                <div><p class="text-sm text-slate-700 dark:text-slate-300"><span class="font-medium">Maria Lopez</span> updated "Remote Work Policy" SOP</p><p class="text-xs text-slate-400 mt-0.5">6 hours ago</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="git-merge" class="w-4 h-4 text-violet-600"></i></div>
+                <div><p class="text-sm text-slate-700 dark:text-slate-300"><span class="font-medium">Dev Team</span> merged "Slack Integration" branch</p><p class="text-xs text-slate-400 mt-0.5">Yesterday</p></div>
+              </div>
+              <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="award" class="w-4 h-4 text-sky-600"></i></div>
+                <div><p class="text-sm text-slate-700 dark:text-slate-300"><span class="font-medium">Kim Nakamura</span> completed onboarding at 100%</p><p class="text-xs text-slate-400 mt-0.5">Yesterday</p></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Onboarding Overview -->
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6">
+            <h3 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-4">Onboarding Overview</h3>
+            <div class="space-y-5">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-sky-400 to-sky-600 flex items-center justify-center text-white text-[10px] font-bold">SC</div>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Sarah Chen</span>
+                  </div>
+                  <span class="text-xs font-medium text-emerald-600">85%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full bg-emerald-500 rounded-full" style="width:85%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-[10px] font-bold">TW</div>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Tom Wilson</span>
+                  </div>
+                  <span class="text-xs font-medium text-amber-600">52%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full bg-amber-500 rounded-full" style="width:52%"></div></div>
+              </div>
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white text-[10px] font-bold">LP</div>
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Lisa Park</span>
+                  </div>
+                  <span class="text-xs font-medium text-rose-600">28%</span>
+                </div>
+                <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full bg-rose-500 rounded-full" style="width:28%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6">
+          <h3 class="text-lg font-semibold tracking-tight text-slate-900 dark:text-white mb-4">Quick Actions</h3>
+          <div class="flex flex-wrap gap-3">
+            <button onclick="navigateTo('tasks')" class="px-4 py-2 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 rounded-lg text-sm font-medium hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors flex items-center gap-2">
+              <i data-lucide="plus" class="w-4 h-4"></i> New Task
+            </button>
+            <button onclick="navigateTo('onboarding')" class="px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm font-medium hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors flex items-center gap-2">
+              <i data-lucide="user-plus" class="w-4 h-4"></i> Add Employee
+            </button>
+            <button onclick="navigateTo('sops')" class="px-4 py-2 bg-sky-50 dark:bg-sky-900/20 text-sky-700 dark:text-sky-300 rounded-lg text-sm font-medium hover:bg-sky-100 dark:hover:bg-sky-900/40 transition-colors flex items-center gap-2">
+              <i data-lucide="file-plus" class="w-4 h-4"></i> Create SOP
+            </button>
+            <button class="px-4 py-2 bg-violet-50 dark:bg-violet-900/20 text-violet-700 dark:text-violet-300 rounded-lg text-sm font-medium hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-colors flex items-center gap-2">
+              <i data-lucide="download" class="w-4 h-4"></i> Export Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TASKS ===== -->
+    <div id="page-tasks" class="app-page hidden p-8 page-transition">
+      <div class="max-w-7xl">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Tasks</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage and track your team's work</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+              <button onclick="setTaskView('kanban')" id="btn-kanban" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm">Kanban</button>
+              <button onclick="setTaskView('list')" id="btn-list" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors text-slate-500 dark:text-slate-400">List</button>
+              <button onclick="setTaskView('table')" id="btn-table" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors text-slate-500 dark:text-slate-400">Table</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kanban View -->
+        <div id="view-kanban" class="task-view">
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <!-- TODO -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 px-1 mb-1">
+                <div class="w-2.5 h-2.5 rounded-full bg-slate-400"></div>
+                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">To Do</h3>
+                <span class="text-xs text-slate-400 ml-1" id="count-TODO">3</span>
+              </div>
+              <div class="kanban-col space-y-3 p-2 rounded-lg border-2 border-transparent" data-col="TODO" ondragover="onDragOver(event)" ondrop="onDrop(event, 'TODO')" ondragleave="onDragLeave(event)">
+              </div>
+            </div>
+            <!-- IN PROGRESS -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 px-1 mb-1">
+                <div class="w-2.5 h-2.5 rounded-full bg-sky-500"></div>
+                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">In Progress</h3>
+                <span class="text-xs text-slate-400 ml-1" id="count-IN_PROGRESS">3</span>
+              </div>
+              <div class="kanban-col space-y-3 p-2 rounded-lg border-2 border-transparent" data-col="IN_PROGRESS" ondragover="onDragOver(event)" ondrop="onDrop(event, 'IN_PROGRESS')" ondragleave="onDragLeave(event)">
+              </div>
+            </div>
+            <!-- REVIEW -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 px-1 mb-1">
+                <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Review</h3>
+                <span class="text-xs text-slate-400 ml-1" id="count-REVIEW">2</span>
+              </div>
+              <div class="kanban-col space-y-3 p-2 rounded-lg border-2 border-transparent" data-col="REVIEW" ondragover="onDragOver(event)" ondrop="onDrop(event, 'REVIEW')" ondragleave="onDragLeave(event)">
+              </div>
+            </div>
+            <!-- DONE -->
+            <div class="space-y-3">
+              <div class="flex items-center gap-2 px-1 mb-1">
+                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Done</h3>
+                <span class="text-xs text-slate-400 ml-1" id="count-DONE">2</span>
+              </div>
+              <div class="kanban-col space-y-3 p-2 rounded-lg border-2 border-transparent" data-col="DONE" ondragover="onDragOver(event)" ondrop="onDrop(event, 'DONE')" ondragleave="onDragLeave(event)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- List View -->
+        <div id="view-list" class="task-view hidden">
+          <div class="space-y-2" id="list-view-content"></div>
+        </div>
+
+        <!-- Table View -->
+        <div id="view-table" class="task-view hidden">
+          <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700">
+                  <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Task</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Priority</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Assignee</th>
+                  <th class="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Due</th>
+                </tr>
+              </thead>
+              <tbody id="table-view-content"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ORG CHART ===== -->
+    <div id="page-orgchart" class="app-page hidden p-8 page-transition">
+      <div class="max-w-7xl">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Organization Chart</h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Visualize your team structure</p>
+          </div>
+          <div class="flex bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+            <button onclick="setOrgLayout('vertical')" id="btn-org-vertical" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm flex items-center gap-1.5">
+              <i data-lucide="arrow-down" class="w-3 h-3"></i> Top-Down
+            </button>
+            <button onclick="setOrgLayout('horizontal')" id="btn-org-horizontal" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+              <i data-lucide="arrow-right" class="w-3 h-3"></i> Left-Right
+            </button>
+          </div>
+        </div>
+        <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-8 dot-grid overflow-auto" style="min-height:500px">
+          <div id="org-chart-container" class="flex flex-col items-center gap-0">
+            <svg id="org-lines" class="absolute" style="pointer-events:none;"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ONBOARDING ===== -->
+    <div id="page-onboarding" class="app-page hidden p-8 page-transition">
+      <div class="max-w-4xl">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Onboarding</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Track and manage employee onboarding courses</p>
+        </div>
+
+        <!-- Courses Grid -->
+        <div id="onboarding-courses" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"></div>
+
+        <!-- Course Detail -->
+        <div id="course-detail" class="hidden bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6">
+          <button onclick="closeCourseDetail()" class="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 mb-4 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to courses
+          </button>
+          <h2 id="course-title" class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-1"></h2>
+          <p id="course-desc" class="text-sm text-slate-500 dark:text-slate-400 mb-6"></p>
+          <div id="course-lessons" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SOPs ===== -->
+    <div id="page-sops" class="app-page hidden p-8 page-transition">
+      <div class="max-w-4xl">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Standard Operating Procedures</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Your team's knowledge base</p>
+        </div>
+
+        <!-- Search + Chips -->
+        <div class="mb-6 space-y-3">
+          <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
+            <input id="sop-search" type="text" oninput="filterSOPs()" placeholder="Search SOPs..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white placeholder-slate-400">
+          </div>
+          <div class="flex flex-wrap gap-2" id="sop-chips">
+            <button onclick="filterSOPCategory('All')" class="sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-primary-600 text-white" data-cat="All">All</button>
+            <button onclick="filterSOPCategory('General')" class="sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="General">General</button>
+            <button onclick="filterSOPCategory('Engineering')" class="sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="Engineering">Engineering</button>
+            <button onclick="filterSOPCategory('Design')" class="sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="Design">Design</button>
+            <button onclick="filterSOPCategory('HR')" class="sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300" data-cat="HR">HR</button>
+          </div>
+        </div>
+
+        <!-- SOP Cards Grid -->
+        <div id="sop-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"></div>
+
+        <!-- SOP Detail View -->
+        <div id="sop-detail" class="hidden bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6">
+          <button onclick="closeSOPDetail()" class="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 mb-4 transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to SOPs
+          </button>
+          <div class="flex items-center gap-3 mb-4">
+            <span id="sop-detail-cat" class="px-2 py-0.5 text-xs font-medium rounded-full"></span>
+            <span id="sop-detail-date" class="text-xs text-slate-400"></span>
+          </div>
+          <h2 id="sop-detail-title" class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white mb-4"></h2>
+          <div id="sop-detail-content" class="prose prose-sm prose-slate dark:prose-invert max-w-none text-sm text-slate-600 dark:text-slate-300 leading-relaxed space-y-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== INTEGRATIONS ===== -->
+    <div id="page-integrations" class="app-page hidden p-8 page-transition">
+      <div class="max-w-4xl">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Integrations</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Connect your favorite tools with Radia</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="integrations-grid"></div>
+      </div>
+    </div>
+
+    <!-- ===== SETTINGS ===== -->
+    <div id="page-settings" class="app-page hidden p-8 page-transition">
+      <div class="max-w-2xl">
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Settings</h1>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Manage your account preferences</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-6 space-y-6">
+          <!-- Profile -->
+          <div>
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Profile</h3>
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-violet-500 flex items-center justify-center text-white text-xl font-bold">JD</div>
+              <button class="px-4 py-2 text-sm font-medium text-primary-600 border border-primary-200 dark:border-primary-800 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">Change avatar</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">First Name</label>
+                <input type="text" value="Jane" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Last Name</label>
+                <input type="text" value="Doe" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email</label>
+                <input type="email" value="admin@radia.app" class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white">
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Role</label>
+                <input type="text" value="Admin" disabled class="w-full px-3 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed">
+              </div>
+            </div>
+          </div>
+
+          <!-- Appearance -->
+          <div class="pt-6 border-t border-slate-200 dark:border-slate-700">
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Appearance</h3>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Dark Mode</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Toggle between light and dark themes</p>
+              </div>
+              <button onclick="toggleTheme()" id="settings-theme-toggle" class="relative w-11 h-6 rounded-full transition-colors bg-slate-200 dark:bg-primary-600">
+                <div class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform dark:translate-x-5"></div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Notifications -->
+          <div class="pt-6 border-t border-slate-200 dark:border-slate-700">
+            <h3 class="text-base font-semibold text-slate-900 dark:text-white mb-4">Notifications</h3>
+            <div class="space-y-4">
+              <label class="flex items-center justify-between cursor-pointer">
+                <div>
+                  <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Email notifications</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Receive email updates for important events</p>
+                </div>
+                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+              </label>
+              <label class="flex items-center justify-between cursor-pointer">
+                <div>
+                  <p class="text-sm font-medium text-slate-700 dark:text-slate-300">Task reminders</p>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Get reminded about upcoming deadlines</p>
+                </div>
+                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-slate-200 dark:border-slate-700">
+            <button onclick="showToast('Settings saved successfully')" class="px-6 py-2.5 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors text-sm shadow-sm">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+  <div class="flex items-center gap-3 px-4 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg shadow-lg text-sm font-medium">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 dark:text-emerald-600"></i>
+    <span id="toast-msg"></span>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const tasks = [
+  { id:'t1', title:'Update employee handbook', status:'TODO', priority:'High', assignee:'Jane D.', avatar:'JD', color:'from-primary-500 to-violet-500', due:'Jun 10', integration:'', desc:'' },
+  { id:'t2', title:'Review Q2 performance reports', status:'TODO', priority:'Medium', assignee:'Alex R.', avatar:'AR', color:'from-emerald-400 to-emerald-600', due:'Jun 12', integration:'', desc:'' },
+  { id:'t3', title:'Setup new hire onboarding flow', status:'TODO', priority:'Low', assignee:'Maria L.', avatar:'ML', color:'from-amber-400 to-amber-600', due:'Jun 15', integration:'', desc:'' },
+  { id:'t4', title:'Implement Slack notifications', status:'IN_PROGRESS', priority:'High', assignee:'Dev Team', avatar:'DT', color:'from-sky-400 to-sky-600', due:'Jun 8', integration:'slack', desc:'' },
+  { id:'t5', title:'Design org chart component', status:'IN_PROGRESS', priority:'Medium', assignee:'Kim N.', avatar:'KN', color:'from-rose-400 to-rose-600', due:'Jun 9', integration:'', desc:'' },
+  { id:'t6', title:'GitHub webhook integration', status:'IN_PROGRESS', priority:'High', assignee:'Dev Team', avatar:'DT', color:'from-sky-400 to-sky-600', due:'Jun 7', integration:'github', desc:'' },
+  { id:'t7', title:'Create SOP templates', status:'REVIEW', priority:'Medium', assignee:'Sarah C.', avatar:'SC', color:'from-violet-400 to-violet-600', due:'Jun 6', integration:'', desc:'' },
+  { id:'t8', title:'Employee survey analysis', status:'REVIEW', priority:'Low', assignee:'Tom W.', avatar:'TW', color:'from-amber-400 to-amber-600', due:'Jun 5', integration:'', desc:'' },
+  { id:'t9', title:'Finalize benefits package', status:'DONE', priority:'High', assignee:'Jane D.', avatar:'JD', color:'from-primary-500 to-violet-500', due:'Jun 3', integration:'', desc:'' },
+  { id:'t10', title:'Setup Gmail forwarding rules', status:'DONE', priority:'Medium', assignee:'Alex R.', avatar:'AR', color:'from-emerald-400 to-emerald-600', due:'Jun 2', integration:'gmail', desc:'' },
+];
+
+const courses = [
+  {
+    id:'c1', title:'Company Culture & Values', desc:'Learn about our mission, vision, and core values that drive everything we do.', progress:85, icon:'heart',
+    lessons:[
+      { title:'Welcome to the team', done:true },
+      { title:'Our mission & vision', done:true },
+      { title:'Core values deep dive', done:true },
+      { title:'Culture handbook review', done:true },
+      { title:'Meet the leadership team', done:false },
+    ]
+  },
+  {
+    id:'c2', title:'Tools & Systems Setup', desc:'Get set up with all the tools and systems you need to be productive.', progress:60, icon:'monitor',
+    lessons:[
+      { title:'Email & calendar setup', done:true },
+      { title:'Slack workspace tour', done:true },
+      { title:'Project management tools', done:true },
+      { title:'VPN & security setup', done:false },
+      { title:'Development environment', done:false },
+    ]
+  },
+  {
+    id:'c3', title:'Compliance & Policies', desc:'Essential compliance training and company policy overview.', progress:40, icon:'shield',
+    lessons:[
+      { title:'Code of conduct', done:true },
+      { title:'Data privacy & GDPR', done:true },
+      { title:'Workplace safety', done:false },
+      { title:'Anti-harassment training', done:false },
+      { title:'Benefits enrollment', done:false },
+    ]
+  },
+];
+
+const sops = [
+  { id:'s1', title:'Remote Work Policy', category:'General', updated:'Jun 1, 2026', icon:'home',
+    content:'<p><strong>Purpose:</strong> This policy establishes guidelines for remote work arrangements.</p><p><strong>Scope:</strong> All full-time employees eligible for remote work.</p><p><strong>Guidelines:</strong></p><ul class="list-disc pl-5 space-y-1"><li>Maintain core hours (10am - 3pm local time)</li><li>Ensure reliable internet connection (min 25 Mbps)</li><li>Use company-approved VPN for all work</li><li>Attend all scheduled meetings via video with camera on</li><li>Report any security incidents immediately</li></ul><p><strong>Equipment:</strong> The company will provide laptop, monitor, and keyboard. Additional equipment requests must be approved by your manager.</p>' },
+  { id:'s2', title:'Code Review Standards', category:'Engineering', updated:'May 28, 2026', icon:'code',
+    content:'<p><strong>Purpose:</strong> Establish consistent code review practices across engineering teams.</p><p><strong>Process:</strong></p><ul class="list-disc pl-5 space-y-1"><li>All changes require at least 2 approving reviews</li><li>Reviews should be completed within 24 hours</li><li>Use conventional comments (suggestion, issue, nitpick)</li><li>Run all CI checks before requesting review</li><li>Keep PRs under 400 lines of changed code</li></ul><p><strong>Focus Areas:</strong> Security, performance, readability, test coverage, and documentation.</p>' },
+  { id:'s3', title:'Design System Guidelines', category:'Design', updated:'May 25, 2026', icon:'palette',
+    content:'<p><strong>Purpose:</strong> Maintain visual consistency across all Radia products.</p><p><strong>Principles:</strong></p><ul class="list-disc pl-5 space-y-1"><li>Use the 4px spacing grid for all layout decisions</li><li>Primary color: Indigo #4f46e5 for interactive elements</li><li>Typography: Inter for UI, JetBrains Mono for code</li><li>Border radius: 10px for cards, 8px for buttons, 6px for inputs</li><li>Shadows: sm default, md on hover for elevation</li></ul><p><strong>Components:</strong> Always check the shared Figma library before creating new components.</p>' },
+  { id:'s4', title:'Hiring Process', category:'HR', updated:'May 20, 2026', icon:'users',
+    content:'<p><strong>Purpose:</strong> Standardize the hiring workflow from sourcing to onboarding.</p><p><strong>Stages:</strong></p><ol class="list-decimal pl-5 space-y-1"><li>Job requisition approval (1-2 days)</li><li>Sourcing & posting (ongoing)</li><li>Resume screening (48-hour turnaround)</li><li>Phone screen (30 minutes)</li><li>Technical/skills assessment (1 hour)</li><li>Team interview panel (2 hours)</li><li>Offer & negotiation (1-3 days)</li></ol><p><strong>Timeline:</strong> Target 30 days from posting to offer acceptance.</p>' },
+  { id:'s5', title:'Incident Response Plan', category:'Engineering', updated:'May 15, 2026', icon:'alert-triangle',
+    content:'<p><strong>Purpose:</strong> Define procedures for handling production incidents.</p><p><strong>Severity Levels:</strong></p><ul class="list-disc pl-5 space-y-1"><li><strong>P0 (Critical):</strong> Service is completely down. Response: 5 minutes.</li><li><strong>P1 (High):</strong> Major feature impaired. Response: 15 minutes.</li><li><strong>P2 (Medium):</strong> Minor feature issue. Response: 1 hour.</li><li><strong>P3 (Low):</strong> Cosmetic issue. Response: next business day.</li></ul><p><strong>Process:</strong> Detect > Triage > Communicate > Mitigate > Resolve > Post-mortem.</p>' },
+  { id:'s6', title:'Brand Voice Guide', category:'Design', updated:'May 10, 2026', icon:'message-circle',
+    content:'<p><strong>Purpose:</strong> Ensure consistent brand communication across all channels.</p><p><strong>Tone:</strong> Professional yet approachable. Confident but not arrogant. Clear and concise.</p><p><strong>Guidelines:</strong></p><ul class="list-disc pl-5 space-y-1"><li>Use active voice whenever possible</li><li>Avoid jargon unless writing for a technical audience</li><li>Keep sentences under 20 words on average</li><li>Use "we" for the company, "you" for the user</li><li>Capitalize product names but not features</li></ul><p><strong>Examples:</strong> "Get started in minutes" over "Initiate the onboarding process."</p>' },
+];
+
+const integrations = [
+  { id:'i1', name:'Slack', desc:'Send notifications and updates to Slack channels', icon:'<svg viewBox="0 0 24 24" class="w-8 h-8" fill="none"><path d="M14.5 2a2.5 2.5 0 00-2.5 2.5V9h2.5A2.5 2.5 0 0017 6.5v-2A2.5 2.5 0 0014.5 2z" fill="#E01E5A"/><path d="M9.5 2A2.5 2.5 0 007 4.5v2A2.5 2.5 0 009.5 9H12V4.5A2.5 2.5 0 009.5 2z" fill="#36C5F0"/><path d="M9.5 22A2.5 2.5 0 0012 19.5V15H9.5A2.5 2.5 0 007 17.5v2A2.5 2.5 0 009.5 22z" fill="#2EB67D"/><path d="M14.5 22a2.5 2.5 0 002.5-2.5v-2a2.5 2.5 0 00-2.5-2.5H12v4.5a2.5 2.5 0 002.5 2.5z" fill="#ECB22E"/><path d="M22 9.5a2.5 2.5 0 00-2.5-2.5H15v5h4.5A2.5 2.5 0 0022 9.5z" fill="#E01E5A"/><path d="M2 14.5A2.5 2.5 0 004.5 17H9v-5H4.5A2.5 2.5 0 002 14.5z" fill="#ECB22E"/><path d="M2 9.5A2.5 2.5 0 004.5 12H9V7H4.5A2.5 2.5 0 002 9.5z" fill="#36C5F0"/><path d="M22 14.5a2.5 2.5 0 00-2.5-2.5H15v5h4.5a2.5 2.5 0 002.5-2.5z" fill="#2EB67D"/></svg>', connected:true, color:'bg-purple-50 dark:bg-purple-900/20' },
+  { id:'i2', name:'GitHub', desc:'Sync repositories and track pull requests', icon:'<svg viewBox="0 0 24 24" class="w-8 h-8"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836a9.59 9.59 0 012.504.337c1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z" class="fill-slate-900 dark:fill-white"/></svg>', connected:true, color:'bg-slate-50 dark:bg-slate-800' },
+  { id:'i3', name:'Gmail', desc:'Manage email notifications and forwarding rules', icon:'<svg viewBox="0 0 24 24" class="w-8 h-8" fill="none"><path d="M2 6l10 7 10-7v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" fill="#EA4335" opacity="0.2"/><path d="M22 6l-10 7L2 6" stroke="#EA4335" stroke-width="2" stroke-linecap="round"/><rect x="2" y="4" width="20" height="16" rx="2" stroke="#EA4335" stroke-width="2" fill="none"/></svg>', connected:true, color:'bg-red-50 dark:bg-red-900/20' },
+  { id:'i4', name:'Discord', desc:'Community management and team communication', icon:'<svg viewBox="0 0 24 24" class="w-8 h-8"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026c.462-.62.874-1.275 1.226-1.963a.075.075 0 00-.041-.104 13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z" fill="#5865F2"/></svg>', connected:false, color:'bg-indigo-50 dark:bg-indigo-900/20' },
+  { id:'i5', name:'Teams', desc:'Microsoft Teams meetings and channel sync', icon:'<svg viewBox="0 0 24 24" class="w-8 h-8"><path d="M20 7h-2V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2H8a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V9a2 2 0 00-2-2z" fill="#6264A7" opacity="0.9"/><circle cx="15" cy="5" r="2.5" fill="#6264A7"/><circle cx="20" cy="7" r="2" fill="#6264A7" opacity="0.6"/><rect x="2" y="6" width="10" height="10" rx="1.5" fill="#6264A7"/><path d="M5 9h4M5 11.5h4M5 14h2.5" stroke="white" stroke-width="0.8"/></svg>', connected:false, color:'bg-indigo-50 dark:bg-indigo-900/20' },
+  { id:'i6', name:'Messenger', desc:'Customer support chat and team messaging', icon:'<svg viewBox="0 0 24 24" class="w-8 h-8"><defs><linearGradient id="msg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00B2FF"/><stop offset="100%" stop-color="#006AFF"/></linearGradient></defs><path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.93 1.46 5.545 3.745 7.256V22l3.378-1.852c.9.25 1.855.384 2.877.384 5.523 0 10-4.145 10-9.289C22 6.145 17.523 2 12 2z" fill="url(#msg-grad)"/><path d="M13.228 14.048l-2.56-2.732L6 14.048l5.107-5.42 2.624 2.732L18.364 8.63l-5.136 5.42z" fill="white"/></svg>', connected:false, color:'bg-blue-50 dark:bg-blue-900/20' },
+];
+
+const orgMembers = [
+  { id:'o1', name:'Jane Doe', title:'Chief Executive Officer', role:'Creator', avatar:'JD', color:'from-primary-500 to-violet-500', parent:null },
+  { id:'o2', name:'Alex Rivera', title:'VP of Engineering', role:'Creator', avatar:'AR', color:'from-emerald-400 to-emerald-600', parent:'o1' },
+  { id:'o3', name:'Maria Lopez', title:'VP of Design', role:'Moderator', avatar:'ML', color:'from-amber-400 to-amber-600', parent:'o1' },
+  { id:'o4', name:'Sarah Chen', title:'Senior Engineer', role:'User', avatar:'SC', color:'from-sky-400 to-sky-600', parent:'o2' },
+  { id:'o5', name:'Kim Nakamura', title:'Frontend Engineer', role:'User', avatar:'KN', color:'from-rose-400 to-rose-600', parent:'o2' },
+  { id:'o6', name:'Tom Wilson', title:'UI/UX Designer', role:'User', avatar:'TW', color:'from-amber-400 to-amber-600', parent:'o3' },
+];
+
+// ===== STATE =====
+let currentPage = 'landing';
+let currentTaskView = 'kanban';
+let currentOrgLayout = 'vertical';
+let currentSOPCategory = 'All';
+let draggedTask = null;
+
+// ===== THEME =====
+function initTheme() {
+  const saved = localStorage.getItem('radia-theme');
+  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  }
+}
+function toggleTheme() {
+  const html = document.documentElement;
+  html.classList.toggle('dark');
+  html.classList.toggle('light');
+  localStorage.setItem('radia-theme', html.classList.contains('dark') ? 'dark' : 'light');
+  lucide.createIcons();
+}
+initTheme();
+
+// ===== NAVIGATION =====
+function navigateTo(page) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.app-page').forEach(p => p.classList.add('hidden'));
+
+  const appPages = ['dashboard','tasks','orgchart','onboarding','sops','integrations','settings'];
+
+  if (appPages.includes(page)) {
+    document.getElementById('app-shell').classList.remove('hidden');
+    document.getElementById('app-shell').classList.add('flex');
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) { pageEl.classList.remove('hidden'); }
+
+    // Update nav
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navBtn = document.querySelector(`[data-nav="${page}"]`);
+    if (navBtn) navBtn.classList.add('active');
+  } else {
+    document.getElementById('app-shell').classList.add('hidden');
+    document.getElementById('app-shell').classList.remove('flex');
+    const pageEl = document.getElementById('page-' + page);
+    if (pageEl) { pageEl.classList.remove('hidden'); }
+  }
+
+  currentPage = page;
+
+  // Render page content
+  if (page === 'tasks') renderTasks();
+  if (page === 'orgchart') setTimeout(() => renderOrgChart(), 50);
+  if (page === 'onboarding') renderOnboarding();
+  if (page === 'sops') renderSOPs();
+  if (page === 'integrations') renderIntegrations();
+
+  lucide.createIcons();
+  window.scrollTo(0, 0);
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.remove('hidden');
+  lucide.createIcons();
+  setTimeout(() => toast.classList.add('hidden'), 3000);
+}
+
+// ===== TASKS =====
+function priorityColor(p) {
+  return p === 'High' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300'
+       : p === 'Medium' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+       : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+}
+function statusLabel(s) {
+  return { TODO:'To Do', IN_PROGRESS:'In Progress', REVIEW:'Review', DONE:'Done' }[s];
+}
+function statusColor(s) {
+  return { TODO:'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', IN_PROGRESS:'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300', REVIEW:'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', DONE:'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' }[s];
+}
+function integrationIcon(i) {
+  if (i === 'slack') return '<span class="px-1.5 py-0.5 text-[10px] font-medium rounded bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">Slack</span>';
+  if (i === 'github') return '<span class="px-1.5 py-0.5 text-[10px] font-medium rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">GitHub</span>';
+  if (i === 'gmail') return '<span class="px-1.5 py-0.5 text-[10px] font-medium rounded bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">Gmail</span>';
+  return '';
+}
+
+function renderKanbanCard(task) {
+  return `<div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-4 card-hover cursor-grab active:cursor-grabbing" draggable="true" data-task-id="${task.id}" ondragstart="onDragStart(event, '${task.id}')" ondragend="onDragEnd(event)">
+    <div class="flex items-start justify-between mb-3">
+      <p class="text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug pr-2">${task.title}</p>
+      <span class="px-1.5 py-0.5 text-[10px] font-medium rounded ${priorityColor(task.priority)} shrink-0">${task.priority}</span>
+    </div>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-full bg-gradient-to-br ${task.color} flex items-center justify-center text-white text-[9px] font-bold">${task.avatar}</div>
+        <span class="text-xs text-slate-500 dark:text-slate-400">${task.assignee}</span>
+      </div>
+      <div class="flex items-center gap-2">
+        ${integrationIcon(task.integration)}
+        <span class="text-[11px] text-slate-400 flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i>${task.due}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderTasks() {
+  const cols = ['TODO','IN_PROGRESS','REVIEW','DONE'];
+  cols.forEach(col => {
+    const container = document.querySelector(`[data-col="${col}"]`);
+    const colTasks = tasks.filter(t => t.status === col);
+    container.innerHTML = colTasks.map(renderKanbanCard).join('');
+    document.getElementById('count-' + col).textContent = colTasks.length;
+  });
+
+  // List view
+  const listContent = document.getElementById('list-view-content');
+  listContent.innerHTML = tasks.map(t => `
+    <div class="flex items-center gap-4 p-4 bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 card-hover">
+      <div class="w-7 h-7 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-[10px] font-bold shrink-0">${t.avatar}</div>
+      <div class="flex-1 min-w-0"><p class="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">${t.title}</p><p class="text-xs text-slate-400">${t.assignee}</p></div>
+      <span class="px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColor(t.status)} shrink-0">${statusLabel(t.status)}</span>
+      <span class="px-2 py-0.5 text-[11px] font-medium rounded ${priorityColor(t.priority)} shrink-0">${t.priority}</span>
+      <span class="text-xs text-slate-400 shrink-0">${t.due}</span>
+    </div>
+  `).join('');
+
+  // Table view
+  const tableContent = document.getElementById('table-view-content');
+  tableContent.innerHTML = tasks.map(t => `
+    <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+      <td class="px-4 py-3"><div class="flex items-center gap-3"><div class="w-6 h-6 rounded-full bg-gradient-to-br ${t.color} flex items-center justify-center text-white text-[9px] font-bold">${t.avatar}</div><span class="text-sm text-slate-800 dark:text-slate-200">${t.title}</span></div></td>
+      <td class="px-4 py-3"><span class="px-2 py-0.5 text-[11px] font-medium rounded-full ${statusColor(t.status)}">${statusLabel(t.status)}</span></td>
+      <td class="px-4 py-3"><span class="px-2 py-0.5 text-[11px] font-medium rounded ${priorityColor(t.priority)}">${t.priority}</span></td>
+      <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">${t.assignee}</td>
+      <td class="px-4 py-3 text-xs text-slate-400">${t.due}</td>
+    </tr>
+  `).join('');
+
+  lucide.createIcons();
+}
+
+function setTaskView(view) {
+  currentTaskView = view;
+  document.querySelectorAll('.task-view').forEach(v => v.classList.add('hidden'));
+  document.getElementById('view-' + view).classList.remove('hidden');
+  ['kanban','list','table'].forEach(v => {
+    const btn = document.getElementById('btn-' + v);
+    if (v === view) { btn.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'; }
+    else { btn.className = 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors text-slate-500 dark:text-slate-400'; }
+  });
+}
+
+// Drag and drop
+function onDragStart(e, taskId) {
+  draggedTask = taskId;
+  e.target.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragEnd(e) {
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+}
+function onDragOver(e) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function onDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+function onDrop(e, newStatus) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (draggedTask) {
+    const task = tasks.find(t => t.id === draggedTask);
+    if (task && task.status !== newStatus) {
+      task.status = newStatus;
+      renderTasks();
+      showToast(`Moved "${task.title}" to ${statusLabel(newStatus)}`);
+    }
+    draggedTask = null;
+  }
+}
+
+// ===== ORG CHART =====
+function renderOrgChart() {
+  const container = document.getElementById('org-chart-container');
+  const isVertical = currentOrgLayout === 'vertical';
+
+  // Build tree
+  const ceo = orgMembers.find(m => !m.parent);
+  const vps = orgMembers.filter(m => m.parent === ceo.id);
+
+  function roleBadge(role) {
+    const colors = { Creator: 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300', Moderator: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300', User: 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400' };
+    return `<span class="px-1.5 py-0.5 text-[10px] font-medium rounded-full ${colors[role]}">${role}</span>`;
+  }
+
+  function nodeCard(m) {
+    return `<div class="org-node bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-4 shadow-sm text-center" style="min-width:160px" data-org-id="${m.id}">
+      <div class="w-12 h-12 rounded-full bg-gradient-to-br ${m.color} flex items-center justify-center text-white text-sm font-bold mx-auto mb-2">${m.avatar}</div>
+      <p class="text-sm font-semibold text-slate-900 dark:text-white">${m.name}</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 mb-2">${m.title}</p>
+      ${roleBadge(m.role)}
+    </div>`;
+  }
+
+  if (isVertical) {
+    let html = `<div class="flex flex-col items-center relative">
+      <!-- CEO -->
+      <div class="mb-0">${nodeCard(ceo)}</div>
+      <div class="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
+      <!-- VPs -->
+      <div class="flex gap-16 relative">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-slate-300 dark:bg-slate-600" style="width:calc(100% - 160px)"></div>`;
+    vps.forEach(vp => {
+      const children = orgMembers.filter(m => m.parent === vp.id);
+      html += `<div class="flex flex-col items-center">
+        <div class="w-px h-0 bg-transparent"></div>
+        ${nodeCard(vp)}
+        ${children.length ? `<div class="w-px h-8 bg-slate-300 dark:bg-slate-600"></div>
+        <div class="flex gap-8 relative">
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 h-px bg-slate-300 dark:bg-slate-600" style="width:calc(100% - 80px)"></div>
+          ${children.map(c => `<div class="flex flex-col items-center"><div class="w-px h-0 bg-transparent"></div>${nodeCard(c)}</div>`).join('')}
+        </div>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+    container.innerHTML = html;
+  } else {
+    // Horizontal layout
+    let html = `<div class="flex items-center gap-0 relative">
+      <div>${nodeCard(ceo)}</div>
+      <div class="w-10 h-px bg-slate-300 dark:bg-slate-600"></div>
+      <div class="flex flex-col gap-10 relative">
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-px bg-slate-300 dark:bg-slate-600" style="height:calc(100% - 80px)"></div>`;
+    vps.forEach(vp => {
+      const children = orgMembers.filter(m => m.parent === vp.id);
+      html += `<div class="flex items-center gap-0">
+        <div class="w-6 h-px bg-slate-300 dark:bg-slate-600"></div>
+        ${nodeCard(vp)}
+        ${children.length ? `<div class="w-10 h-px bg-slate-300 dark:bg-slate-600"></div>
+        <div class="flex flex-col gap-6 relative">
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 w-px bg-slate-300 dark:bg-slate-600" style="height:calc(100% - 40px)"></div>
+          ${children.map(c => `<div class="flex items-center gap-0"><div class="w-6 h-px bg-slate-300 dark:bg-slate-600"></div>${nodeCard(c)}</div>`).join('')}
+        </div>` : ''}
+      </div>`;
+    });
+    html += `</div></div>`;
+    container.innerHTML = html;
+  }
+  lucide.createIcons();
+}
+
+function setOrgLayout(layout) {
+  currentOrgLayout = layout;
+  ['vertical','horizontal'].forEach(l => {
+    const btn = document.getElementById('btn-org-' + l);
+    if (l === layout) { btn.className = btn.className.replace(/text-slate-500 dark:text-slate-400/g, 'text-slate-900 dark:text-white').replace(/(?:bg-white dark:bg-slate-700 shadow-sm)?/, 'bg-white dark:bg-slate-700 shadow-sm'); }
+    else { btn.className = btn.className.replace(/bg-white dark:bg-slate-700 shadow-sm/g, '').replace(/text-slate-900 dark:text-white/g, 'text-slate-500 dark:text-slate-400'); }
+  });
+  document.getElementById('btn-org-vertical').className = layout === 'vertical'
+    ? 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm flex items-center gap-1.5'
+    : 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors text-slate-500 dark:text-slate-400 flex items-center gap-1.5';
+  document.getElementById('btn-org-horizontal').className = layout === 'horizontal'
+    ? 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm flex items-center gap-1.5'
+    : 'px-3 py-1.5 text-xs font-medium rounded-md transition-colors text-slate-500 dark:text-slate-400 flex items-center gap-1.5';
+  renderOrgChart();
+}
+
+// ===== ONBOARDING =====
+function renderOnboarding() {
+  const grid = document.getElementById('onboarding-courses');
+  grid.innerHTML = courses.map(c => {
+    const progressColor = c.progress >= 80 ? 'bg-emerald-500' : c.progress >= 50 ? 'bg-amber-500' : 'bg-rose-500';
+    const progressTextColor = c.progress >= 80 ? 'text-emerald-600' : c.progress >= 50 ? 'text-amber-600' : 'text-rose-600';
+    return `<div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover cursor-pointer" onclick="openCourse('${c.id}')">
+      <div class="w-10 h-10 rounded-lg bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center mb-4"><i data-lucide="${c.icon}" class="w-5 h-5 text-primary-600"></i></div>
+      <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-1">${c.title}</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-4 line-clamp-2">${c.desc}</p>
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-medium ${progressTextColor}">${c.progress}% complete</span>
+        <span class="text-xs text-slate-400">${c.lessons.filter(l=>l.done).length}/${c.lessons.length} lessons</span>
+      </div>
+      <div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden"><div class="progress-bar h-full ${progressColor} rounded-full" style="width:${c.progress}%"></div></div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+}
+
+function openCourse(id) {
+  const course = courses.find(c => c.id === id);
+  if (!course) return;
+  document.getElementById('onboarding-courses').classList.add('hidden');
+  document.getElementById('course-detail').classList.remove('hidden');
+  document.getElementById('course-title').textContent = course.title;
+  document.getElementById('course-desc').textContent = course.desc;
+  const lessonsEl = document.getElementById('course-lessons');
+  lessonsEl.innerHTML = course.lessons.map((l, i) => `
+    <label class="flex items-center gap-3 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+      <input type="checkbox" ${l.done ? 'checked' : ''} onchange="toggleLesson('${id}', ${i})" class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+      <span class="text-sm ${l.done ? 'text-slate-400 line-through' : 'text-slate-700 dark:text-slate-300'}">${l.title}</span>
+      ${l.done ? '<i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 ml-auto"></i>' : '<i data-lucide="circle" class="w-4 h-4 text-slate-300 dark:text-slate-600 ml-auto"></i>'}
+    </label>
+  `).join('');
+  lucide.createIcons();
+}
+
+function toggleLesson(courseId, lessonIdx) {
+  const course = courses.find(c => c.id === courseId);
+  course.lessons[lessonIdx].done = !course.lessons[lessonIdx].done;
+  course.progress = Math.round((course.lessons.filter(l => l.done).length / course.lessons.length) * 100);
+  openCourse(courseId);
+}
+
+function closeCourseDetail() {
+  document.getElementById('course-detail').classList.add('hidden');
+  document.getElementById('onboarding-courses').classList.remove('hidden');
+  renderOnboarding();
+}
+
+// ===== SOPs =====
+function renderSOPs() {
+  const search = document.getElementById('sop-search')?.value.toLowerCase() || '';
+  const filtered = sops.filter(s => {
+    const matchCat = currentSOPCategory === 'All' || s.category === currentSOPCategory;
+    const matchSearch = !search || s.title.toLowerCase().includes(search) || s.category.toLowerCase().includes(search);
+    return matchCat && matchSearch;
+  });
+
+  const catColors = { General:'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', Engineering:'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300', Design:'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300', HR:'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' };
+
+  const grid = document.getElementById('sop-grid');
+  grid.innerHTML = filtered.map(s => `
+    <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover cursor-pointer" onclick="openSOP('${s.id}')">
+      <div class="flex items-start justify-between mb-3">
+        <div class="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><i data-lucide="${s.icon}" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i></div>
+        <span class="px-2 py-0.5 text-[10px] font-medium rounded-full ${catColors[s.category]}">${s.category}</span>
+      </div>
+      <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-1">${s.title}</h3>
+      <p class="text-xs text-slate-400">Updated ${s.updated}</p>
+    </div>
+  `).join('');
+
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="col-span-2 text-center py-12 text-sm text-slate-400">No SOPs found matching your criteria.</div>';
+  }
+  lucide.createIcons();
+}
+
+function filterSOPCategory(cat) {
+  currentSOPCategory = cat;
+  document.querySelectorAll('.sop-chip').forEach(c => {
+    if (c.dataset.cat === cat) { c.className = 'sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-primary-600 text-white'; }
+    else { c.className = 'sop-chip px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'; }
+  });
+  renderSOPs();
+}
+
+function filterSOPs() { renderSOPs(); }
+
+function openSOP(id) {
+  const sop = sops.find(s => s.id === id);
+  if (!sop) return;
+  const catColors = { General:'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400', Engineering:'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300', Design:'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300', HR:'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' };
+  document.getElementById('sop-grid').classList.add('hidden');
+  document.querySelector('#page-sops .mb-6:nth-child(2)').classList.add('hidden');
+  document.getElementById('sop-detail').classList.remove('hidden');
+  document.getElementById('sop-detail-title').textContent = sop.title;
+  document.getElementById('sop-detail-cat').className = `px-2 py-0.5 text-xs font-medium rounded-full ${catColors[sop.category]}`;
+  document.getElementById('sop-detail-cat').textContent = sop.category;
+  document.getElementById('sop-detail-date').textContent = 'Updated ' + sop.updated;
+  document.getElementById('sop-detail-content').innerHTML = sop.content;
+  lucide.createIcons();
+}
+
+function closeSOPDetail() {
+  document.getElementById('sop-detail').classList.add('hidden');
+  document.getElementById('sop-grid').classList.remove('hidden');
+  document.querySelectorAll('#page-sops .mb-6').forEach(el => el.classList.remove('hidden'));
+  renderSOPs();
+}
+
+// ===== INTEGRATIONS =====
+function renderIntegrations() {
+  const grid = document.getElementById('integrations-grid');
+  grid.innerHTML = integrations.map(ig => `
+    <div class="bg-white dark:bg-slate-900 rounded-card border border-slate-200 dark:border-slate-700 p-5 card-hover">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 rounded-xl ${ig.color} flex items-center justify-center">${ig.icon}</div>
+        <div class="flex items-center gap-1.5">
+          <div class="w-2 h-2 rounded-full ${ig.connected ? 'bg-emerald-500 animate-pulse-dot' : 'bg-slate-300 dark:bg-slate-600'}"></div>
+          <span class="text-xs font-medium ${ig.connected ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400'}">${ig.connected ? 'Connected' : 'Disconnected'}</span>
+        </div>
+      </div>
+      <h3 class="text-sm font-semibold text-slate-900 dark:text-white mb-1">${ig.name}</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">${ig.desc}</p>
+      <button onclick="${ig.connected ? `disconnectIntegration('${ig.id}')` : `connectIntegration('${ig.id}')`}" class="w-full py-2 text-xs font-medium rounded-lg transition-colors ${ig.connected ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' : 'bg-primary-600 text-white hover:bg-primary-700'}">
+        ${ig.connected ? 'Disconnect' : 'Connect'}
+      </button>
+    </div>
+  `).join('');
+}
+
+function connectIntegration(id) {
+  const ig = integrations.find(i => i.id === id);
+  if (ig) { ig.connected = true; renderIntegrations(); showToast(`${ig.name} connected successfully`); }
+}
+function disconnectIntegration(id) {
+  const ig = integrations.find(i => i.id === id);
+  if (ig) { ig.connected = false; renderIntegrations(); showToast(`${ig.name} disconnected`); }
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  navigateTo('landing');
+});
+</script>
+</body>
+</html>
